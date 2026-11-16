@@ -4,11 +4,11 @@
   "description": "Website ban bo setup ban hoc va ban lam viec thong minh bang HTML, CSS, JavaScript thuan.",
   "type": "module",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.19.0"
   },
   "scripts": {
-    "dev": "npx vite --host 127.0.0.1",
-    "build": "npx vite build",
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
     "preview": "npx vite preview --host",
     "start": "npx vite preview --host 0.0.0.0",
     "api": "node assistant-api.js",
