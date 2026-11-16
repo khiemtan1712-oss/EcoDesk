@@ -22,3 +22,4 @@ users.forEach(u => {
 fs.writeFileSync('users.json', JSON.stringify(users, null, 2), 'utf8');
 fs.writeFileSync('backend/users.json', JSON.stringify(users, null, 2), 'utf8');
 console.log('Successfully written users with exact BCrypt hashes to users.json and backend/users.json');
+

@@ -21,6 +21,11 @@ public class DataSeeder implements CommandLineRunner {
     private final OrderRepository orderRepository;
     private final CampaignRepository campaignRepository;
     private final BannerRepository bannerRepository;
+    private final ReviewRepository reviewRepository;
+    private final PurchaseOrderRepository purchaseOrderRepository;
+    private final FinancialTransactionRepository financialTransactionRepository;
+    private final InventoryMovementRepository inventoryMovementRepository;
+    private final PayrollRecordRepository payrollRecordRepository;
     private final ObjectMapper objectMapper;
 
     public DataSeeder(CategoryRepository categoryRepository,
@@ -28,14 +33,25 @@ public class DataSeeder implements CommandLineRunner {
                       UserRepository userRepository,
                       OrderRepository orderRepository,
                       CampaignRepository campaignRepository,
-                      BannerRepository bannerRepository) {
+                      BannerRepository bannerRepository,
+                      ReviewRepository reviewRepository,
+                      PurchaseOrderRepository purchaseOrderRepository,
+                      FinancialTransactionRepository financialTransactionRepository,
+                      InventoryMovementRepository inventoryMovementRepository,
+                      PayrollRecordRepository payrollRecordRepository) {
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.campaignRepository = campaignRepository;
         this.bannerRepository = bannerRepository;
+        this.reviewRepository = reviewRepository;
+        this.purchaseOrderRepository = purchaseOrderRepository;
+        this.financialTransactionRepository = financialTransactionRepository;
+        this.inventoryMovementRepository = inventoryMovementRepository;
+        this.payrollRecordRepository = payrollRecordRepository;
         this.objectMapper = new ObjectMapper();
+        this.objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Override
@@ -272,7 +288,109 @@ public class DataSeeder implements CommandLineRunner {
                     banners.add(banner);
                 }
                 bannerRepository.saveAll(banners);
-                System.out.println("✅ Đã nạp " + banners.size() + " banner vào MySQL!");
+                System.out.println("✅ Đã nạp " + banners.size() + " banner vào cơ sở dữ liệu!");
+            }
+
+            // 5. Orders
+            if (orderRepository.count() == 0 && root.has("orders")) {
+                List<Order> orders = new ArrayList<>();
+                for (JsonNode o : root.path("orders")) {
+                    try {
+                        Order order = objectMapper.treeToValue(o, Order.class);
+                        orders.add(order);
+                    } catch (Exception ex) {
+                        System.err.println("Lỗi nạp order: " + ex.getMessage());
+                    }
+                }
+                if (!orders.isEmpty()) {
+                    orderRepository.saveAll(orders);
+                    System.out.println("✅ Đã nạp " + orders.size() + " đơn hàng vào cơ sở dữ liệu!");
+                }
+            }
+
+            // 6. Reviews
+            if (reviewRepository.count() == 0 && root.has("reviews")) {
+                List<Review> reviews = new ArrayList<>();
+                for (JsonNode r : root.path("reviews")) {
+                    try {
+                        Review rev = objectMapper.treeToValue(r, Review.class);
+                        reviews.add(rev);
+                    } catch (Exception ex) {
+                        System.err.println("Lỗi nạp review: " + ex.getMessage());
+                    }
+                }
+                if (!reviews.isEmpty()) {
+                    reviewRepository.saveAll(reviews);
+                    System.out.println("✅ Đã nạp " + reviews.size() + " đánh giá vào cơ sở dữ liệu!");
+                }
+            }
+
+            // 7. Purchase Orders
+            if (purchaseOrderRepository.count() == 0 && root.has("purchases")) {
+                List<PurchaseOrder> purchases = new ArrayList<>();
+                for (JsonNode po : root.path("purchases")) {
+                    try {
+                        PurchaseOrder p = objectMapper.treeToValue(po, PurchaseOrder.class);
+                        purchases.add(p);
+                    } catch (Exception ex) {
+                        System.err.println("Lỗi nạp purchase order: " + ex.getMessage());
+                    }
+                }
+                if (!purchases.isEmpty()) {
+                    purchaseOrderRepository.saveAll(purchases);
+                    System.out.println("✅ Đã nạp " + purchases.size() + " phiếu nhập kho vào cơ sở dữ liệu!");
+                }
+            }
+
+            // 8. Financial Transactions
+            if (financialTransactionRepository.count() == 0 && root.has("transactions")) {
+                List<FinancialTransaction> txs = new ArrayList<>();
+                for (JsonNode t : root.path("transactions")) {
+                    try {
+                        FinancialTransaction tx = objectMapper.treeToValue(t, FinancialTransaction.class);
+                        txs.add(tx);
+                    } catch (Exception ex) {
+                        System.err.println("Lỗi nạp transaction: " + ex.getMessage());
+                    }
+                }
+                if (!txs.isEmpty()) {
+                    financialTransactionRepository.saveAll(txs);
+                    System.out.println("✅ Đã nạp " + txs.size() + " giao dịch tài chính vào cơ sở dữ liệu!");
+                }
+            }
+
+            // 9. Inventory Movements
+            if (inventoryMovementRepository.count() == 0 && root.has("movements")) {
+                List<InventoryMovement> movements = new ArrayList<>();
+                for (JsonNode m : root.path("movements")) {
+                    try {
+                        InventoryMovement mov = objectMapper.treeToValue(m, InventoryMovement.class);
+                        movements.add(mov);
+                    } catch (Exception ex) {
+                        System.err.println("Lỗi nạp inventory movement: " + ex.getMessage());
+                    }
+                }
+                if (!movements.isEmpty()) {
+                    inventoryMovementRepository.saveAll(movements);
+                    System.out.println("✅ Đã nạp " + movements.size() + " biến động kho vào cơ sở dữ liệu!");
+                }
+            }
+
+            // 10. Payroll Records
+            if (payrollRecordRepository.count() == 0 && root.has("payrolls")) {
+                List<PayrollRecord> payrolls = new ArrayList<>();
+                for (JsonNode pr : root.path("payrolls")) {
+                    try {
+                        PayrollRecord p = objectMapper.treeToValue(pr, PayrollRecord.class);
+                        payrolls.add(p);
+                    } catch (Exception ex) {
+                        System.err.println("Lỗi nạp payroll: " + ex.getMessage());
+                    }
+                }
+                if (!payrolls.isEmpty()) {
+                    payrollRecordRepository.saveAll(payrolls);
+                    System.out.println("✅ Đã nạp " + payrolls.size() + " bảng lương vào cơ sở dữ liệu!");
+                }
             }
 
         } catch (Exception e) {
