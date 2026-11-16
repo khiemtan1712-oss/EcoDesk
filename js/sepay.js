@@ -79,6 +79,18 @@ export function getOrderPaymentStatusInfo(order) {
   const rawPaymentStatus = String(order?.paymentStatus || "").trim().toUpperCase();
   const orderStatus = String(order?.status || "").trim().toLowerCase();
 
+  // Đơn hàng đã Hoàn thành / Hoàn tất luôn được coi là đã thanh toán đầy đủ (Đã TT), tránh hiển thị mâu thuẫn "Chờ TT"
+  if (orderStatus === "hoàn thành" || orderStatus === "hoàn tất") {
+    return {
+      code: "PAID",
+      label: "Đã thanh toán",
+      shortLabel: isQrPaymentMethod(method) ? "Đã TT · QR" : "Đã TT · COD",
+      badgeClass: "paid",
+      isPaid: true,
+      isQr: isQrPaymentMethod(method)
+    };
+  }
+
   if (!isQrPaymentMethod(method)) {
     if (rawPaymentStatus === "PAID") {
       return {

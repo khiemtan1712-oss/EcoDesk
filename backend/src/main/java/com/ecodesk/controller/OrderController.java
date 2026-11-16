@@ -375,12 +375,21 @@ public class OrderController {
                                 : "Chuyển trạng thái đơn hàng từ '" + oldStatus + "' sang '" + trimmedStatus + "'";
                         appendStatusHistory(order, trimmedStatus, note, actorName);
                     }
-                    if ("Hoàn thành".equalsIgnoreCase(trimmedStatus)) {
+                    if ("Hoàn thành".equalsIgnoreCase(trimmedStatus) || "Hoàn tất".equalsIgnoreCase(trimmedStatus)) {
                         if (order.getCompletedAt() == null || order.getCompletedAt().isBlank()) {
                             order.setCompletedAt(Instant.now().toString());
                         }
                         String actorName = actorOpt.map(User::getName).orElse(body.containsKey("completedBy") && body.get("completedBy") != null ? body.get("completedBy").toString() : "Quản trị viên");
                         order.setCompletedBy(actorName);
+                        if (!"PAID".equalsIgnoreCase(trim(order.getPaymentStatus()))) {
+                            order.setPaymentStatus("PAID");
+                            if (order.getPaidAmount() == null || order.getPaidAmount() <= 0) {
+                                order.setPaidAmount(order.getTotal() != null ? order.getTotal() : 0.0);
+                            }
+                            if (order.getPaidAt() == null || order.getPaidAt().isBlank()) {
+                                order.setPaidAt(Instant.now().toString());
+                            }
+                        }
                     }
                     if (body.containsKey("completedAt") && body.get("completedAt") != null) {
                         order.setCompletedAt(body.get("completedAt").toString());
@@ -458,12 +467,21 @@ public class OrderController {
                                     : "Chuyển trạng thái đơn hàng từ '" + oldStatus + "' sang '" + trimmedStatus + "'";
                             appendStatusHistory(order, trimmedStatus, note, actorName);
                         }
-                        if ("Hoàn thành".equalsIgnoreCase(trimmedStatus)) {
+                        if ("Hoàn thành".equalsIgnoreCase(trimmedStatus) || "Hoàn tất".equalsIgnoreCase(trimmedStatus)) {
                         if (order.getCompletedAt() == null || order.getCompletedAt().isBlank()) {
                             order.setCompletedAt(Instant.now().toString());
                         }
                         String actorName = actorOpt.map(User::getName).orElse(body.containsKey("completedBy") && body.get("completedBy") != null ? body.get("completedBy").toString() : "Quản trị viên");
                         order.setCompletedBy(actorName);
+                        if (!"PAID".equalsIgnoreCase(trim(order.getPaymentStatus()))) {
+                            order.setPaymentStatus("PAID");
+                            if (order.getPaidAmount() == null || order.getPaidAmount() <= 0) {
+                                order.setPaidAmount(order.getTotal() != null ? order.getTotal() : 0.0);
+                            }
+                            if (order.getPaidAt() == null || order.getPaidAt().isBlank()) {
+                                order.setPaidAt(Instant.now().toString());
+                            }
+                        }
                     }
                     if (body.containsKey("completedAt") && body.get("completedAt") != null) {
                         order.setCompletedAt(body.get("completedAt").toString());

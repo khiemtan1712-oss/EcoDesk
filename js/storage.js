@@ -1508,6 +1508,7 @@ export async function updateOrderStatus(orderId, newStatus, note = "", cancelRea
   });
 
   const currentActor = getCurrentUser();
+  const isCompleted = newStatus === "Hoàn thành" || newStatus === "Hoàn tất";
   const payload = { 
     status: newStatus, 
     note,
@@ -1515,7 +1516,8 @@ export async function updateOrderStatus(orderId, newStatus, note = "", cancelRea
     cancelReason: cancelReason || undefined,
     cancelledAt: newStatus === "Đã hủy" ? timestamp : undefined,
     cancelledBy: cancelledBy || undefined,
-    statusHistoryJson: JSON.stringify(history)
+    statusHistoryJson: JSON.stringify(history),
+    ...(isCompleted ? { paymentStatus: "PAID", paidAmount: currentOrder?.total, paidAt: timestamp } : {})
   };
 
   try {
@@ -1570,6 +1572,9 @@ export async function updateOrderStatus(orderId, newStatus, note = "", cancelRea
       return {
         ...o,
         status: newStatus,
+        paymentStatus: isCompleted ? "PAID" : o.paymentStatus,
+        paidAmount: isCompleted ? (o.total || o.paidAmount) : o.paidAmount,
+        paidAt: isCompleted ? (o.paidAt || timestamp) : o.paidAt,
         cancelReason: cancelReason || o.cancelReason,
         cancelledAt: newStatus === "Đã hủy" ? (o.cancelledAt || timestamp) : o.cancelledAt,
         cancelledBy: cancelledBy || o.cancelledBy || (newStatus === "Đã hủy" ? "Khách hàng" : undefined),
