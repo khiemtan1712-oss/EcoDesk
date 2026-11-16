@@ -130,14 +130,15 @@ export const DEFAULT_STAFF_PERMISSIONS = [
   PERMISSIONS.INVENTORY_PURCHASE_VIEW
 ];
 
-// Mặc định Thu ngân: bán hàng tại quầy (POS), quản lý ca & xem đơn hàng quầy
+// Mặc định Thu ngân: Xem đơn hàng, Xem báo cáo tài chính, Ghi nhận chi phí, Đối soát tài chính
 export const DEFAULT_CASHIER_PERMISSIONS = [
-  PERMISSIONS.POS_ACCESS,
-  PERMISSIONS.POS_SHIFT,
-  PERMISSIONS.ORDERS_VIEW
+  PERMISSIONS.ORDERS_VIEW,
+  PERMISSIONS.FINANCE_VIEW,
+  PERMISSIONS.FINANCE_RECORD_EXPENSE,
+  PERMISSIONS.FINANCE_RECONCILE
 ];
 
-// Các quyền tuyệt đối không cấp cho Thu ngân
+// Các quyền tuyệt đối không cấp cho Thu ngân (trừ FINANCE_VIEW, FINANCE_RECORD_EXPENSE, FINANCE_RECONCILE)
 export const CASHIER_FORBIDDEN_PERMISSIONS = new Set([
   PERMISSIONS.USERS_VIEW,
   PERMISSIONS.USERS_MANAGE_ROLES,
@@ -149,55 +150,55 @@ export const CASHIER_FORBIDDEN_PERMISSIONS = new Set([
   PERMISSIONS.ORDERS_EDIT_INFO,
   PERMISSIONS.INVENTORY_PURCHASE_RECEIVE,
   PERMISSIONS.INVENTORY_ADJUST,
-  PERMISSIONS.FINANCE_VIEW,
   PERMISSIONS.FINANCE_PAYROLL_VIEW,
   PERMISSIONS.REPORTS_VIEW
 ]);
 
 /**
  * Kiểm tra xem người dùng có quyền cụ thể hay không
+ * Sử dụng chung logic hợp nhất từ getUserEffectivePermissions
  * @param {Object} user 
  * @param {string} permissionKey 
  * @returns {boolean}
  */
 export function hasPermission(user, permissionKey) {
   if (!user || user.active === false) return false;
-  // Admin luôn có toàn quyền tuyệt đối
-  if (user.role === "admin") return true;
-  if (user.role === "cashier") {
-    if (CASHIER_FORBIDDEN_PERMISSIONS.has(permissionKey)) return false;
-    const cashierPerms = Array.isArray(user.permissions) && user.permissions.length > 0
-      ? user.permissions
-      : DEFAULT_CASHIER_PERMISSIONS;
-    return cashierPerms.includes(permissionKey);
-  }
-  // Khách hàng thông thường không có bất kỳ quyền quản trị nào
-  if (user.role !== "staff") return false;
-  
-  // Nhân viên: kiểm tra mảng permissions gắn với tài khoản
-  const userPerms = Array.isArray(user.permissions) ? user.permissions : DEFAULT_STAFF_PERMISSIONS;
-  return userPerms.includes(permissionKey);
+  const effective = getUserEffectivePermissions(user);
+  return effective.includes(permissionKey);
 }
 
 /**
  * Lấy toàn bộ danh sách quyền hiệu lực của người dùng
+ * Quy tắc:
+ * - Admin: Toàn bộ 22 quyền
+ * - Staff: Kế thừa quyền mặc định (DEFAULT_STAFF_PERMISSIONS) + quyền được cấp riêng (user.permissions), loại bỏ trùng lặp và chỉ giữ quyền hợp lệ
+ * - Cashier: Kế thừa quyền mặc định (DEFAULT_CASHIER_PERMISSIONS) + quyền được cấp riêng (user.permissions), loại bỏ trùng lặp, trừ đi CASHIER_FORBIDDEN_PERMISSIONS
+ * - Customer / khác: Không có quyền
  * @param {Object} user 
  * @returns {string[]}
  */
 export function getUserEffectivePermissions(user) {
   if (!user || user.active === false) return [];
+  const validKeys = new Set(Object.values(PERMISSIONS));
+
   if (user.role === "admin") {
-    return Object.values(PERMISSIONS);
+    return Array.from(validKeys);
   }
+
   if (user.role === "cashier") {
-    const perms = Array.isArray(user.permissions) && user.permissions.length > 0
-      ? user.permissions
-      : DEFAULT_CASHIER_PERMISSIONS;
-    return perms.filter((p) => !CASHIER_FORBIDDEN_PERMISSIONS.has(p));
+    const customPerms = Array.isArray(user.permissions) ? user.permissions : [];
+    const combined = new Set([...DEFAULT_CASHIER_PERMISSIONS, ...customPerms]);
+    return Array.from(combined).filter(
+      (p) => validKeys.has(p) && !CASHIER_FORBIDDEN_PERMISSIONS.has(p)
+    );
   }
+
   if (user.role === "staff") {
-    return Array.isArray(user.permissions) ? user.permissions : DEFAULT_STAFF_PERMISSIONS;
+    const customPerms = Array.isArray(user.permissions) ? user.permissions : [];
+    const combined = new Set([...DEFAULT_STAFF_PERMISSIONS, ...customPerms]);
+    return Array.from(combined).filter((p) => validKeys.has(p));
   }
+
   return [];
 }
 

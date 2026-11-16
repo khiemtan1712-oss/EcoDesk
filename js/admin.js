@@ -64,6 +64,7 @@ import { initIcons, renderIcon } from "./icons.js";
 import { getNewBadgeStatus, getDiscountPromotionStatus } from "./commerce.js";
 import {
   hasPermission,
+  getUserEffectivePermissions,
   PERMISSIONS,
   PERMISSION_GROUPS,
   DEFAULT_STAFF_PERMISSIONS,
@@ -166,7 +167,8 @@ function getStatusBadge(status) {
 
 function getRoleLabel(role) {
   if (role === "admin") return { text: "Quản trị viên", class: "badge-admin" };
-    if (role === "staff") return { text: "Nhân viên", class: "badge-staff" };
+  if (role === "cashier") return { text: "Thu ngân", class: "badge-staff" };
+  if (role === "staff") return { text: "Nhân viên", class: "badge-staff" };
   return { text: "Khách hàng", class: "badge-customer" };
 }
 
@@ -4832,8 +4834,9 @@ function renderCustomersTable() {
       : `<span style="display: inline-flex; width: 32px; height: 32px; border-radius: 50%; background: #e3ece6; color: #1e3a29; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;">${escapeHtml((u.name || "U")[0].toUpperCase())}</span>`;
 
     const totalPermKeys = Object.keys(PERMISSIONS).length;
+    const effectivePermsCount = getUserEffectivePermissions(u).length;
     const staffPermsBadge = isGranularRole
-      ? `<br><span style="display: inline-block; margin-top: 4px; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;">${Array.isArray(u.permissions) ? u.permissions.length : 0}/${totalPermKeys} quyền</span>`
+      ? `<br><span style="display: inline-block; margin-top: 4px; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;">${effectivePermsCount}/${totalPermKeys} quyền</span>`
       : "";
     const statusBadge = isDisabled
       ? `<br><span style="display: inline-block; margin-top: 4px; background: #fee2e2; color: #b91c1c; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;">Đã vô hiệu hóa</span>`
@@ -4930,9 +4933,9 @@ function bindCustomersEvents() {
       if (!permsList) return;
       const selectedRole = roleSelect.value;
       const isCashier = selectedRole === "cashier";
-      const fallbackPerms = isCashier ? DEFAULT_CASHIER_PERMISSIONS : DEFAULT_STAFF_PERMISSIONS;
-      const hasExisting = targetUser.role === selectedRole && Array.isArray(targetUser.permissions) && targetUser.permissions.length > 0;
-      const effectivePerms = new Set(hasExisting ? targetUser.permissions : fallbackPerms);
+      // Tính danh sách quyền hiệu lực dựa trên vai trò đang chọn và quyền đã cấp cho tài khoản
+      const tempUser = { ...targetUser, role: selectedRole };
+      const effectivePerms = new Set(getUserEffectivePermissions(tempUser));
       permsList.innerHTML = PERMISSION_GROUPS.map((g) => `
         <div style="background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
           <div style="font-weight: 700; font-size: 12.5px; color: #0f172a; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">

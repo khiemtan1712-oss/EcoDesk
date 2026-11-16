@@ -161,30 +161,49 @@ public class RbacService {
                 && ROLE_ADMIN.equalsIgnoreCase(normalizeRole(user.getRole()));
     }
 
+    public List<String> getUserEffectivePermissions(User user) {
+        if (user == null || Boolean.FALSE.equals(user.getActive()) || Boolean.TRUE.equals(user.getHidden())) {
+            return List.of();
+        }
+        String role = normalizeRole(user.getRole());
+        if (ROLE_ADMIN.equals(role)) {
+            return List.of(
+                    PERM_ORDERS_VIEW, PERM_ORDERS_UPDATE_STATUS, PERM_ORDERS_EDIT_INFO,
+                    PERM_PRODUCTS_MANAGE, PERM_PRODUCTS_PRICE_STOCK, PERM_CATEGORIES_MANAGE,
+                    PERM_USERS_VIEW, PERM_USERS_MANAGE_ROLES,
+                    PERM_PROMOTIONS_MANAGE,
+                    PERM_REPORTS_VIEW, PERM_DATA_EXPORT,
+                    PERM_FINANCE_VIEW, PERM_FINANCE_RECORD_EXPENSE, PERM_FINANCE_PAYROLL_VIEW, PERM_FINANCE_RECONCILE,
+                    PERM_INVENTORY_PURCHASE_VIEW, PERM_INVENTORY_PURCHASE_CREATE, PERM_INVENTORY_PURCHASE_RECEIVE,
+                    PERM_INVENTORY_PURCHASE_PAY, PERM_INVENTORY_ADJUST,
+                    PERM_CHAT_SUPPORT, PERM_REVIEWS_MANAGE
+            );
+        }
+        if (ROLE_CUSTOMER.equals(role)) {
+            return List.of();
+        }
+        LinkedHashSet<String> effective = new LinkedHashSet<>();
+        if (ROLE_CASHIER.equals(role)) {
+            effective.addAll(DEFAULT_CASHIER_PERMISSIONS);
+            if (user.getPermissions() != null) {
+                effective.addAll(user.getPermissions());
+            }
+            effective.removeIf(CASHIER_FORBIDDEN_PERMISSIONS::contains);
+            return new ArrayList<>(effective);
+        }
+        if (ROLE_STAFF.equals(role)) {
+            effective.addAll(DEFAULT_STAFF_PERMISSIONS);
+            if (user.getPermissions() != null) {
+                effective.addAll(user.getPermissions());
+            }
+            return new ArrayList<>(effective);
+        }
+        return List.of();
+    }
+
     public boolean hasPermission(User user, String permission) {
         if (user == null || permission == null || permission.isBlank()) return false;
-        if (Boolean.FALSE.equals(user.getActive()) || Boolean.TRUE.equals(user.getHidden())) return false;
-
-        String role = normalizeRole(user.getRole());
-        if (ROLE_ADMIN.equals(role)) return true;
-        if (ROLE_CUSTOMER.equals(role)) return false;
-
-        if (ROLE_CASHIER.equals(role)) {
-            if (CASHIER_FORBIDDEN_PERMISSIONS.contains(permission)) {
-                return false;
-            }
-            List<String> perms = user.getPermissions();
-            List<String> effective = (perms != null && !perms.isEmpty()) ? perms : DEFAULT_CASHIER_PERMISSIONS;
-            return effective.contains(permission);
-        }
-
-        if (ROLE_STAFF.equals(role)) {
-            List<String> perms = user.getPermissions();
-            List<String> effective = (perms != null && !perms.isEmpty()) ? perms : DEFAULT_STAFF_PERMISSIONS;
-            return effective.contains(permission);
-        }
-
-        return false;
+        return getUserEffectivePermissions(user).contains(permission.trim());
     }
 
     public User requireAdmin(String headerUserId, String fallbackActorId, String message) {
