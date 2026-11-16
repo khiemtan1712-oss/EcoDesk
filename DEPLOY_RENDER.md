@@ -7,10 +7,12 @@ Dự án EcoDesk Studio đã được cấu hình sẵn tệp **Render Blueprint
 ## 1. Kiến trúc hệ thống trên Render
 
 - **Frontend (`ecodesk-frontend`):** Render Static Site
+  - Cấu hình chuẩn Render Blueprint: `type: web` kết hợp `runtime: static` (Render không dùng `type: static` riêng mà nhóm Static Site vào web service với runtime static).
   - **Chi phí:** **100% Miễn phí & Vĩnh viễn**, không giới hạn băng thông.
   - Tự động chạy lệnh `npm install && npm run build` và phục vụ thư mục `./dist`.
-  - Đã cấu hình sẵn Rewrite Rule chuyển hướng toàn bộ `/api/*` sang Backend API.
+  - Kết nối trực tiếp với backend thông qua biến `VITE_API_URL`.
 - **Backend (`ecodesk-api`):** Render Web Service (Docker / Java 17 Spring Boot)
+  - Cấu hình chuẩn Render Blueprint: `type: web` kết hợp `runtime: docker`.
   - Chạy trên container Docker nhẹ, tối ưu port động theo biến môi trường `$PORT` của Render.
 - **Database (MySQL):** 
   - Render cung cấp PostgreSQL miễn phí nhưng chưa có MySQL free tier tích hợp sẵn.

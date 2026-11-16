@@ -8,18 +8,16 @@ services:
   # ----------------------------------------------------------------------------
   # 1. FRONTEND: Static Site (Hoàn toàn MIỄN PHÍ & Không giới hạn băng thông)
   # ----------------------------------------------------------------------------
-  - type: static
+  - type: web
     name: ecodesk-frontend
+    runtime: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     pullRequestPreviewsEnabled: false
+    envVars:
+      - key: VITE_API_URL
+        value: https://ecodesk-api.onrender.com
     routes:
-      # Chuyển hướng các request /api sang Backend Spring Boot
-      # (Sau khi deploy backend xong, bạn có thể kiểm tra URL backend và cập nhật nếu cần)
-      - type: rewrite
-        source: /api/*
-        destination: https://ecodesk-api.onrender.com/api/*
-      # Hỗ trợ định tuyến Single Page Application & các trang html tĩnh
       - type: rewrite
         source: /*
         destination: /index.html
@@ -30,16 +28,13 @@ services:
       - path: /*
         name: X-Content-Type-Options
         value: nosniff
-    envVars:
-      - key: VITE_API_URL
-        value: https://ecodesk-api.onrender.com
 
   # ----------------------------------------------------------------------------
   # 2. BACKEND API: Spring Boot Web Service (Java 17 / Docker)
   # ----------------------------------------------------------------------------
   - type: web
     name: ecodesk-api
-    env: docker
+    runtime: docker
     dockerContext: ./backend
     dockerfilePath: ./backend/Dockerfile
     plan: free
@@ -95,4 +90,3 @@ services:
       # Cấu hình Google Gemini AI cho trợ lý tư vấn (Tùy chọn)
       - key: GEMINI_API_KEY
         sync: false
-
