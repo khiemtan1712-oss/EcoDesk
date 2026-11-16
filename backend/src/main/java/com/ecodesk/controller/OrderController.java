@@ -195,6 +195,22 @@ public class OrderController {
                                     // Authoritative server-side price check
                                     double authPrice = resolveAuthoritativePrice(p, variantId, orderTime);
                                     ((ObjectNode) item).put("price", authPrice);
+                                    ((ObjectNode) item).put("unitPrice", authPrice);
+                                    double rawBase = p.getPrice() != null ? p.getPrice() : 0.0;
+                                    if (!variantId.isEmpty() && p.getVariantsJson() != null && !p.getVariantsJson().isBlank()) {
+                                        try {
+                                            JsonNode vNode = objectMapper.readTree(p.getVariantsJson());
+                                            if (vNode.isArray()) {
+                                                for (JsonNode v : vNode) {
+                                                    if (variantId.equals(v.path("id").asText("")) && v.has("price") && v.get("price").isNumber()) {
+                                                        rawBase = v.get("price").asDouble();
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        } catch (Exception ignored) {}
+                                    }
+                                    ((ObjectNode) item).put("originalPrice", rawBase);
                                     calculatedSubtotal += authPrice * qty;
                                     hasCalculatedItems = true;
                                 }

@@ -883,7 +883,7 @@ function setupWishlistTab() {
         const id = btn.dataset.id;
         const prod = allProducts.find((p) => String(p.id) === String(id));
         if (prod) {
-          addToCart(prod, 1);
+          addToCart(prod.id, 1);
           showToast(`Đã thêm "${prod.name}" vào giỏ hàng!`);
         }
       });

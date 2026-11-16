@@ -1499,7 +1499,7 @@ function handleReorder(order) {
           v.id,
           v.options || null,
           v.name || item.variantName,
-          v.price != null ? Number(v.price) : (item.unitPrice || item.price),
+          v.price != null ? Number(v.price) : Number(product.price || 0),
           v.image || item.image || product.image
         );
         addedCount++;
@@ -1558,7 +1558,7 @@ function handleReorder(order) {
             null,
             null,
             null,
-            item.unitPrice || item.price || product.price,
+            Number(product.price || 0),
             product.image || item.image
           );
           addedCount++;

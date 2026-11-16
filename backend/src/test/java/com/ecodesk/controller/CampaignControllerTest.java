@@ -319,3 +319,4 @@ class CampaignControllerTest {
                 .andExpect(jsonPath("$.total").value(1000000.0));
     }
 }
+

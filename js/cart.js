@@ -42,7 +42,11 @@ function render() {
       variant = product.variants.find((v) => String(v.id) === String(item.variantId) || String(v.sku) === String(item.variantId));
     }
     const maxStock = variant ? Number(variant.stock) : Number(product.stock);
-    const basePrice = (variant && variant.price != null) ? Number(variant.price) : ((item.price != null) ? Number(item.price) : Number(product.price));
+    const basePrice = (variant && variant.price != null && !isNaN(variant.price))
+      ? Number(variant.price)
+      : (product && product.price != null && !isNaN(product.price)
+        ? Number(product.price)
+        : (item.originalPrice != null ? Number(item.originalPrice) : Number(item.basePrice || item.price || 0)));
     const pricing = getPricing({ ...product, price: basePrice }, new Date(), variant);
 
     subtotal += pricing.price * item.quantity;
@@ -71,7 +75,11 @@ function render() {
 
     const price = document.createElement("p");
     price.className = "cart-item-price";
-    price.textContent = `${pricing.percent ? `Sale ${pricing.percent}% · ` : ""}${formatPrice(pricing.price)}`;
+    if (pricing.percent > 0) {
+      price.innerHTML = `<del style="color: #94a3b8; font-size: 0.9em; margin-right: 6px;">${formatPrice(pricing.original)}</del><strong>${formatPrice(pricing.price)}</strong> <span class="badge badge-sale" style="margin-left: 4px; font-size: 11px;">-${pricing.percent}%</span>`;
+    } else {
+      price.textContent = formatPrice(pricing.price);
+    }
     
     info.append(name);
     if (item.variantName || (variant && variant.name)) info.append(variantTag);

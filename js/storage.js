@@ -1847,7 +1847,56 @@ export function getCartKey() {
 }
 
 export function getCart() {
-  return read(getCartKey());
+  const key = getCartKey();
+  const rawCart = read(key, []);
+  if (!Array.isArray(rawCart) || rawCart.length === 0) return [];
+
+  const products = getProducts();
+  let mutated = false;
+
+  const normalized = rawCart.map((item) => {
+    if (!item || !item.productId) return item;
+    const product = products.find((p) => String(p.id) === String(item.productId));
+    if (!product) return item;
+
+    let variant = null;
+    if (item.variantId && Array.isArray(product.variants)) {
+      variant = product.variants.find(
+        (v) => String(v.id) === String(item.variantId) || String(v.sku) === String(item.variantId)
+      );
+    }
+
+    const rawBasePrice = (variant && variant.price != null && !isNaN(variant.price))
+      ? Number(variant.price)
+      : Number(product.price || 0);
+
+    const pricing = getProductPrice({ ...product, price: rawBasePrice }, new Date(), variant);
+    const resolvedSalePrice = Number(pricing.price || rawBasePrice);
+
+    if (
+      item.originalPrice !== rawBasePrice ||
+      item.basePrice !== rawBasePrice ||
+      item.price !== resolvedSalePrice ||
+      item.salePrice !== resolvedSalePrice
+    ) {
+      mutated = true;
+      return {
+        ...item,
+        originalPrice: rawBasePrice,
+        basePrice: rawBasePrice,
+        price: resolvedSalePrice,
+        salePrice: resolvedSalePrice
+      };
+    }
+    return item;
+  });
+
+  if (mutated) {
+    try {
+      write(key, normalized);
+    } catch {}
+  }
+  return normalized;
 }
 
 /**
@@ -1973,7 +2022,10 @@ export function addToCart(productId, quantity = 1, variantId = null, variantOpti
       variantName: variantName || cart[currentIdx].variantName,
       selectedOptions: variantOptions || cart[currentIdx].selectedOptions || null,
       quantity: newQty,
+      originalPrice: rawBasePrice,
+      basePrice: rawBasePrice,
       price: resolvedUnitPrice,
+      salePrice: resolvedUnitPrice,
       image: variantImage || cart[currentIdx].image
     };
   } else {
@@ -1984,7 +2036,10 @@ export function addToCart(productId, quantity = 1, variantId = null, variantOpti
       variantSku: variantSku,
       variantName: variantName || null,
       selectedOptions: variantOptions || null,
+      originalPrice: rawBasePrice,
+      basePrice: rawBasePrice,
       price: resolvedUnitPrice,
+      salePrice: resolvedUnitPrice,
       image: variantImage || product.image,
       quantity: addQty
     });
@@ -2578,7 +2633,11 @@ export async function placeOrder({
       throw new Error(`Sản phẩm "${itemLabel}" chỉ còn ${availableStock} chiếc trong kho, không đủ đáp ứng số lượng đặt (${quantity}).`);
     }
 
-    const basePrice = (variant && variant.price != null) ? Number(variant.price) : ((price != null && !isNaN(price)) ? Number(price) : Number(product.price));
+    const basePrice = (variant && variant.price != null && !isNaN(variant.price))
+      ? Number(variant.price)
+      : (product && product.price != null && !isNaN(product.price)
+        ? Number(product.price)
+        : (item.originalPrice != null ? Number(item.originalPrice) : Number(item.basePrice || price || 0)));
     const pricing = getProductPrice({ ...product, price: basePrice }, now, variant);
 
     return {
@@ -2589,6 +2648,7 @@ export async function placeOrder({
       name: product.name,
       quantity: Number(quantity) || 1,
       unitPrice: pricing.price,
+      price: pricing.price,
       originalPrice: basePrice,
       image: (variant && variant.image) || image || product.image,
       saleCode: pricing.code

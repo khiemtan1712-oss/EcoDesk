@@ -1709,7 +1709,7 @@ function renderDetail(product, categories) {
           targetVariant.id,
           targetVariant.options,
           targetVariant.name,
-          pricing.price,
+          targetVariant.price != null ? Number(targetVariant.price) : Number(freshProduct.price || 0),
           targetVariant.image || freshProduct.image
         );
         showToast(`Đã thêm ${requestedQty} sản phẩm "${itemDisplayName}" vào giỏ hàng!`);

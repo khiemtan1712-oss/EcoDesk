@@ -57,7 +57,11 @@ function calculateOrderTotals() {
     if (item.variantId && Array.isArray(product.variants)) {
       variant = product.variants.find((v) => String(v.id) === String(item.variantId) || String(v.sku) === String(item.variantId));
     }
-    const basePrice = (variant && variant.price != null) ? Number(variant.price) : ((item.price != null) ? Number(item.price) : Number(product.price));
+    const basePrice = (variant && variant.price != null && !isNaN(variant.price))
+      ? Number(variant.price)
+      : (product && product.price != null && !isNaN(product.price)
+        ? Number(product.price)
+        : (item.originalPrice != null ? Number(item.originalPrice) : Number(item.basePrice || item.price || 0)));
     const pricing = getProductPrice({ ...product, price: basePrice }, now, variant);
 
     return {
@@ -134,7 +138,7 @@ function renderOrderSummary() {
         <div class="item-name">${escapeHtml(item.product.name)}</div>
         ${item.variantName ? `<div class="checkout-variant-tag" style="font-size: 11.5px; color: #15803d; font-weight: 600;">Phân loại: ${escapeHtml(item.variantName)}</div>` : ""}
         <div class="item-subtext">
-          ${item.percent ? `<span style="color: #15803d; font-weight: 600;">Sale ${item.percent}%</span> · ` : ""}
+          ${item.percent ? `<span style="color: #15803d; font-weight: 600;">Sale ${item.percent}%</span> · <del style="color:#94a3b8; font-size: 11.5px; margin-right: 4px;">${formatPrice(item.originalPrice)}</del>` : ""}
           ${formatPrice(item.unitPrice)}
         </div>
       </div>

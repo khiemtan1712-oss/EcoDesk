@@ -268,7 +268,11 @@ export function renderCartDrawer() {
     }
 
     const maxStock = variant ? Number(variant.stock) : Number(product.stock || 0);
-    const basePrice = (variant && variant.price != null) ? Number(variant.price) : ((item.price != null && !isNaN(item.price)) ? Number(item.price) : Number(product.price));
+    const basePrice = (variant && variant.price != null && !isNaN(variant.price))
+      ? Number(variant.price)
+      : (product && product.price != null && !isNaN(product.price)
+        ? Number(product.price)
+        : (item.originalPrice != null ? Number(item.originalPrice) : Number(item.basePrice || item.price || 0)));
     const pricing = getPricing({ ...product, price: basePrice }, new Date(), variant);
 
     const lineTotal = pricing.price * item.quantity;
