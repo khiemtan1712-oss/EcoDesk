@@ -4,7 +4,9 @@ import http from "node:http";
 import net from "node:net";
 import path from "node:path";
 
-const ROOT_DIR = path.resolve(import.meta.dirname, "..");
+import { fileURLToPath } from "node:url";
+
+const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 function readConfiguredPort() {
   if (process.env.SERVER_PORT && /^\d+$/.test(process.env.SERVER_PORT.trim())) {

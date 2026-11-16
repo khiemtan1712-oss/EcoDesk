@@ -7,6 +7,8 @@ export default ({ mode }) => {
   const backendPort = env.SERVER_PORT || process.env.SERVER_PORT || "8080";
   const assistantPort = env.ASSISTANT_PORT || process.env.ASSISTANT_PORT || "3001";
 
+  const rootDir = process.cwd();
+
   return {
     server: {
       proxy: {
@@ -17,19 +19,19 @@ export default ({ mode }) => {
   build: {
     rollupOptions: {
       input: {
-        main: path.resolve(import.meta.dirname, "index.html"),
-        products: path.resolve(import.meta.dirname, "products.html"),
-        detail: path.resolve(import.meta.dirname, "detail.html"),
-        cart: path.resolve(import.meta.dirname, "cart.html"),
-        checkout: path.resolve(import.meta.dirname, "checkout.html"),
-        account: path.resolve(import.meta.dirname, "account.html"),
-        login: path.resolve(import.meta.dirname, "login.html"),
-        register: path.resolve(import.meta.dirname, "register.html"),
-        admin: path.resolve(import.meta.dirname, "admin.html"),
-        add: path.resolve(import.meta.dirname, "add.html"),
-        edit: path.resolve(import.meta.dirname, "edit.html"),
-        customerOrders: path.resolve(import.meta.dirname, "customer-orders.html"),
-        paymentSupport: path.resolve(import.meta.dirname, "payment-support.html")
+        main: path.resolve(rootDir, "index.html"),
+        products: path.resolve(rootDir, "products.html"),
+        detail: path.resolve(rootDir, "detail.html"),
+        cart: path.resolve(rootDir, "cart.html"),
+        checkout: path.resolve(rootDir, "checkout.html"),
+        account: path.resolve(rootDir, "account.html"),
+        login: path.resolve(rootDir, "login.html"),
+        register: path.resolve(rootDir, "register.html"),
+        admin: path.resolve(rootDir, "admin.html"),
+        add: path.resolve(rootDir, "add.html"),
+        edit: path.resolve(rootDir, "edit.html"),
+        customerOrders: path.resolve(rootDir, "customer-orders.html"),
+        paymentSupport: path.resolve(rootDir, "payment-support.html")
       }
     }
   },

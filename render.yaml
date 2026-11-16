@@ -11,10 +11,12 @@ services:
   - type: web
     name: ecodesk-frontend
     runtime: static
-    buildCommand: npm install && npm run build
+    buildCommand: rm -rf node_modules && npm install && npm run build
     staticPublishPath: ./dist
     pullRequestPreviewsEnabled: false
     envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
       - key: VITE_API_URL
         value: https://ecodesk-api.onrender.com
     routes:
