@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập - EcoDesk</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+</head>
+
+<body class="auth-body">
+  <div class="top-strip">
+    <div class="container top-strip-inner">
+      <span>Tài khoản EcoDesk</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html"><span class="brand-mark">E</span><span>EcoDesk</span></a>
+      <nav class="nav">
+        <a href="./index.html">Trang chủ</a>
+        <a href="./products.html">Sản phẩm</a>
+        <a href="./payment-support.html">Hỗ Trợ Khách Hàng</a>
+      </nav>
+      <div class="actions"><span class="auth-area" data-auth-area></span></div>
+    </div>
+  </header>
+
+  <main class="section page-shell auth-page">
+    <div class="container auth-shell">
+      <section class="auth-visual">
+        <p class="eyebrow">Member access</p>
+        <h1>Đăng nhập để tiếp tục mua sắm và quản lý giỏ hàng.</h1>
+        <p>Đồng bộ giỏ hàng, lưu sản phẩm yêu thích, theo dõi đơn hàng và nhận ưu đãi dành riêng cho thành viên EcoDesk.</p>
+      </section>
+
+      <form id="authForm" class="auth-card auth-form-stack" data-mode="login" novalidate>
+        <div class="auth-card-head">
+          <p class="eyebrow">Đăng nhập</p>
+          <h2>Chào mừng trở lại</h2>
+        </div>
+        <div id="authNoticeBanner" class="auth-alert-banner is-info" role="status" aria-live="polite" hidden></div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input class="input" id="email" name="email" type="email" autocomplete="email" placeholder="nhapemail@example.com">
+          <small class="error-text" data-error="email"></small>
+        </div>
+        <div class="field">
+          <div class="auth-label-row">
+            <label for="password">Mật khẩu</label>
+            <button type="button" id="forgotPasswordLink" class="auth-inline-link-btn">Quên mật khẩu?</button>
+          </div>
+          <div class="password-field-wrap">
+            <input class="input" id="password" name="password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu">
+            <button type="button" class="password-toggle-btn" data-toggle-password="password" aria-label="Hiện mật khẩu" aria-pressed="false">
+              <i data-lucide="eye"></i>
+            </button>
+          </div>
+          <small class="error-text" data-error="password"></small>
+        </div>
+        <small class="error-text auth-general-error" data-error="general" role="alert"></small>
+        <button class="btn auth-submit-btn" id="btnLoginSubmit" type="submit">Đăng nhập</button>
+        <p class="auth-switch">Chưa có tài khoản? <a href="./register.html" id="authSwitchLink">Đăng ký ngay</a></p>
+      </form>
+    </div>
+  </main>
+
+  <!-- Modal Quên mật khẩu / Đặt lại mật khẩu OTP -->
+  <div id="forgotPasswordModal" class="admin-modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+    <div style="background: #ffffff; border-radius: 12px; max-width: 460px; width: 100%; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden; animation: fadeIn 0.2s ease-out;">
+      <div style="padding: 18px 24px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+        <h3 id="forgotModalTitle" style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #0f172a;">Quên mật khẩu</h3>
+        <button type="button" id="closeForgotModalBtn" style="background: none; border: none; font-size: 1.5rem; line-height: 1; cursor: pointer; color: #64748b;">&times;</button>
+      </div>
+
+      <div style="padding: 24px;">
+        <!-- Bước 1: Nhập Email -->
+        <div id="forgotStep1">
+          <p style="font-size: 0.9rem; color: #475569; margin-bottom: 16px; line-height: 1.5;">
+            Vui lòng nhập địa chỉ email đã đăng ký. Hệ thống sẽ tạo mã xác thực một lần (OTP) có hiệu lực trong vòng <strong>15 phút</strong>.
+          </p>
+          <div class="field" style="margin-bottom: 16px;">
+            <label for="forgotEmail" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 6px;">Email tài khoản *</label>
+            <input class="input" id="forgotEmail" type="email" placeholder="ví dụ: khachhang@gmail.com" style="width: 100%;">
+            <small class="error-text" id="forgotEmailError" style="color: #dc2626; display: block; margin-top: 4px; font-size: 0.8rem;"></small>
+          </div>
+          <button class="btn" id="btnRequestOtp" type="button" style="width: 100%;">Gửi mã xác thực</button>
+        </div>
+
+        <!-- Bước 2: Nhập OTP & Mật khẩu mới -->
+        <div id="forgotStep2" style="display: none;">
+          <div id="forgotOtpStatusBanner" class="auth-alert-banner is-info" role="status" aria-live="polite" style="margin-bottom: 14px;">
+            Nếu email tồn tại trong hệ thống, mã xác thực 6 chữ số đã được gửi tới hộp thư của bạn.
+          </div>
+          <div class="field" style="margin-bottom: 12px;">
+            <label for="forgotToken" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 6px;">Mã xác thực (6 chữ số) *</label>
+            <input class="input otp-code-input" id="forgotToken" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" style="width: 100%;">
+            <div class="otp-meta-row">
+              <span class="otp-timer-badge" id="forgotOtpTimerBadge">Hiệu lực còn: <strong id="forgotOtpCountdown">15:00</strong></span>
+              <button type="button" class="otp-resend-btn" id="btnResendForgotOtp" disabled>Gửi lại mã (<span id="forgotResendCountdown">60s</span>)</button>
+            </div>
+          </div>
+          <div class="field" style="margin-bottom: 12px;">
+            <label for="forgotNewPassword" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 6px;">Mật khẩu mới *</label>
+            <div class="password-field-wrap">
+              <input class="input" id="forgotNewPassword" type="password" autocomplete="new-password" placeholder="Nhập mật khẩu mới" style="width: 100%;">
+              <button type="button" class="password-toggle-btn" data-toggle-password="forgotNewPassword" aria-label="Hiện mật khẩu mới" aria-pressed="false">
+                <i data-lucide="eye"></i>
+              </button>
+            </div>
+            <div id="forgotPasswordStrength" style="margin-top: 6px; font-size: 0.78rem; color: #64748b;" aria-live="polite">Độ mạnh: <span id="forgotStrengthLabel" style="font-weight: 700;">Chưa nhập</span></div>
+          </div>
+          <div class="field" style="margin-bottom: 16px;">
+            <label for="forgotConfirmPassword" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 6px;">Xác nhận mật khẩu mới *</label>
+            <div class="password-field-wrap">
+              <input class="input" id="forgotConfirmPassword" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới" style="width: 100%;">
+              <button type="button" class="password-toggle-btn" data-toggle-password="forgotConfirmPassword" aria-label="Hiện xác nhận mật khẩu mới" aria-pressed="false">
+                <i data-lucide="eye"></i>
+              </button>
+            </div>
+            <small class="error-text" id="forgotResetError" style="color: #dc2626; display: block; margin-top: 4px; font-size: 0.8rem;"></small>
+          </div>
+          <div class="otp-action-row" style="display: flex; gap: 10px;">
+            <button class="btn-outline" id="btnBackToStep1" type="button" style="flex: 1;">Quay lại</button>
+            <button class="btn" id="btnConfirmReset" type="button" style="flex: 2;">Đặt lại mật khẩu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script type="module" src="./js/auth-state.js"></script>
+  <script type="module" src="./js/auth.js"></script>
+</body>
+
+</html>

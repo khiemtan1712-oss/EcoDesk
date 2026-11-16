@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký - EcoDesk</title>
+  <script type="module" crossorigin src="/assets/rolldown-runtime-XKyaHtl9.js"></script>
+  <script type="module" crossorigin src="/assets/chat-DXzIvOEk.js"></script>
+  <script type="module" crossorigin src="/assets/assistant-Bl3dD0Kt.js"></script>
+  <script type="module" crossorigin src="/assets/auth-state-DbVAYLiB.js"></script>
+  <script type="module" crossorigin src="/assets/auth-ITV2MDF9.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/assistant-BKElRzB-.css">
+  <link rel="stylesheet" crossorigin href="/assets/auth-state-PTugdkvS.css">
+  <link rel="stylesheet" crossorigin href="/assets/reset-DUid8m18.css">
+  <link rel="stylesheet" crossorigin href="/assets/responsive-6rQpoo7i.css">
+</head>
+<body class="auth-body">
+  <div class="top-strip">
+    <div class="container top-strip-inner">
+      <span>Tạo tài khoản EcoDesk</span>
+      <span>Xác thực tài khoản qua Email OTP</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html"><span class="brand-mark">E</span><span>EcoDesk</span></a>
+      <nav class="nav">
+        <a href="./index.html">Trang chủ</a>
+        <a href="./products.html">Sản phẩm</a>
+        <a href="./payment-support.html">Hỗ Trợ Khách Hàng</a>
+      </nav>
+      <div class="actions"><span class="auth-area" data-auth-area></span></div>
+    </div>
+  </header>
+
+  <main class="section page-shell auth-page">
+    <div class="container auth-shell">
+      <section class="auth-visual">
+        <p class="eyebrow">New member</p>
+        <h1>Tạo tài khoản để lưu trải nghiệm mua sắm của bạn.</h1>
+        <p>Chọn mật khẩu riêng, đủ mạnh. Sau khi nhập thông tin, hệ thống sẽ gửi mã OTP 6 chữ số tới email của bạn để kích hoạt và đăng nhập tự động.</p>
+      </section>
+
+      <form id="authForm" class="auth-card auth-form-stack" data-mode="register" novalidate>
+        <div class="auth-card-head">
+          <p class="eyebrow">Đăng ký</p>
+          <h2>Tạo tài khoản mới</h2>
+        </div>
+        <div id="authNoticeBanner" class="auth-alert-banner is-info" role="status" aria-live="polite" hidden></div>
+
+        <div id="registerStep1" class="auth-step-stack">
+          <div class="field">
+            <label for="name">Họ tên</label>
+            <input class="input" id="name" name="name" type="text" autocomplete="name">
+            <small class="error-text" data-error="name"></small>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input class="input" id="email" name="email" type="email" autocomplete="email">
+            <small class="error-text" data-error="email"></small>
+          </div>
+          <div class="field">
+            <label for="password">Mật khẩu</label>
+            <div class="password-field-wrap">
+              <input class="input" id="password" name="password" type="password" autocomplete="new-password">
+              <button type="button" class="password-toggle-btn" data-toggle-password="password" aria-label="Hiện mật khẩu" aria-pressed="false">
+                <i data-lucide="eye"></i>
+              </button>
+            </div>
+            <div class="password-guidance" id="passwordGuidance" aria-live="polite">
+              <p>Dùng mật khẩu riêng, không dùng lại ở website khác. Mật khẩu cần có:</p>
+              <ul>
+                <li data-password-rule="length">Ít nhất 10 ký tự</li>
+                <li data-password-rule="lower">Một chữ thường (a-z)</li>
+                <li data-password-rule="upper">Một chữ hoa (A-Z)</li>
+                <li data-password-rule="number">Một chữ số (0-9)</li>
+                <li data-password-rule="symbol">Một ký tự đặc biệt</li>
+              </ul>
+              <p class="password-warning">Nếu trình duyệt cảnh báo mật khẩu đã bị lộ, hãy đổi sang mật khẩu khác và không dùng lại mật khẩu đó.</p>
+            </div>
+            <small class="error-text" data-error="password"></small>
+          </div>
+          <div class="field">
+            <label for="confirm">Nhập lại mật khẩu</label>
+            <div class="password-field-wrap">
+              <input class="input" id="confirm" name="confirm" type="password" autocomplete="new-password">
+              <button type="button" class="password-toggle-btn" data-toggle-password="confirm" aria-label="Hiện mật khẩu nhập lại" aria-pressed="false">
+                <i data-lucide="eye"></i>
+              </button>
+            </div>
+            <small class="error-text" data-error="confirm"></small>
+          </div>
+          <small class="error-text auth-general-error" data-error="general" role="alert"></small>
+          <button class="btn auth-submit-btn" id="btnRegisterRequestOtp" type="submit">Tiếp tục &amp; gửi mã OTP</button>
+        </div>
+
+        <div id="registerStep2" class="otp-step-panel auth-step-stack" hidden>
+          <div class="auth-alert-banner is-info" id="registerOtpNotice" role="status" aria-live="polite">
+            Mã xác thực OTP 6 chữ số đã được gửi tới <span class="otp-email-pill" id="registerOtpEmailBadge"></span>. Vui lòng kiểm tra hộp thư đến hoặc mục Spam.
+          </div>
+          <div class="field">
+            <label for="registerOtp">Mã xác thực OTP (6 chữ số)</label>
+            <input class="input otp-code-input" id="registerOtp" name="otp" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+            <div class="otp-meta-row">
+              <span class="otp-timer-badge" id="registerOtpTimerBadge">Hiệu lực còn: <strong id="registerOtpCountdown">15:00</strong></span>
+              <button type="button" class="otp-resend-btn" id="btnResendRegisterOtp" disabled>Gửi lại mã (<span id="registerResendCountdown">60s</span>)</button>
+            </div>
+            <small class="error-text" data-error="otp" id="registerOtpError"></small>
+          </div>
+          <div class="otp-action-row">
+            <button type="button" class="btn-outline" id="btnBackToRegisterStep1" style="flex: 1;">Sửa thông tin</button>
+            <button type="button" class="btn" id="btnVerifyRegisterOtp" style="flex: 2;">Xác nhận &amp; hoàn tất đăng ký</button>
+          </div>
+        </div>
+
+        <p class="auth-switch">Đã có tài khoản? <a href="./login.html" id="authSwitchLink">Đăng nhập</a></p>
+      </form>
+    </div>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+</body>
+</html>

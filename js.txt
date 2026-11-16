@@ -1,0 +1,16 @@
+- Chiều thứ 5 ngày 8/10/2026:
+  + Giao diện cho bài cuối kỳ
+  + Cơ sở dữ liệu dạng JSON
+  + Hiển thị trang chủ (ít nhất 15 sản phẩm)
+  + Hiển thị trang chi tiết
+  + (Không yêu cầu trang admin)
+  - Chiều thứ 5 ngày 15/10/2026:
+  + Làm sale sản phẩm : 
+    . Đăng ký lần đầu của khách hàng mới (1 phiếu giảm cho xài 1 lần)
+    . Thành viên Đồng, Vàng, Bạc,.... (mỗi thành viên khác nhau có mỗi phiếu giảm giá khác nhau)
+    . Mã sale sẽ khác nhau cho mỗi sản phẩm 
+    . Đặt lịch tự động đến ngày lễ dịp (thì mỗi sản phẩm sẽ tự động có giá sale khác nhau tối đa là 50% nhưng vẫn sẽ có vài lễ sale mạnh đến 70-90% nhưng chỉ có lễ hoặc dịp dì đó đặc biệt cả chục năm mới có 1 lần), và các ngày đặc biệt như (1/1, 2/2, 3/3,....., thì vẫn có sale và các sản phẩm được sale không được sale cao hơn các ngày có dịp lễ tối đa chỉ 10-15%)
+    . 
+  + Phần banner có thêm database trong trang admin để thay đổi theo từng ngày, tuần hoặc tháng
+  + Hiện sản phẩm nào mới về, sản phẩm nổi bật (bán nhiều nhất), 
+  + Tích hợp AI chat box để hỏi liên quan đến trang web sản phẩm, 

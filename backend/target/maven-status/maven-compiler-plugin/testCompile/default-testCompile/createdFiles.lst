@@ -1,0 +1,9 @@
+com\ecodesk\controller\RbacAndFinanceControllerTest$TestEnv.class
+com\ecodesk\controller\OrderControllerTest.class
+com\ecodesk\controller\AuthControllerTest.class
+com\ecodesk\service\SepayTransactionSyncServiceTest.class
+com\ecodesk\controller\RbacAndFinanceControllerTest.class
+com\ecodesk\service\AuthServiceTest$1.class
+com\ecodesk\service\AuthServiceTest.class
+com\ecodesk\service\AuthServiceTest$RecordingMailSender.class
+com\ecodesk\service\SmtpIntegrationTest.class

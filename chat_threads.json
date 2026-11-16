@@ -1,0 +1,54 @@
+[
+  {
+    "id": "CHAT_U_1794456499677",
+    "customerId": "U_1794456499677",
+    "customerName": "Khiêm Tấn",
+    "customerEmail": "khiemtan1712@gmail.com",
+    "customerPhone": "",
+    "orderId": null,
+    "status": "open",
+    "assignedStaffId": null,
+    "assignedStaffName": null,
+    "createdAt": "2026-11-12T07:48:04.326Z",
+    "updatedAt": "2026-11-12T07:48:04.326Z",
+    "unreadCustomerCount": 0,
+    "unreadStaffCount": 0,
+    "messages": [
+      {
+        "id": "MSG_INIT_1794469684326",
+        "senderId": "SYSTEM",
+        "senderName": "EcoDesk Studio",
+        "senderRole": "system",
+        "text": "Xin chào quý khách! Đội ngũ tư vấn EcoDesk luôn sẵn sàng hỗ trợ thông tin sản phẩm, đơn hàng và chính sách bảo hành.",
+        "createdAt": "2026-11-12T07:48:04.326Z",
+        "isRead": true
+      }
+    ]
+  },
+  {
+    "id": "CHAT_U_ADMIN",
+    "customerId": "U_ADMIN",
+    "customerName": "Quản trị viên EcoDesk",
+    "customerEmail": "admin@ecodesk.vn",
+    "customerPhone": "",
+    "orderId": null,
+    "status": "open",
+    "assignedStaffId": null,
+    "assignedStaffName": null,
+    "createdAt": "2026-11-11T16:06:15.173Z",
+    "updatedAt": "2026-11-11T16:06:15.173Z",
+    "unreadCustomerCount": 0,
+    "unreadStaffCount": 0,
+    "messages": [
+      {
+        "id": "MSG_INIT_1794413175173",
+        "senderId": "SYSTEM",
+        "senderName": "EcoDesk Studio",
+        "senderRole": "system",
+        "text": "Xin chào quý khách! Đội ngũ tư vấn EcoDesk luôn sẵn sàng hỗ trợ thông tin sản phẩm, đơn hàng và chính sách bảo hành.",
+        "createdAt": "2026-11-11T16:06:15.173Z",
+        "isRead": true
+      }
+    ]
+  }
+]

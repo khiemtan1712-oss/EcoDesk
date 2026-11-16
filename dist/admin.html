@@ -1,0 +1,2381 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng Điều Khiển Quản Trị - EcoDesk Studio</title>
+  <script>
+    const userStr = localStorage.getItem("ecodesk_current_user");
+    if (!userStr) {
+      sessionStorage.setItem("ecodesk_auth_notice", "Vui lòng đăng nhập bằng tài khoản quản trị.");
+      window.location.replace("./login.html?next=" + encodeURIComponent("./admin.html"));
+    } else {
+      try {
+        const u = JSON.parse(userStr);
+        if (!u || u.active === false || u.role === "customer" || (u.role !== "admin" && u.role !== "staff" && u.role !== "cashier")) {
+          sessionStorage.setItem("ecodesk_auth_notice", u && u.active === false ? "Tài khoản của bạn đã bị vô hiệu hóa." : "Tài khoản khách hàng không có quyền truy cập trang quản trị.");
+          window.location.replace("./index.html");
+        }
+      } catch (e) {}
+    }
+  </script>
+  <script type="module" crossorigin src="/assets/admin-PdWluZTB.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-XKyaHtl9.js">
+  <link rel="modulepreload" crossorigin href="/assets/chat-DXzIvOEk.js">
+  <link rel="modulepreload" crossorigin href="/assets/reviews-DXluw-M7.js">
+  <link rel="modulepreload" crossorigin href="/assets/sepay-BzTqLbya.js">
+  <link rel="modulepreload" crossorigin href="/assets/typeof-B5XbjTb1.js">
+  <link rel="stylesheet" crossorigin href="/assets/admin-C2kFjKph.css">
+  <link rel="stylesheet" crossorigin href="/assets/reset-DUid8m18.css">
+</head>
+<body class="admin-body">
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="admin-wrapper">
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-header">
+        <a class="brand-link" href="./admin.html">
+          <span class="brand-badge">E</span>
+          <div class="brand-text">
+            <span>EcoDesk</span>
+            <span class="brand-tagline">Studio Admin</span>
+          </div>
+        </a>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" type="button" aria-label="Đóng thanh điều hướng">&times;</button>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" id="sidebarUserAvatar">A</div>
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name" id="sidebarUserName">Quản trị viên</span>
+          <span class="sidebar-user-role" id="sidebarUserRole">Quản trị hệ thống</span>
+        </div>
+      </div>
+
+      <div class="sidebar-nav-container">
+        <div class="nav-group-label">Tổng quan</div>
+        <ul class="admin-nav">
+          <li>
+            <a class="nav-link active" data-tab="overview">
+              <span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>
+              <span class="nav-text">Tổng quan</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="nav-group-label">Quản lý bán hàng</div>
+        <ul class="admin-nav">
+          <li>
+            <a class="nav-link" data-tab="orders">
+              <span class="nav-icon"><i data-lucide="package"></i></span>
+              <span class="nav-text">Đơn hàng</span>
+              <span class="nav-badge badge-primary" id="badgeOrdersCount">0</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" data-tab="products">
+              <span class="nav-icon"><i data-lucide="armchair"></i></span>
+              <span class="nav-text">Sản phẩm</span>
+              <span class="nav-badge" id="badgeProductsCount">0</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" data-tab="categories">
+              <span class="nav-icon"><i data-lucide="folder"></i></span>
+              <span class="nav-text">Danh mục</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" data-tab="inventory">
+              <span class="nav-icon"><i data-lucide="alert-triangle"></i></span>
+              <span class="nav-text">Tồn kho</span>
+              <span class="nav-badge badge-warning" id="badgeLowStockCount">0</span>
+            </a>
+          </li>
+          <li class="nav-item-dropdown" id="customersNavDropdown">
+            <a class="nav-link" data-tab="customers" id="customersNavTrigger">
+              <span class="nav-icon"><i data-lucide="users"></i></span>
+              <span class="nav-text">Khách &amp; Tài khoản</span>
+              <span class="nav-badge" id="badgeUsersCount">0</span>
+              <span class="nav-caret" aria-hidden="true">▾</span>
+            </a>
+            <ul class="nav-submenu" id="customersSubmenu">
+              <li>
+                <a class="nav-sublink active" data-subrole="all">
+                  <span class="sublink-dot"></span>
+                  <span style="flex: 1;">Tất cả tài khoản</span>
+                  <span class="nav-subbadge" id="custCountAll">0</span>
+                </a>
+              </li>
+              <li>
+                <a class="nav-sublink" data-subrole="admin">
+                  <span class="sublink-dot admin"></span>
+                  <span style="flex: 1;">Quản trị viên (Admin)</span>
+                  <span class="nav-subbadge" id="custCountAdmin">0</span>
+                </a>
+              </li>
+              <li>
+                <a class="nav-sublink" data-subrole="staff">
+                  <span class="sublink-dot staff"></span>
+                  <span style="flex: 1;">Nhân viên (Staff)</span>
+                  <span class="nav-subbadge" id="custCountStaff">0</span>
+                </a>
+              </li>
+              <li>
+                <a class="nav-sublink" data-subrole="cashier">
+                  <span class="sublink-dot" style="background: #0284c7;"></span>
+                  <span style="flex: 1;">Thu ngân (Cashier)</span>
+                  <span class="nav-subbadge" id="custCountCashier">0</span>
+                </a>
+              </li>
+              <li>
+                <a class="nav-sublink" data-subrole="customer">
+                  <span class="sublink-dot customer"></span>
+                  <span style="flex: 1;">Khách hàng (User)</span>
+                  <span class="nav-subbadge" id="custCountCust">0</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a class="nav-link" data-tab="chat">
+              <span class="nav-icon"><i data-lucide="message-circle"></i></span>
+              <span class="nav-text">Tin nhắn CSKH</span>
+              <span class="nav-badge badge-primary" id="badgeChatCount" style="display: none;">0</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="nav-group-label">Marketing &amp; Nội dung</div>
+        <ul class="admin-nav">
+          <li>
+            <a class="nav-link" data-tab="campaigns">
+              <span class="nav-icon"><i data-lucide="tag"></i></span>
+              <span class="nav-text">Khuyến mãi &amp; Sale</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" data-tab="banners">
+              <span class="nav-icon"><i data-lucide="image"></i></span>
+              <span class="nav-text">Nội dung &amp; Banner</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="nav-group-label">Hệ thống mở rộng</div>
+        <ul class="admin-nav">
+          <li>
+            <a class="nav-link" data-tab="reviews">
+              <span class="nav-icon"><i data-lucide="star"></i></span>
+              <span class="nav-text">Đánh giá</span>
+              <span class="nav-badge" id="badgeReviewsUnreplied" style="display: none;">0</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" data-tab="reports">
+              <span class="nav-icon"><i data-lucide="line-chart"></i></span>
+              <span class="nav-text">Báo cáo &amp; Tài chính</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" data-tab="settings">
+              <span class="nav-icon"><i data-lucide="settings"></i></span>
+              <span class="nav-text">Cài đặt</span>
+              <span class="nav-badge badge-soon">Sắp có</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <a class="sidebar-store-btn" href="./index.html" title="Về trang cửa hàng EcoDesk">
+          <span><i data-lucide="store" style="width:16px; height:16px;"></i></span>
+          <span>Xem cửa hàng</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- ==================== CONTENT AREA ==================== -->
+    <div class="admin-content-area">
+      <!-- TOPBAR -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button class="topbar-toggle-btn" id="sidebarToggleBtn" type="button" title="Thu gọn / Mở rộng thanh điều hướng">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="topbar-search">
+            <span class="topbar-search-icon"><i data-lucide="search" style="width:16px; height:16px;"></i></span>
+            <input type="search" id="adminGlobalSearch" placeholder="Tìm sản phẩm, đơn hàng, khách hàng...">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <a class="btn-admin secondary" href="./index.html" title="Về cửa hàng EcoDesk">
+            <span><i data-lucide="store" style="width:15px; height:15px;"></i></span>
+            <span>Cửa hàng</span>
+          </a>
+
+          <button class="topbar-action-btn" id="adminNotifBtn" type="button" title="Thông báo hệ thống">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="notif-indicator" id="notifIndicator"></span>
+          </button>
+
+          <!-- Topbar User Menu -->
+          <div class="topbar-user">
+            <button class="topbar-user-trigger" id="topbarUserBtn" type="button">
+              <div class="topbar-avatar" id="topbarAvatar">A</div>
+              <span class="topbar-user-name" id="topbarUserName">Quản trị viên</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="topbar-dropdown" id="topbarDropdown">
+              <div class="dropdown-header">
+                <div class="dropdown-user-name" id="dropdownUserName">Quản trị viên EcoDesk</div>
+                <div class="dropdown-user-email" id="dropdownUserEmail">admin@ecodesk.vn</div>
+              </div>
+              <a class="dropdown-item" href="./account.html">
+                <span><i data-lucide="user" style="width:15px; height:15px;"></i></span>
+                <span>Thông tin tài khoản</span>
+              </a>
+              <button class="dropdown-item" id="navAddProductBtn" type="button" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font: inherit; display: flex; align-items: center; gap: 8px;">
+                <span><i data-lucide="plus" style="width:15px; height:15px;"></i></span>
+                <span>Thêm sản phẩm</span>
+              </button>
+              <a class="dropdown-item" href="./index.html">
+                <span><i data-lucide="store" style="width:15px; height:15px;"></i></span>
+                <span>Xem website</span>
+              </a>
+              <a class="dropdown-item danger" id="adminLogoutBtn" href="#">
+                <span><i data-lucide="log-out" style="width:15px; height:15px;"></i></span>
+                <span>Đăng xuất</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- MAIN VIEW WITH PANES -->
+      <main class="admin-main-view">
+
+        <!-- ==================== TAB 1: TỔNG QUAN (OVERVIEW) ==================== -->
+        <section class="admin-tab-pane active" id="pane-overview">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title" id="overviewGreeting">Xin chào, Quản trị viên!</h1>
+              <p class="page-header-sub" id="overviewDate">Thứ Năm, 22 tháng 10, 2026 · Tổng quan hoạt động kinh doanh EcoDesk</p>
+            </div>
+            <div class="page-header-actions">
+              <select class="time-filter-select" id="overviewTimeFilter">
+                <option value="all" selected>Toàn thời gian</option>
+                <option value="month">Tháng này</option>
+                <option value="7days">7 ngày qua</option>
+                <option value="today">Hôm nay</option>
+              </select>
+              <button class="btn-admin secondary" id="exportReportPdfBtn" type="button" style="background: #fff0f0; color: #b91c1c; border-color: #fca5a5;">
+                <span><i data-lucide="file-text" style="width:15px; height:15px;"></i></span>
+                <span>Xuất PDF báo cáo</span>
+              </button>
+              <button class="btn-admin secondary" id="exportReportBtn" type="button">
+                <span><i data-lucide="file-spreadsheet" style="width:15px; height:15px;"></i></span>
+                <span>Xuất báo cáo Excel</span>
+              </button>
+              <button class="btn-admin primary" id="overviewAddProductBtn" type="button">
+                <span>+</span>
+                <span>Thêm sản phẩm</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- KPI Cards Grid -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-label">Doanh thu</span>
+                <div class="kpi-icon-wrap green"><i data-lucide="dollar-sign" style="width:20px; height:20px;"></i></div>
+              </div>
+              <div class="kpi-value" id="kpiRevenue">0 ₫</div>
+              <div class="kpi-bottom">
+                <span class="kpi-trend up" id="kpiRevenueTrend"><i data-lucide="check" style="width:13px; height:13px; vertical-align:middle; margin-right:3px;"></i>Đồng bộ</span>
+                <span id="kpiRevenueSub">từ các đơn hoàn tất</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-label">Số đơn hàng</span>
+                <div class="kpi-icon-wrap blue"><i data-lucide="package" style="width:20px; height:20px;"></i></div>
+              </div>
+              <div class="kpi-value" id="kpiOrders">0</div>
+              <div class="kpi-bottom">
+                <span class="kpi-trend up" id="kpiOrdersRate">100%</span>
+                <span id="kpiOrdersSub">tỷ lệ hoàn tất</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-label">Giá trị trung bình đơn</span>
+                <div class="kpi-icon-wrap amber"><i data-lucide="credit-card" style="width:20px; height:20px;"></i></div>
+              </div>
+              <div class="kpi-value" id="kpiAOV">0 ₫</div>
+              <div class="kpi-bottom">
+                <span class="kpi-trend neutral">AOV</span>
+                <span>trên mỗi giao dịch</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-label">Sắp hết hàng</span>
+                <div class="kpi-icon-wrap red"><i data-lucide="alert-triangle" style="width:20px; height:20px;"></i></div>
+              </div>
+              <div class="kpi-value" id="kpiLowStock">0</div>
+              <div class="kpi-bottom">
+                <span class="kpi-trend down" id="kpiLowStockLabel">Cần nhập thêm</span>
+                <span>tồn kho &le; 15</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Revenue Analytics Hero Section (Traffic-Style Large Line Chart & Metric Cards) -->
+          <div class="revenue-hero-card">
+            <div class="revenue-hero-header">
+              <div class="revenue-hero-title-group">
+                <h2 id="revenueMainTitle">Doanh thu</h2>
+                <p class="revenue-hero-subtitle" id="revenueDateSubtitle">Tháng 1 – Tháng 12, 2026</p>
+              </div>
+
+              <div class="revenue-hero-controls">
+                <!-- Custom Date Range Picker: Start Date -> End Date -->
+                <div class="date-range-picker-group">
+                  <span><i data-lucide="calendar" style="width:15px; height:15px;"></i></span>
+                  <input type="date" class="date-range-input" id="revenueStartDate" aria-label="Ngày bắt đầu" />
+                  <span class="date-range-arrow">→</span>
+                  <input type="date" class="date-range-input" id="revenueEndDate" aria-label="Ngày kết thúc" />
+                  <button type="button" class="btn-date-apply" id="revenueApplyDateBtn">Áp dụng</button>
+                </div>
+
+                <!-- Granularity Chips: Theo ngày / Theo tháng / Theo quý / Theo năm -->
+                <div class="table-filter-chips" style="margin: 0;">
+                  <button class="filter-chip" id="chartFilterDaily" type="button">Theo ngày</button>
+                  <button class="filter-chip active" id="chartFilterMonthly" type="button">Theo tháng</button>
+                  <button class="filter-chip" id="chartFilterQuarterly" type="button">Theo quý</button>
+                  <button class="filter-chip" id="chartFilterYearly" type="button">Theo năm</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="revenue-hero-body">
+              <!-- Large Line Chart Container -->
+              <div class="chart-container" id="revenueChartContainer" style="min-height: 280px;">
+                <!-- Interactive SVG Two-Line Chart will be rendered here -->
+              </div>
+
+              <!-- Interactive Legend with series visibility toggles -->
+              <div class="chart-legend" id="revenueChartLegend">
+                <div class="legend-item interactive" id="legendToggleCurrent" title="Bấm để ẩn/hiện chuỗi này">
+                  <span class="legend-color" style="background: #15803d;"></span>
+                  <strong>Kỳ hiện tại</strong> (Doanh thu thực nhận)
+                </div>
+                <div class="legend-item interactive" id="legendTogglePrevious" title="Bấm để ẩn/hiện chuỗi này">
+                  <span class="legend-color" style="background: #0284c7;"></span>
+                  <strong>Kỳ liền trước</strong> (Để so sánh)
+                </div>
+              </div>
+
+              <!-- Bottom Metrics Grid (5 Focused E-Commerce KPIs) -->
+              <div class="revenue-metrics-grid">
+                <!-- Metric 1: Tổng doanh thu -->
+                <div class="revenue-metric-card">
+                  <div class="revenue-metric-label">Tổng doanh thu</div>
+                  <div class="revenue-metric-value" id="heroRevenueVal">0 ₫</div>
+                  <div class="revenue-metric-sub up" id="heroRevenueDiff">--</div>
+                  <div class="revenue-metric-bar green"></div>
+                </div>
+
+                <!-- Metric 2: Số đơn hoàn tất -->
+                <div class="revenue-metric-card">
+                  <div class="revenue-metric-label">Số đơn hoàn tất</div>
+                  <div class="revenue-metric-value" id="heroOrdersVal">0</div>
+                  <div class="revenue-metric-sub" id="heroOrdersDiff">0 đơn kỳ trước</div>
+                  <div class="revenue-metric-bar blue"></div>
+                </div>
+
+                <!-- Metric 3: Giá trị đơn TB (AOV) -->
+                <div class="revenue-metric-card">
+                  <div class="revenue-metric-label">Giá trị đơn TB (AOV)</div>
+                  <div class="revenue-metric-value" id="heroAOVVal">0 ₫</div>
+                  <div class="revenue-metric-sub" id="heroAOVDiff">Doanh thu / đơn</div>
+                  <div class="revenue-metric-bar amber"></div>
+                </div>
+
+                <!-- Metric 4: Doanh thu kỳ trước -->
+                <div class="revenue-metric-card">
+                  <div class="revenue-metric-label">Doanh thu kỳ trước</div>
+                  <div class="revenue-metric-value" id="heroPrevRevenueVal">0 ₫</div>
+                  <div class="revenue-metric-sub" id="heroPrevRevenueNote">Kỳ liền kề</div>
+                  <div class="revenue-metric-bar purple"></div>
+                </div>
+
+                <!-- Metric 5: Khách hàng đã mua -->
+                <div class="revenue-metric-card">
+                  <div class="revenue-metric-label">Khách hàng đã mua</div>
+                  <div class="revenue-metric-value" id="heroCustomersVal">0</div>
+                  <div class="revenue-metric-sub" id="heroCustomersNote">Khách duy nhất</div>
+                  <div class="revenue-metric-bar teal"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Status Donut Chart Section -->
+          <div class="dashboard-row single-col">
+            <div class="admin-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h3>Cơ cấu trạng thái đơn hàng</h3>
+                  <p>Tỷ lệ phân bổ trạng thái các đơn đặt hàng toàn hệ thống</p>
+                </div>
+              </div>
+              <div class="card-body donut-chart-box">
+                <div id="orderStatusChartContainer" style="width: 100%; display: flex; justify-content: center;">
+                  <!-- Interactive SVG Donut Chart will be rendered here -->
+                </div>
+                <div class="chart-legend" id="orderStatusLegend">
+                  <!-- Status items populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Best Sellers & Recent Orders -->
+          <div class="dashboard-row">
+            <!-- Top Best Sellers -->
+            <div class="admin-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h3>Sản phẩm bán chạy nhất</h3>
+                  <p>Bàn ghế công thái học &amp; phụ kiện setup được ưa chuộng</p>
+                </div>
+                <a class="table-action-btn" data-switch-tab="products" href="#">Xem tất cả</a>
+              </div>
+              <div class="card-body">
+                <div class="best-seller-list" id="overviewBestSellers">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Low Stock Warnings -->
+            <div class="admin-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h3>Cảnh báo tồn kho thấp</h3>
+                  <p>Các sản phẩm có lượng tồn kho ít nhất cần bổ sung</p>
+                </div>
+                <a class="table-action-btn" data-switch-tab="inventory" href="#">Quản lý kho</a>
+              </div>
+              <div class="card-body">
+                <div class="best-seller-list" id="overviewLowStockList">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Orders Table in Overview -->
+          <div class="admin-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Đơn hàng gần đây</h3>
+                <p>Danh sách các đơn mua mới nhất từ khách hàng</p>
+              </div>
+              <a class="btn-admin secondary" data-switch-tab="orders" href="#">Xem toàn bộ đơn</a>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <div class="admin-table-wrap" style="border: none; border-radius: 0;">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Mã đơn</th>
+                      <th>Khách hàng</th>
+                      <th>Ngày đặt</th>
+                      <th>Sản phẩm</th>
+                      <th>Tổng tiền</th>
+                      <th>Trạng thái</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="overviewRecentOrdersTable">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 2: QUẢN LÝ ĐƠN HÀNG (ORDERS) ==================== -->
+        <section class="admin-tab-pane" id="pane-orders">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title">Quản lý đơn hàng</h1>
+              <p class="page-header-sub">Theo dõi, lọc theo luồng xử lý và thao tác xác nhận đơn bán hàng</p>
+            </div>
+            <div class="page-header-actions">
+              <button class="btn-admin secondary" id="exportOrdersPdfBtn" type="button" style="background: #fff0f0; color: #b91c1c; border-color: #fca5a5;"><span><i data-lucide="file-text" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Xuất danh sách PDF</button>
+              <button class="btn-admin secondary" id="exportOrdersBtn" type="button"><span><i data-lucide="file-spreadsheet" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Xuất Excel (.xlsx)</button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-body">
+              <!-- Shopee-Style Workflow Filter Tabs with Counts -->
+              <div class="table-toolbar" style="margin-bottom: 14px;">
+                <div class="table-filter-chips" id="ordersFilterGroup">
+                  <button class="filter-chip active" type="button" data-order-status="all">
+                    Tất cả <span class="filter-chip-count" id="countTabAll">0</span>
+                  </button>
+                  <button class="filter-chip" type="button" data-order-status="need_action" title="Các đơn đang chờ shop thao tác (Chờ xác nhận & Đang xử lý)">
+                    <i data-lucide="zap" style="width:13px; height:13px; display:inline-block; vertical-align:-1px;"></i> Cần xử lý <span class="filter-chip-count alert" id="countTabNeedAction">0</span>
+                  </button>
+                  <button class="filter-chip" type="button" data-order-status="cancel_requests" title="Các đơn khách hàng đã gửi yêu cầu hủy chờ duyệt">
+                    Yêu cầu hủy <span class="filter-chip-count alert" id="countTabCancelRequests">0</span>
+                  </button>
+                  <button class="filter-chip" type="button" data-order-status="Chờ xác nhận">
+                    Chờ xác nhận <span class="filter-chip-count" id="countTabPending">0</span>
+                  </button>
+                  <button class="filter-chip" type="button" data-order-status="Đang xử lý">
+                    Đang xử lý <span class="filter-chip-count" id="countTabProcessing">0</span>
+                  </button>
+                  <button class="filter-chip" type="button" data-order-status="Đang giao">
+                    Đang giao <span class="filter-chip-count" id="countTabShipping">0</span>
+                  </button>
+                  <button class="filter-chip" type="button" data-order-status="Hoàn thành">
+                    Hoàn tất <span class="filter-chip-count" id="countTabCompleted">0</span>
+                  </button>
+                  <button class="filter-chip" type="button" data-order-status="Đã hủy">
+                    Đã hủy <span class="filter-chip-count" id="countTabCancelled">0</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Advanced Filter & Search Bar -->
+              <div class="orders-filter-panel">
+                <div class="orders-filter-row">
+                  <!-- Search input -->
+                  <div class="table-search-box" style="width: 280px;">
+                    <span class="search-icon"><i data-lucide="search" style="width:15px; height:15px;"></i></span>
+                    <input type="search" id="orderSearchInput" placeholder="Tìm mã đơn, tên, SĐT, sản phẩm...">
+                  </div>
+
+                  <!-- Date Range Filter -->
+                  <div class="date-range-picker-group" style="background: #ffffff;">
+                    <span><i data-lucide="calendar" style="width:15px; height:15px;"></i></span>
+                    <input type="date" class="date-range-input" id="orderFilterStartDate" aria-label="Từ ngày" title="Lọc từ ngày" />
+                    <span class="date-range-arrow">→</span>
+                    <input type="date" class="date-range-input" id="orderFilterEndDate" aria-label="Đến ngày" title="Lọc đến ngày" />
+                  </div>
+
+                  <!-- Payment Method Filter -->
+                  <select class="orders-filter-input" id="orderPaymentFilter">
+                    <option value="all">Tất cả thanh toán</option>
+                    <option value="qr">Chuyển khoản QR (VietQR)</option>
+                    <option value="unpaid_qr">QR · Chờ thanh toán</option>
+                    <option value="paid_qr">QR · Đã thanh toán</option>
+                    <option value="needs_review">QR · Cần đối soát</option>
+                    <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+                  </select>
+
+                  <!-- Sort Order Selector -->
+                  <select class="orders-filter-input" id="orderSortSelector">
+                    <option value="priority">Ưu tiên đơn cần xử lý trước</option>
+                    <option value="newest">Ngày đặt: Mới nhất</option>
+                    <option value="oldest">Ngày đặt: Cũ nhất</option>
+                    <option value="total_desc">Giá trị đơn: Cao xuống thấp</option>
+                    <option value="total_asc">Giá trị đơn: Thấp lên cao</option>
+                  </select>
+
+                  <!-- Reset Filter Button -->
+                  <button class="btn-action-secondary" id="orderClearFilterBtn" type="button">
+                    <span style="display:inline-flex; align-items:center; gap:4px;"><i data-lucide="rotate-ccw" style="width:14px; height:14px;"></i> Xóa bộ lọc</span>
+                  </button>
+                </div>
+
+                <!-- Filter Results Counter -->
+                <div style="font-size: 12.5px; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between;">
+                  <span id="orderFilterSummaryText">Đang hiển thị 0 đơn hàng</span>
+                  <span id="orderHighValueBadge" style="display: none; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 4px; font-weight: 600;"><span style="display:inline-flex; align-items:center; gap:4px;"><i data-lucide="sparkles" style="width:13px; height:13px;"></i> Có đơn giá trị cao &ge; 5 triệu</span></span>
+                </div>
+              </div>
+
+              <!-- SePay API Sync & Reconciliation Bar -->
+              <div id="adminSepayBar" style="margin-bottom: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                  <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:13px;">
+                    <strong>Đồng bộ giao dịch SePay:</strong>
+                    <span id="adminSepayStatusText" style="color:#475569;">Đang tải trạng thái...</span>
+                  </div>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn-action-secondary" id="adminSepaySyncBtn" type="button">Đồng bộ SePay ngay</button>
+                    <button class="btn-action-secondary" id="adminSepayTxToggleBtn" type="button">Nhật ký đối soát SePay</button>
+                  </div>
+                </div>
+                <div id="adminSepayTxPanel" style="display:none; margin-top:12px; border-top:1px solid #e2e8f0; padding-top:12px;">
+                  <div style="font-size:12.5px; color:#64748b; margin-bottom:8px;">Giao dịch gần đây đã đọc từ SePay (trùng / sai tiền / thiếu mã DH sẽ được giữ lại để tra soát):</div>
+                  <div class="admin-table-wrap" style="max-height:260px; overflow:auto;">
+                    <table class="admin-data-table" style="font-size:12px;">
+                      <thead>
+                        <tr>
+                          <th>Mã GD SePay</th>
+                          <th>Thời gian</th>
+                          <th>Số tiền</th>
+                          <th>Mã tham chiếu</th>
+                          <th>Trạng thái khớp</th>
+                          <th>Đơn / Ghi chú</th>
+                          <th>Xử lý</th>
+                        </tr>
+                      </thead>
+                      <tbody id="adminSepayTxBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Batch Action Toolbar (Appears when >= 1 checkbox checked) -->
+              <div class="orders-batch-bar" id="ordersBatchBar">
+                <div>
+                  <span id="ordersBatchSelectedCount">Đã chọn 0 đơn</span>
+                  <span style="font-weight: 400; color: #15803d; margin-left: 8px;">(Thao tác hàng loạt an toàn)</span>
+                </div>
+                <div class="orders-batch-actions">
+                  <button class="btn-action-primary" id="batchConfirmBtn" type="button"><i data-lucide="check" style="width:13px; height:13px; display:inline-block; vertical-align:-1px;"></i> Xác nhận đơn đã chọn</button>
+                  <button class="btn-action-secondary" id="batchProcessBtn" type="button"><i data-lucide="package" style="width:13px; height:13px; display:inline-block; vertical-align:-1px;"></i> Bắt đầu xử lý kho</button>
+                  <button class="btn-action-secondary" id="batchDeselectBtn" type="button">Bỏ chọn</button>
+                </div>
+              </div>
+
+              <div class="admin-table-wrap">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 38px; text-align: center;">
+                        <input type="checkbox" id="orderSelectAllCheck" title="Chọn tất cả đơn hiển thị" />
+                      </th>
+                      <th>Mã đơn & Thời điểm</th>
+                      <th>Khách hàng & SĐT</th>
+                      <th>Sản phẩm đặt mua</th>
+                      <th>Tổng tiền & Thanh toán</th>
+                      <th>Trạng thái đơn</th>
+                      <th style="text-align: right;">Thao tác tiếp theo</th>
+                    </tr>
+                  </thead>
+                  <tbody id="fullOrdersTable">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 3: QUẢN LÝ SẢN PHẨM (PRODUCTS) ==================== -->
+        <section class="admin-tab-pane" id="pane-products">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title">Quản lý sản phẩm</h1>
+              <p class="page-header-sub">Danh sách bàn ghế, đèn học, phụ kiện công thái học EcoDesk</p>
+            </div>
+            <div class="page-header-actions">
+              <button class="btn-admin secondary" id="exportProductsBtn" type="button"><span><i data-lucide="file-spreadsheet" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Xuất Excel</button>
+              <button class="btn-admin secondary" id="importProductsBtn" type="button"><span><i data-lucide="file-up" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Nhập Excel</button>
+              <input type="file" id="productExcelFileInput" accept=".xlsx, .xls, .csv" style="display: none;">
+              <button class="btn-admin primary" id="openAddProductModalBtn" type="button">
+                <span>+</span>
+                <span>Thêm sản phẩm</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-body">
+              <div class="table-toolbar">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                  <select class="time-filter-select" id="productCategoryFilter">
+                    <option value="all">Tất cả danh mục</option>
+                  </select>
+                  <select class="time-filter-select" id="productStockFilter">
+                    <option value="all">Tất cả tình trạng & ưu đãi</option>
+                    <option value="draft">Bản nháp / Chưa xuất bản</option>
+                    <option value="in_stock">Còn hàng (&gt; 0)</option>
+                    <option value="low_stock">Sắp hết hàng (&le; 15)</option>
+                    <option value="out_stock">Hết hàng (0)</option>
+                    <option value="has_new_badge">Đang có nhãn Mới</option>
+                    <option value="has_discount">Đang giảm giá</option>
+                  </select>
+                </div>
+                <div class="table-search-box">
+                  <span class="search-icon"><i data-lucide="search" style="width:15px; height:15px;"></i></span>
+                  <input type="search" id="productSearchInput" placeholder="Tìm tên sản phẩm, mã...">
+                </div>
+              </div>
+
+              <div class="admin-table-wrap">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Ảnh</th>
+                      <th>Sản phẩm</th>
+                      <th>Danh mục</th>
+                      <th>Giá bán</th>
+                      <th>Tồn kho</th>
+                      <th>Nhãn & Khuyến mãi</th>
+                      <th>Đã bán</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="fullProductsTable">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 4: DANH MỤC SẢN PHẨM (CATEGORIES) ==================== -->
+        <section class="admin-tab-pane" id="pane-categories">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title">Danh mục sản phẩm</h1>
+              <p class="page-header-sub">Phân loại các dòng sản phẩm chủ lực của EcoDesk Studio</p>
+            </div>
+            <div class="page-header-actions">
+              <button class="btn-admin secondary" id="exportCategoriesBtn" type="button"><span><i data-lucide="file-spreadsheet" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Xuất Excel</button>
+              <button class="btn-admin secondary" id="importCategoriesBtn" type="button"><span><i data-lucide="file-up" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Nhập Excel</button>
+              <input type="file" id="categoryExcelFileInput" accept=".xlsx, .xls, .csv" style="display: none;">
+              <button class="btn-admin primary" id="addCategoryBtn" type="button">
+                <span>+</span>
+                <span>Thêm danh mục mới</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-body">
+              <div class="admin-table-wrap">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Mã danh mục</th>
+                      <th>Tên danh mục</th>
+                      <th>Số lượng sản phẩm</th>
+                      <th>Tổng hàng tồn kho</th>
+                      <th>Tổng sản phẩm đã bán</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="categoriesTable">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 5: QUẢN LÝ TỒN KHO (INVENTORY & PURCHASES) ==================== -->
+        <section class="admin-tab-pane" id="pane-inventory">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title">Quản lý tồn kho &amp; Phiếu nhập hàng</h1>
+              <p class="page-header-sub">Quản lý nhập hàng từ nhà cung cấp, kiểm kê tồn kho và sổ biến động hàng hóa</p>
+            </div>
+            <div class="page-header-actions" style="display: flex; gap: 8px;">
+              <button class="btn-admin primary" id="invOpenCreatePoTopBtn" type="button" title="Dùng khi cửa hàng nhận hàng mua mới. Nhập số lượng, giá nhập và tình trạng thanh toán.">
+                <span><i data-lucide="plus" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Nhập hàng từ nhà cung cấp
+              </button>
+              <button class="btn-admin secondary" id="invOpenAdjustTopBtn" type="button" title="Dùng khi số lượng thực tế lệch với hệ thống, hoặc khi ghi nhận hàng hỏng/mất. Vui lòng nhập lý do.">
+                <span><i data-lucide="sliders" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Điều chỉnh số lượng
+              </button>
+            </div>
+          </div>
+
+          <!-- Inventory Subtabs Navigation -->
+          <div class="filter-pills" id="invSubTabs" style="margin-bottom: 16px;">
+            <button type="button" class="filter-pill active" data-inv-subtab="stock">
+              <span style="display:inline-flex; align-items:center; gap:6px;"><i data-lucide="package" style="width:14px; height:14px;"></i> Tình trạng kho hàng</span>
+            </button>
+            <button type="button" class="filter-pill" data-inv-subtab="purchases">
+              <span style="display:inline-flex; align-items:center; gap:6px;"><i data-lucide="file-text" style="width:14px; height:14px;"></i> Phiếu nhập kho</span>
+            </button>
+            <button type="button" class="filter-pill" data-inv-subtab="movements">
+              <span style="display:inline-flex; align-items:center; gap:6px;"><i data-lucide="history" style="width:14px; height:14px;"></i> Sổ biến động kho</span>
+            </button>
+          </div>
+
+          <!-- SUBTAB 1: TÌNH TRẠNG KHO HÀNG -->
+          <div id="invStockPane">
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-top">
+                  <span class="kpi-label">Tổng tồn kho toàn hệ thống</span>
+                  <div class="kpi-icon-wrap blue"><i data-lucide="package" style="width:20px; height:20px;"></i></div>
+                </div>
+                <div class="kpi-value" id="invTotalStock">0</div>
+                <div class="kpi-bottom"><span>Mặt hàng có sẵn để bán</span></div>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-top">
+                  <span class="kpi-label">Hàng sắp hết (&le; 15)</span>
+                  <div class="kpi-icon-wrap amber"><i data-lucide="alert-triangle" style="width:20px; height:20px;"></i></div>
+                </div>
+                <div class="kpi-value" id="invLowStockCount">0</div>
+                <div class="kpi-bottom"><span class="kpi-trend down">Ưu tiên nhập hàng</span></div>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-top">
+                  <span class="kpi-label">Hết hàng (0 chiếc)</span>
+                  <div class="kpi-icon-wrap red"><i data-lucide="alert-octagon" style="width:20px; height:20px;"></i></div>
+                </div>
+                <div class="kpi-value" id="invOutOfStockCount">0</div>
+                <div class="kpi-bottom"><span>Cần bổ sung kho ngay</span></div>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-top">
+                  <span class="kpi-label">Tổng đã xuất bán</span>
+                  <div class="kpi-icon-wrap green"><i data-lucide="truck" style="width:20px; height:20px;"></i></div>
+                </div>
+                <div class="kpi-value" id="invTotalSold">0</div>
+                <div class="kpi-bottom"><span>Sản phẩm giao thành công</span></div>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h3>Bảng chi tiết tình trạng kho hàng</h3>
+                  <p>Theo dõi tồn kho, giá nhập bình quân và thao tác nhập hàng / kiểm kê</p>
+                </div>
+                <div class="table-search-box">
+                  <span class="search-icon"><i data-lucide="search" style="width:15px; height:15px;"></i></span>
+                  <input type="search" id="inventorySearchInput" placeholder="Tìm sản phẩm...">
+                </div>
+              </div>
+              <div class="card-body" style="padding: 0;">
+                <div class="admin-table-wrap" style="border: none; border-radius: 0;">
+                  <table class="admin-data-table">
+                    <thead>
+                      <tr>
+                        <th>Sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Giá bán</th>
+                        <th>
+                          <span style="display: inline-flex; align-items: center; gap: 4px;" title="Giá nhập trung bình của các lần nhập hàng. Cần số liệu này để ước tính lãi khi bán.">
+                            Giá nhập bình quân
+                            <i data-lucide="help-circle" style="width:13px; height:13px; color:#64748b; cursor:help;"></i>
+                          </span>
+                        </th>
+                        <th>Tồn kho hiện tại</th>
+                        <th>Tình trạng cảnh báo</th>
+                        <th style="text-align: right;">Thao tác kho</th>
+                      </tr>
+                    </thead>
+                    <tbody id="inventoryTable">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBTAB 2: PHIẾU NHẬP KHO -->
+          <div id="invPurchasesPane" style="display: none;">
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-top">
+                  <span class="kpi-label">Tổng giá trị phiếu nhập</span>
+                  <div class="kpi-icon-wrap blue"><i data-lucide="shopping-bag" style="width:20px; height:20px;"></i></div>
+                </div>
+                <div class="kpi-value" id="invPoKpiTotal">0 ₫</div>
+                <div class="kpi-bottom"><span id="invPoKpiCount">0 phiếu nhập</span></div>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-top">
+                  <span class="kpi-label">Thực chi trả nhà cung cấp</span>
+                  <div class="kpi-icon-wrap green"><i data-lucide="dollar-sign" style="width:20px; height:20px;"></i></div>
+                </div>
+                <div class="kpi-value" id="invPoKpiPaid" style="color: #15803d;">0 ₫</div>
+                <div class="kpi-bottom"><span>Dòng tiền thực chi mua hàng</span></div>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-top">
+                  <span class="kpi-label">Công nợ NCC còn phải trả</span>
+                  <div class="kpi-icon-wrap amber"><i data-lucide="clock" style="width:20px; height:20px;"></i></div>
+                </div>
+                <div class="kpi-value" id="invPoKpiDebt" style="color: #b45309;">0 ₫</div>
+                <div class="kpi-bottom"><span>Khoản nợ chưa thanh toán</span></div>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-top">
+                  <span class="kpi-label">Giá trị tồn kho theo giá nhập bình quân</span>
+                  <div class="kpi-icon-wrap blue"><i data-lucide="archive" style="width:20px; height:20px;"></i></div>
+                </div>
+                <div class="kpi-value" id="invPoKpiValuation" style="color: #0284c7;">0 ₫</div>
+                <div class="kpi-bottom"><span id="invPoKpiValuationNote" title="Giá nhập trung bình của các lần nhập hàng. Cần số liệu này để ước tính lãi khi bán.">Định giá theo giá nhập bình quân</span></div>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="card-header" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;">
+                <div class="card-title-group">
+                  <h3>Danh sách phiếu nhập kho</h3>
+                  <p>Quản lý các đợt nhập hàng từ nhà cung cấp, kiểm tra nhận hàng và công nợ</p>
+                </div>
+                <button class="btn-admin primary" id="invCreatePoBtn" type="button" title="Dùng khi cửa hàng nhận hàng mua mới. Nhập số lượng, giá nhập và tình trạng thanh toán.">
+                  <span><i data-lucide="plus" style="width:14px; height:14px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Nhập hàng từ nhà cung cấp
+                </button>
+              </div>
+
+              <div class="card-body" style="padding: 14px 18px 0;">
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px;">
+                  <div class="table-search-box" style="flex: 1; min-width: 200px;">
+                    <span class="search-icon"><i data-lucide="search" style="width:15px; height:15px;"></i></span>
+                    <input type="search" id="invPoSearchInput" placeholder="Tìm theo mã phiếu, NCC, sản phẩm...">
+                  </div>
+
+                  <select id="invPoFilterReceived" class="time-filter-select">
+                    <option value="all">Tất cả nhận hàng</option>
+                    <option value="RECEIVED">Đã nhận hàng (nhập kho)</option>
+                    <option value="DRAFT">Lưu nháp (chưa nhận)</option>
+                    <option value="CANCELLED">Đã hủy</option>
+                  </select>
+
+                  <select id="invPoFilterPayment" class="time-filter-select">
+                    <option value="all">Tất cả thanh toán</option>
+                    <option value="PAID">Đã thanh toán đủ</option>
+                    <option value="PARTIALLY_PAID">Thanh toán một phần</option>
+                    <option value="UNPAID">Chưa thanh toán</option>
+                  </select>
+
+                  <button class="btn-admin secondary" id="invPoRefreshBtn" type="button" title="Làm mới danh sách">
+                    <i data-lucide="refresh-cw" style="width:14px; height:14px;"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-body" style="padding: 0;">
+                <div class="admin-table-wrap" style="border: none; border-radius: 0;">
+                  <table class="admin-data-table">
+                    <thead>
+                      <tr>
+                        <th>Mã phiếu</th>
+                        <th>Ngày nhập</th>
+                        <th>Nhà cung cấp</th>
+                        <th>Mặt hàng</th>
+                        <th>Tổng tiền</th>
+                        <th>Đã thanh toán</th>
+                        <th>Còn nợ</th>
+                        <th>Nhận hàng</th>
+                        <th>Thanh toán</th>
+                        <th style="text-align: right;">Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody id="invPurchasesTableBody">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBTAB 3: SỔ BIẾN ĐỘNG KHO -->
+          <div id="invMovementsPane" style="display: none;">
+            <div class="admin-card">
+              <div class="card-header" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;">
+                <div class="card-title-group">
+                  <h3>Nhật ký biến động kho hàng (Inventory Audit Log)</h3>
+                  <p>Lưu vết chi tiết mọi thay đổi số lượng tồn kho theo sản phẩm / biến thể, người thực hiện và lý do</p>
+                </div>
+              </div>
+
+              <div class="card-body" style="padding: 14px 18px 0;">
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px;">
+                  <div class="table-search-box" style="flex: 1; min-width: 220px;">
+                    <span class="search-icon"><i data-lucide="search" style="width:15px; height:15px;"></i></span>
+                    <input type="search" id="invMovementSearchInput" placeholder="Tìm theo mã SP, biến thể, mã đơn, người tạo...">
+                  </div>
+
+                  <select id="invMovementFilterType" class="time-filter-select">
+                    <option value="all">Tất cả loại biến động</option>
+                    <option value="PURCHASE_RECEIPT">Nhập hàng NCC (Phiếu nhập)</option>
+                    <option value="PURCHASE_RETURN">Trả NCC / Hủy phiếu nhập</option>
+                    <option value="STOCK_ADJUSTMENT">Điều chỉnh kiểm kê / Lệch kho</option>
+                    <option value="ORDER_FULFILLMENT">Xuất bán đơn hàng</option>
+                    <option value="ORDER_RETURN">Khách trả hàng hoàn kho</option>
+                  </select>
+
+                  <button class="btn-admin secondary" id="invMovementRefreshBtn" type="button" title="Làm mới danh sách">
+                    <i data-lucide="refresh-cw" style="width:14px; height:14px;"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-body" style="padding: 0;">
+                <div class="admin-table-wrap" style="border: none; border-radius: 0;">
+                  <table class="admin-data-table">
+                    <thead>
+                      <tr>
+                        <th>Thời gian</th>
+                        <th>Sản phẩm / Biến thể</th>
+                        <th>Loại biến động</th>
+                        <th>Thay đổi SL</th>
+                        <th>Tồn kho (Trước &rarr; Sau)</th>
+                        <th>Giá nhập / Đơn vị</th>
+                        <th>Tham chiếu</th>
+                        <th>Người thực hiện &amp; Lý do</th>
+                      </tr>
+                    </thead>
+                    <tbody id="invMovementsTableBody">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 6: KHÁCH HÀNG & TÀI KHOẢN (CUSTOMERS) ==================== -->
+        <section class="admin-tab-pane" id="pane-customers">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title">Quản lý tài khoản (Admin, Nhân viên, Khách hàng)</h1>
+              <p class="page-header-sub">Toàn bộ tài khoản và mật khẩu được lưu vào file <code>users.json</code> tại thư mục gốc.</p>
+            </div>
+            <div class="page-header-actions">
+              <button class="btn-admin primary" id="downloadUsersBtn" type="button"><span><i data-lucide="download" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Tải file users.json</button>
+              <button class="btn-admin secondary" id="reloadUsersBtn" type="button"><span><i data-lucide="refresh-cw" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Đồng bộ từ file</button>
+            </div>
+          </div>
+
+          <!-- File Storage & Security Banner -->
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px;">
+            <span style="font-size: 26px; display:inline-flex; align-items:center; color:#15803d;"><i data-lucide="shield-check" style="width:28px; height:28px;"></i></span>
+            <div>
+              <strong style="color: #166534;">Bảo mật &amp; Phân quyền hệ thống:</strong>
+              <p style="margin: 4px 0 0; font-size: 13px; color: #374151;">Hệ thống phân biệt rõ vai trò Quản trị viên (Admin), Thu ngân (Cashier), Nhân viên (Staff) và Khách hàng (Customer). Mật khẩu được mã hóa BCrypt và quyền thao tác được kiểm tra đồng bộ trên cả giao diện lẫn backend API.</p>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-body">
+              <div class="table-toolbar">
+                <div class="table-filter-info" style="font-size: 13.5px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px;">
+                  <span>Lọc danh sách:</span>
+                  <span id="currentFilterRoleBadge" class="badge-role" style="font-size: 12px;">Tất cả tài khoản</span>
+                </div>
+                <div class="table-search-box" style="max-width: 360px;">
+                  <span class="search-icon"><i data-lucide="search" style="width:15px; height:15px;"></i></span>
+                  <input type="search" id="customerSearchInput" placeholder="Tìm theo tên, email, sđt...">
+                </div>
+              </div>
+
+              <div class="admin-table-wrap">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Người dùng</th>
+                      <th>Email đăng nhập</th>
+                      <th>Vai trò hiện tại</th>
+                      <th>Số điện thoại</th>
+                      <th>Hạng (KH) / Ghi chú</th>
+                      <th>Ngày tạo</th>
+                      <th>Thao tác vai trò</th>
+                    </tr>
+                  </thead>
+                  <tbody id="customersTable">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+<!-- ==================== TAB: HỖ TRỢ KHÁCH HÀNG (CHAT CSKH) ==================== -->
+        <section class="admin-tab-pane" id="pane-chat">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title">Hỗ trợ &amp; Tin nhắn Khách hàng</h1>
+              <p class="page-header-sub">Hộp thư trao đổi trực tuyến giữa khách mua hàng và đội ngũ nhân viên EcoDesk</p>
+            </div>
+            <div class="page-header-actions">
+              <span id="chatStaffAssigneeTag" style="font-size: 13px; color: #475569; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                Đang trực: <strong id="chatStaffCurrentName">Nhân viên</strong>
+              </span>
+            </div>
+          </div>
+
+          <div class="admin-card" style="min-height: 580px;">
+            <div class="admin-chat-shell">
+              <!-- Cột trái: Danh sách hội thoại -->
+              <div class="admin-chat-thread-col">
+                <div style="padding: 12px; border-bottom: 1px solid #e2e8f0;">
+                  <input type="text" id="adminChatSearch" placeholder="Tìm theo tên, email, mã đơn..." style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                  <div style="display: flex; gap: 4px; margin-top: 8px;">
+                    <button type="button" class="btn-admin secondary active chat-filter-btn" data-chat-filter="all" style="flex: 1; padding: 4px 6px; font-size: 11px;">Tất cả</button>
+                    <button type="button" class="btn-admin secondary chat-filter-btn" data-chat-filter="open" style="flex: 1; padding: 4px 6px; font-size: 11px;">Mới</button>
+                    <button type="button" class="btn-admin secondary chat-filter-btn" data-chat-filter="in_progress" style="flex: 1; padding: 4px 6px; font-size: 11px;">Đang xử lý</button>
+                    <button type="button" class="btn-admin secondary chat-filter-btn" data-chat-filter="resolved" style="flex: 1; padding: 4px 6px; font-size: 11px;">Đã xong</button>
+                  </div>
+                </div>
+                <div id="adminChatThreadList" style="flex: 1; overflow-y: auto; padding: 8px;">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+
+              <!-- Cột phải: Khung hội thoại đang chọn -->
+              <div style="display: flex; flex-direction: column; background: #ffffff;">
+                <div id="adminChatDetailHeader" style="padding: 12px 18px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                  <div>
+                    <h3 id="adminChatActiveTitle" style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Chọn một cuộc trò chuyện</h3>
+                    <div id="adminChatActiveSubtitle" style="font-size: 12px; color: #64748b; margin-top: 2px;">Chưa chọn khách hàng</div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="font-size: 12px; font-weight: 600; color: #475569;">Trạng thái:</label>
+                    <select id="adminChatStatusSelect" class="time-filter-select" style="font-size: 12px; padding: 4px 10px;" disabled>
+                      <option value="open">Mới / Chờ xử lý</option>
+                      <option value="in_progress">Đang xử lý</option>
+                      <option value="resolved">Đã giải quyết</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div id="adminChatMessagesContainer" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #fdfdfd;">
+                  <div style="text-align: center; color: #94a3b8; font-size: 13px; margin: auto;">
+                    Chọn khách hàng ở danh sách bên trái để xem trao đổi.
+                  </div>
+                </div>
+
+                <div id="adminChatInputBar" style="padding: 12px; border-top: 1px solid #e2e8f0; background: #fff; display: flex; gap: 8px;">
+                  <input type="text" id="adminChatMessageInput" placeholder="Nhập tin nhắn phản hồi cho khách hàng... (Enter để gửi)" style="flex: 1; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px;" disabled>
+                  <button type="button" class="btn-admin primary" id="adminChatSendBtn" style="padding: 0 18px;" disabled>Gửi tin</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 7: KHUYẾN MÃI (CAMPAIGNS) ==================== -->
+        <section class="admin-tab-pane" id="pane-campaigns">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title">Khuyến mãi &amp; Lịch sale theo sản phẩm</h1>
+              <p class="page-header-sub">Sale ngày đôi tự áp dụng 10–15%. Sự kiện thường tối đa 50%; sự kiện đặc biệt tối đa 90%.</p>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Tạo lịch sale mới</h3>
+                <p>Lên kế hoạch giảm giá cho sản phẩm theo khoảng thời gian định trước</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <form id="campaignForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; align-items: end;">
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Sản phẩm
+                  <select id="campaignProduct" class="time-filter-select" style="width: 100%;" required></select>
+                </label>
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Tên chương trình
+                  <input class="time-filter-select" style="width: 100%;" name="name" required maxlength="70" placeholder="Ví dụ: Ưu đãi tháng 10">
+                </label>
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Loại sự kiện
+                  <select class="time-filter-select" style="width: 100%;" name="type">
+                    <option value="regular">Sự kiện thường · tối đa 50%</option>
+                    <option value="special">Dịp đặc biệt · tối đa 90%</option>
+                  </select>
+                </label>
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Mức giảm (%)
+                  <input class="time-filter-select" style="width: 100%;" name="percent" type="number" min="1" max="50" required placeholder="15">
+                </label>
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Bắt đầu
+                  <input class="time-filter-select" style="width: 100%;" name="startAt" type="datetime-local" required>
+                </label>
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Kết thúc
+                  <input class="time-filter-select" style="width: 100%;" name="endAt" type="datetime-local" required>
+                </label>
+                <button class="btn-admin primary" type="submit" style="height: 38px;">Tạo lịch sale</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Các chương trình sale đang lên lịch</h3>
+                <p>Danh sách các chương trình khuyến mãi hoạt động</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="campaignList" style="display: grid; gap: 10px;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 8: BANNER & NỘI DUNG (BANNERS) ==================== -->
+        <section class="admin-tab-pane" id="pane-banners">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title">Nội dung trang chủ &amp; Banner</h1>
+              <p class="page-header-sub">Chọn ảnh từ sản phẩm tương ứng để banner luôn chuẩn xác nội dung</p>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Lên lịch banner trang chủ</h3>
+              </div>
+            </div>
+            <div class="card-body">
+              <form id="bannerForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; align-items: end;">
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Tiêu đề
+                  <input class="time-filter-select" style="width: 100%;" name="title" required maxlength="70" placeholder="EcoDesk Combo">
+                </label>
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Mô tả ngắn
+                  <input class="time-filter-select" style="width: 100%;" name="description" maxlength="150" placeholder="Bộ sản phẩm công thái học hoàn hảo">
+                </label>
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Ảnh từ sản phẩm
+                  <select id="bannerProduct" class="time-filter-select" style="width: 100%;" required></select>
+                </label>
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Liên kết
+                  <input class="time-filter-select" style="width: 100%;" name="link" value="./products.html">
+                </label>
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Lặp lại
+                  <select class="time-filter-select" style="width: 100%;" name="frequency">
+                    <option value="once">Một lần trong khoảng ngày</option>
+                    <option value="daily">Mỗi ngày</option>
+                    <option value="weekly">Mỗi tuần (theo thứ bắt đầu)</option>
+                    <option value="monthly">Mỗi tháng (theo ngày bắt đầu)</option>
+                  </select>
+                </label>
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Bắt đầu
+                  <input class="time-filter-select" style="width: 100%;" name="startAt" type="datetime-local" required>
+                </label>
+                <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">Kết thúc
+                  <input class="time-filter-select" style="width: 100%;" name="endAt" type="datetime-local" required>
+                </label>
+                <button class="btn-admin primary" type="submit" style="height: 38px;">Lên lịch banner</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Danh sách banner trang chủ</h3>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="bannerList" style="display: grid; gap: 10px;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 9: ĐÁNH GIÁ (REVIEWS) ==================== -->
+        <section class="admin-tab-pane" id="pane-reviews">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title">Quản lý Đánh giá &amp; Bình luận</h1>
+              <p class="page-header-sub">Theo dõi đánh giá thực tế từ đơn đã mua, phản hồi chính thức và kiểm duyệt bình luận sản phẩm</p>
+            </div>
+            <div class="header-actions-group">
+              <button class="btn-admin secondary" id="btnRefreshReviews" type="button">
+                <i data-lucide="refresh-cw" class="admin-btn-icon"></i> Làm mới dữ liệu
+              </button>
+            </div>
+          </div>
+
+          <!-- Review KPI Summary -->
+          <div class="reviews-kpi-grid">
+            <div class="reviews-kpi-card">
+              <span class="reviews-kpi-label">Tổng đánh giá sao</span>
+              <strong class="reviews-kpi-value" id="revKpiTotal">0</strong>
+              <span class="reviews-kpi-sub" id="revKpiAvg">Trung bình: 0.0 / 5 sao</span>
+            </div>
+            <div class="reviews-kpi-card">
+              <span class="reviews-kpi-label">Chưa có EcoDesk phản hồi</span>
+              <strong class="reviews-kpi-value is-warn" id="revKpiUnreplied">0</strong>
+              <span class="reviews-kpi-sub">Đánh giá đang chờ phản hồi chính thức</span>
+            </div>
+            <div class="reviews-kpi-card">
+              <span class="reviews-kpi-label">Bình luận thảo luận</span>
+              <strong class="reviews-kpi-value" id="revKpiComments">0</strong>
+              <span class="reviews-kpi-sub">Không tính vào điểm sao sản phẩm</span>
+            </div>
+            <div class="reviews-kpi-card">
+              <span class="reviews-kpi-label">Đã xác minh mua hàng</span>
+              <strong class="reviews-kpi-value is-ok" id="revKpiVerified">0</strong>
+              <span class="reviews-kpi-sub">Từ các đơn hàng đã giao / hoàn tất</span>
+            </div>
+          </div>
+
+          <!-- Filter Bar -->
+          <div class="admin-card" style="margin-bottom: 18px;">
+            <div class="card-body">
+              <div class="reviews-filter-bar">
+                <div class="reviews-filter-search">
+                  <input type="search" class="time-filter-select" id="revSearchInput" placeholder="Tìm theo tên người gửi, sản phẩm, mã đơn hoặc nội dung...">
+                </div>
+                <select class="time-filter-select" id="revProductFilter">
+                  <option value="all">Tất cả sản phẩm</option>
+                </select>
+                <select class="time-filter-select" id="revStarFilter">
+                  <option value="all">Tất cả số sao</option>
+                  <option value="5">5 sao</option>
+                  <option value="4">4 sao</option>
+                  <option value="3">3 sao</option>
+                  <option value="2">2 sao</option>
+                  <option value="1">1 sao</option>
+                </select>
+                <select class="time-filter-select" id="revReplyFilter">
+                  <option value="all">Mọi trạng thái phản hồi</option>
+                  <option value="unreplied">Chưa phản hồi</option>
+                  <option value="replied">Đã phản hồi</option>
+                  <option value="unverified">Cần rà soát (Chưa khớp đơn hoàn tất)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reviews & Comments List -->
+          <div id="adminReviewsList" class="admin-reviews-list"></div>
+        </section>
+
+        <!-- ==================== TAB 10: BÁO CÁO & TÀI CHÍNH CHUYÊN SÂU ==================== -->
+        <section class="admin-tab-pane" id="pane-reports">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title">Báo cáo &amp; Phân tích chuyên sâu</h1>
+              <p class="page-header-sub">Tổng hợp dữ liệu thật từ đơn hàng, SePay đã xác minh, nhập kho, chi phí vận hành và bảng lương</p>
+            </div>
+            <div class="page-header-actions" style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <button class="btn-admin primary" id="finAddTxBtn" type="button">+ Ghi nhận thu/chi</button>
+              <button class="btn-admin secondary" id="finAddPurchaseBtn" type="button">+ Nhập hàng kho</button>
+              <button class="btn-admin secondary" id="exportReportBtn" type="button">Xuất Excel</button>
+              <button class="btn-admin secondary" id="exportReportPdfBtn" type="button">Xuất PDF</button>
+            </div>
+          </div>
+
+          <!-- Bộ lọc thời gian -->
+          <div class="admin-card" style="margin-bottom: 16px;">
+            <div class="card-body" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px 18px;">
+              <label style="font-size: 13px; font-weight: 600; color: #334155;">Kỳ báo cáo:
+                <select id="finPeriodPreset" class="time-filter-select" style="margin-left: 6px;">
+                  <option value="all">Tất cả thời gian</option>
+                  <option value="month" selected>Tháng này (11/2026)</option>
+                  <option value="last_month">Tháng trước (10/2026)</option>
+                  <option value="quarter">Quý này (Q4/2026)</option>
+                  <option value="year">Năm nay (2026)</option>
+                  <option value="today">Hôm nay</option>
+                  <option value="custom">Tùy chọn khoảng ngày</option>
+                </select>
+              </label>
+              <label style="font-size: 13px; font-weight: 600; color: #334155;">Từ:
+                <input type="date" id="finFromDate" class="time-filter-select" style="margin-left: 4px;">
+              </label>
+              <label style="font-size: 13px; font-weight: 600; color: #334155;">Đến:
+                <input type="date" id="finToDate" class="time-filter-select" style="margin-left: 4px;">
+              </label>
+              <button class="btn-admin primary" id="finApplyFilterBtn" type="button" style="padding: 7px 14px;">Áp dụng</button>
+              <span id="finLastUpdatedNote" style="margin-left: auto; font-size: 12px; color: #64748b;"></span>
+            </div>
+          </div>
+
+          <!-- Cảnh báo thiếu giá vốn / giao dịch chưa đối soát -->
+          <div id="finAlertsBanner" style="display: none; margin-bottom: 16px;"></div>
+
+          <!-- Lưới KPI tách bạch (Tối đa 6 thẻ chỉ số chính) -->
+          <div id="finKpiGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 14px; margin-bottom: 16px;">
+            <!-- Render động bởi js/admin.js -->
+          </div>
+
+          <!-- Thẻ phụ (Hoàn tiền, Tồn kho theo giá vốn, Lợi nhuận) & Thanh đối chiếu số lượng đơn hàng -->
+          <div id="finSecondaryIndicatorsWrap" style="margin-bottom: 18px;">
+            <!-- Render động bởi js/admin.js -->
+          </div>
+
+          <!-- Khu vực rà soát đơn hàng đang xử lý (Đang xử lý / Đang giao / Chờ xử lý) -->
+          <div id="finProcessingOrdersSection" class="admin-card" style="margin-bottom: 18px; border-left: 4px solid #0284c7;">
+            <!-- Render động bởi js/admin.js -->
+          </div>
+
+          <!-- Biểu đồ dòng tiền thu / chi theo thời gian -->
+          <div class="admin-card" style="margin-bottom: 18px;">
+            <div class="card-header" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;">
+              <div>
+                <h3 class="card-title">Biểu đồ dòng tiền &amp; Doanh số theo thời gian</h3>
+                <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Tách riêng Tiền đã thu (đã xác minh), Tổng chi (nhập hàng + vận hành + lương + hoàn tiền) và Doanh số đơn hoàn tất</p>
+              </div>
+              <div class="filter-pills" id="finChartGranularityGroup">
+                <button type="button" class="filter-pill active" data-granularity="day">Theo ngày</button>
+                <button type="button" class="filter-pill" data-granularity="month">Theo tháng</button>
+                <button type="button" class="filter-pill" data-granularity="quarter">Theo quý</button>
+                <button type="button" class="filter-pill" data-granularity="year">Theo năm</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="financeCashflowChart" style="min-height: 220px;"></div>
+              <!-- Bảng chi tiết số liệu theo kỳ -->
+              <div id="finDetailedBreakdownTableWrap" style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+                <!-- Render động bởi js/admin.js -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabs con: Sổ thu chi / Nhập hàng kho / Bảng lương / Nhật ký -->
+          <div class="admin-card">
+            <div class="card-header" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;">
+              <div class="filter-pills" id="finSubTabs">
+                <button type="button" class="filter-pill active" data-fin-subtab="transactions">Sổ thu chi</button>
+                <button type="button" class="filter-pill" data-fin-subtab="purchases">Nhập hàng kho</button>
+                <button type="button" class="filter-pill" data-fin-subtab="payrolls" id="finSubtabPayrollBtn">Lương nhân viên</button>
+                <button type="button" class="filter-pill" data-fin-subtab="audit">Nhật ký tài chính</button>
+              </div>
+              <button type="button" class="btn-admin primary" id="finAddPayrollBtn" style="display: none; padding: 6px 12px; font-size: 12.5px;">+ Tạo bảng lương</button>
+            </div>
+
+            <div class="card-body">
+              <!-- Bộ lọc chi tiết sổ thu chi -->
+              <div id="finTxFiltersBar" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; align-items: center;">
+                <input type="text" id="finTxSearchInput" class="time-filter-select" placeholder="🔍 Tìm danh mục, ghi chú, mã..." style="min-width: 200px; flex: 1 1 180px;">
+                <select id="finFilterType" class="time-filter-select">
+                  <option value="all">Tất cả loại thu/chi</option>
+                  <option value="EXPENSE_OPERATING">Chi phí vận hành</option>
+                  <option value="EXPENSE_PURCHASE">Tiền nhập hàng</option>
+                  <option value="EXPENSE_PAYROLL">Chi lương nhân viên</option>
+                  <option value="INCOME_OTHER">Thu khác</option>
+                  <option value="REFUND_MANUAL">Hoàn tiền thủ công</option>
+                </select>
+                <select id="finFilterReconciled" class="time-filter-select">
+                  <option value="all">Tất cả trạng thái đối soát</option>
+                  <option value="true">Đã đối soát</option>
+                  <option value="false">Chưa đối soát</option>
+                </select>
+                <select id="finFilterMethod" class="time-filter-select">
+                  <option value="all">Tất cả phương thức</option>
+                  <option value="Tiền mặt">Tiền mặt</option>
+                  <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
+                  <option value="Ví điện tử">Ví điện tử</option>
+                </select>
+                <select id="finFilterCreator" class="time-filter-select">
+                  <option value="all">Tất cả nhân viên tạo</option>
+                </select>
+              </div>
+
+              <!-- Bộ lọc chi tiết nhật ký tài chính -->
+              <div id="finAuditFiltersBar" style="display: none; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; align-items: center;">
+                <input type="text" id="finAuditSearchInput" class="time-filter-select" placeholder="🔍 Tìm nội dung nhật ký, người thực hiện..." style="min-width: 240px; flex: 1 1 200px;">
+                <select id="finAuditTypeFilter" class="time-filter-select">
+                  <option value="all">Tất cả đối tượng (Transaction, Purchase, Payroll...)</option>
+                  <option value="TRANSACTION">Giao dịch thu/chi</option>
+                  <option value="PURCHASE">Phiếu nhập kho</option>
+                  <option value="PAYROLL">Bảng lương</option>
+                  <option value="INVENTORY">Tồn kho</option>
+                </select>
+                <select id="finAuditActionFilter" class="time-filter-select">
+                  <option value="all">Tất cả hành động</option>
+                  <option value="CREATE">Tạo mới (CREATE)</option>
+                  <option value="UPDATE">Cập nhật (UPDATE)</option>
+                  <option value="RECONCILE">Đối soát (RECONCILE)</option>
+                  <option value="RECEIVE">Nhận hàng (RECEIVE)</option>
+                  <option value="PAY">Thanh toán (PAY)</option>
+                  <option value="CANCEL">Hủy (CANCEL)</option>
+                  <option value="DELETE">Xóa (DELETE)</option>
+                </select>
+              </div>
+
+              <div id="finSubContent" class="admin-table-wrap">
+                <!-- Bảng render động bởi js/admin.js -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+          <!-- Modal Ghi nhận / Sửa khoản thu chi -->
+          <div class="admin-modal-backdrop" id="finTxModalBackdrop">
+            <div class="admin-modal-card" style="max-width: 540px; width: 95%;">
+              <div class="admin-modal-header">
+                <h3 id="finTxModalTitle">Ghi nhận khoản thu / chi</h3>
+                <button class="admin-modal-close" id="finTxModalCloseBtn" type="button">&times;</button>
+              </div>
+              <form id="finTxForm">
+                <input type="hidden" id="finTxEditId">
+                <div class="admin-modal-body" style="display: grid; gap: 12px;">
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Loại giao dịch *
+                    <select id="finTxTypeInput" class="time-filter-select" required>
+                      <option value="EXPENSE_OPERATING">Chi phí vận hành</option>
+                      <option value="INCOME_OTHER">Khoản thu khác</option>
+                      <option value="REFUND_MANUAL">Hoàn tiền thủ công</option>
+                      <option value="EXPENSE_PURCHASE">Tiền nhập hàng NCC</option>
+                      <option value="EXPENSE_PAYROLL">Chi lương nhân viên</option>
+                    </select>
+                  </label>
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Danh mục / Khoản mục *
+                    <input id="finTxCategoryInput" class="time-filter-select" placeholder="Ví dụ: Tiền điện, phí vận chuyển, mặt bằng..." required>
+                  </label>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Ngày ghi nhận *
+                      <input type="date" id="finTxDateInput" class="time-filter-select" required>
+                    </label>
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Số tiền (VNĐ) *
+                      <input type="number" id="finTxAmountInput" class="time-filter-select" min="1000" step="1000" required>
+                    </label>
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Phương thức thanh toán
+                      <select id="finTxMethodInput" class="time-filter-select">
+                        <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
+                        <option value="Tiền mặt">Tiền mặt</option>
+                        <option value="Ví điện tử">Ví điện tử</option>
+                        <option value="Khác">Khác</option>
+                      </select>
+                    </label>
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Mã liên kết tùy chọn
+                      <input id="finTxLinkedRefInput" class="time-filter-select" placeholder="Mã #ORD-..., #PO-... hoặc #PAY-...">
+                    </label>
+                  </div>
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Link ảnh chứng từ / Hóa đơn đỏ
+                    <input id="finTxAttachmentInput" class="time-filter-select" placeholder="https://... hoặc số chứng từ, hóa đơn VAT">
+                  </label>
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Ghi chú / Diễn giải
+                    <textarea id="finTxNoteInput" class="time-filter-select" rows="2" placeholder="Diễn giải chi tiết lý do chi/thu, nội dung giao dịch..."></textarea>
+                  </label>
+                </div>
+                <div class="admin-modal-footer">
+                  <button class="btn-admin secondary" id="finTxCancelBtn" type="button">Hủy</button>
+                  <button class="btn-admin primary" type="submit">Xác nhận lưu</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- ==================== MODAL XEM CHI TIẾT GIAO DỊCH THU/CHI ==================== -->
+          <div class="admin-modal-backdrop" id="finTxDetailModalBackdrop">
+            <div class="admin-modal-card" style="max-width: 600px; width: 95%;">
+              <div class="admin-modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <h3 id="finTxDetailModalTitle" style="margin: 0;">Chi tiết giao dịch #FIN-...</h3>
+                  <span id="finTxDetailTypeBadge"></span>
+                </div>
+                <button class="admin-modal-close" id="finTxDetailModalCloseBtn" type="button">&times;</button>
+              </div>
+              <div class="admin-modal-body" id="finTxDetailModalBody" style="display: flex; flex-direction: column; gap: 14px;">
+                <!-- Populated dynamically -->
+              </div>
+              <div class="admin-modal-footer" id="finTxDetailModalFooter" style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                <div id="finTxDetailActionBtns" style="display: flex; gap: 8px;">
+                  <!-- Dynamic reconcile / edit button -->
+                </div>
+                <button class="btn-admin secondary" id="finTxDetailDismissBtn" type="button">Đóng</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== MODAL LỰA CHỌN THAO TÁC KHO ==================== -->
+          <div class="admin-modal-backdrop" id="invActionSelectModalBackdrop">
+            <div class="admin-modal-card" style="max-width: 500px; width: 95%;">
+              <div class="admin-modal-header">
+                <h3>Lựa chọn thao tác kho</h3>
+                <button class="admin-modal-close" id="invActionSelectCloseBtn" type="button">&times;</button>
+              </div>
+              <div class="admin-modal-body" style="display: grid; gap: 14px;">
+                <div style="font-size: 13.5px; color: #475569;">
+                  Chọn thao tác kho cho sản phẩm: <strong id="invActionProductName" style="color:#0f172a;"></strong>
+                </div>
+
+                <div style="display: grid; gap: 10px;">
+                  <button type="button" id="invActionChoosePoBtn" style="display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #f8fafc; cursor: pointer; text-align: left; transition: all 0.2s;" title="Dùng khi cửa hàng nhận hàng mua mới. Nhập số lượng, giá nhập và tình trạng thanh toán.">
+                    <div style="background: #e0f2fe; color: #0284c7; width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                      <i data-lucide="shopping-bag" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div>
+                      <div style="font-weight: 700; font-size: 14px; color: #0f172a; margin-bottom: 3px;">1. Nhập hàng từ nhà cung cấp</div>
+                      <div style="font-size: 12px; color: #64748b; line-height: 1.4;">Dùng khi cửa hàng nhận hàng mua mới. Nhập số lượng, giá nhập và tình trạng thanh toán.</div>
+                    </div>
+                  </button>
+
+                  <button type="button" id="invActionChooseAdjustBtn" style="display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #f8fafc; cursor: pointer; text-align: left; transition: all 0.2s;" title="Dùng khi số lượng thực tế lệch với hệ thống, hoặc khi ghi nhận hàng hỏng/mất. Vui lòng nhập lý do.">
+                    <div style="background: #fef3c7; color: #b45309; width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                      <i data-lucide="sliders" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div>
+                      <div style="font-weight: 700; font-size: 14px; color: #0f172a; margin-bottom: 3px;">2. Điều chỉnh số lượng</div>
+                      <div style="font-size: 12px; color: #64748b; line-height: 1.4;">Dùng khi số lượng thực tế lệch với hệ thống, hoặc khi ghi nhận hàng hỏng/mất. Vui lòng nhập lý do. (Thao tác này không tạo khoản chi mua hàng vào báo cáo tài chính).</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+              <div class="admin-modal-footer">
+                <button class="btn-admin secondary" id="invActionSelectCancelBtn" type="button">Đóng</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== MODAL ĐIỀU CHỈNH SỐ LƯỢNG TỒN KHO ==================== -->
+          <div class="admin-modal-backdrop" id="invAdjustModalBackdrop">
+            <div class="admin-modal-card" style="max-width: 540px; width: 95%;">
+              <div class="admin-modal-header">
+                <h3>Điều chỉnh số lượng tồn kho (Kiểm kê)</h3>
+                <button class="admin-modal-close" id="invAdjustCloseBtn" type="button">&times;</button>
+              </div>
+              <form id="invAdjustForm">
+                <div class="admin-modal-body" style="display: grid; gap: 12px;">
+                  <div style="background: #f1f5f9; border-radius: 6px; padding: 10px 12px; font-size: 12.5px; color: #475569;">
+                    <i data-lucide="info" style="width: 14px; height: 14px; display: inline-block; vertical-align: -2px; color: #0284c7;"></i>
+                    Dùng khi số lượng thực tế lệch với hệ thống, hoặc khi ghi nhận hàng hỏng/mất. Vui lòng nhập lý do. (Hệ thống sẽ ghi nhận vào <strong>Sổ biến động kho</strong> và <strong>không sinh chi phí mua hàng</strong>).
+                  </div>
+
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Sản phẩm điều chỉnh *
+                    <select id="invAdjProductSelect" class="time-filter-select" required></select>
+                  </label>
+
+                  <label id="invAdjVariantWrap" style="display: none; gap: 4px; font-size: 13px; font-weight: 600;">Phiên bản / Màu sắc
+                    <select id="invAdjVariantSelect" class="time-filter-select"></select>
+                  </label>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8fafc; padding: 10px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <div>
+                      <span style="font-size: 12px; color: #64748b;">Tồn kho hiện tại:</span>
+                      <div id="invAdjCurrentStockVal" style="font-size: 18px; font-weight: 800; color: #0f172a;">0 chiếc</div>
+                    </div>
+                    <div>
+                      <span style="font-size: 12px; color: #64748b;">Chênh lệch dự kiến:</span>
+                      <div id="invAdjDiffVal" style="font-size: 18px; font-weight: 800; color: #64748b;">0 chiếc</div>
+                    </div>
+                  </div>
+
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Số lượng tồn thực tế sau điều chỉnh *
+                    <input type="number" id="invAdjNewStockInput" class="time-filter-select" min="0" step="1" required placeholder="Nhập số tồn thực tế...">
+                  </label>
+
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Lý do điều chỉnh kho *
+                    <select id="invAdjReasonSelect" class="time-filter-select" required>
+                      <option value="Lệch kiểm kê định kỳ">Lệch kiểm kê định kỳ (thừa/thiếu thực tế)</option>
+                      <option value="Hàng tặng / Khuyến mãi từ đối tác">Hàng tặng / Khuyến mãi từ đối tác</option>
+                      <option value="Hàng hỏng / Hết hạn / Lỗi sản xuất">Hàng hỏng / Hết hạn / Lỗi sản xuất</option>
+                      <option value="Khác">Lý do khác (bắt buộc nhập ghi chú)</option>
+                    </select>
+                  </label>
+
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Ghi chú chi tiết / Biên bản kiểm kê
+                    <textarea id="invAdjNoteInput" class="time-filter-select" rows="2" placeholder="Ghi chú số biên bản kiểm kê, nguyên nhân..."></textarea>
+                  </label>
+                </div>
+                <div class="admin-modal-footer">
+                  <button class="btn-admin secondary" id="invAdjustCancelBtn" type="button">Hủy</button>
+                  <button class="btn-admin primary" id="invAdjustSubmitBtn" type="submit">Xác nhận điều chỉnh số lượng</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- ==================== MODAL TẠO PHIẾU NHẬP HÀNG TỪ NCC (MULTI-ITEM) ==================== -->
+          <div class="admin-modal-backdrop" id="finPurchaseModalBackdrop">
+            <div class="admin-modal-card po-modal-card" id="finPurchaseModalCard">
+              <div class="admin-modal-header">
+                <h3>Nhập hàng từ nhà cung cấp (Tạo phiếu nhập)</h3>
+                <button class="admin-modal-close" id="finPurchaseModalCloseBtn" type="button" aria-label="Đóng">&times;</button>
+              </div>
+              <form id="finPurchaseForm" class="po-form">
+                <div class="admin-modal-body po-modal-body">
+                  <div style="background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 6px; padding: 10px 12px; font-size: 12.5px; color: #0369a1; margin-bottom: 12px;">
+                    <i data-lucide="info" style="width: 14px; height: 14px; display: inline-block; vertical-align: -2px;"></i>
+                    Dùng khi cửa hàng nhận hàng mua mới. Nhập số lượng, giá nhập và tình trạng thanh toán.
+                  </div>
+                  <!-- Thông tin chung: 3 cột desktop -> 2 cột tablet -> 1 cột mobile -->
+                  <div class="po-grid-row-3">
+                    <label class="po-field-group">
+                      <span class="po-field-label">Nhà cung cấp <span style="color:#dc2626;">*</span></span>
+                      <input id="finPoSupplierInput" class="time-filter-select po-input" placeholder="Tên nhà cung cấp / xưởng sản xuất..." required>
+                    </label>
+
+                    <label class="po-field-group">
+                      <span class="po-field-label">Ngày nhập hàng <span style="color:#dc2626;">*</span></span>
+                      <input type="date" id="finPoDateInput" class="time-filter-select po-input" required>
+                    </label>
+
+                    <label class="po-field-group">
+                      <span class="po-field-label">Trạng thái nhận hàng <span style="color:#dc2626;">*</span></span>
+                      <select id="finPoReceivedStatusInput" class="time-filter-select po-select">
+                        <option value="RECEIVED">Đã nhận hàng (cập nhật tồn kho ngay &amp; tính lại giá nhập bình quân)</option>
+                        <option value="DRAFT">Lưu nháp (chưa nhận hàng, không tăng tồn)</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <!-- Danh sách mặt hàng nhập (Multi-item): Table trên desktop/tablet -> Cards trên mobile -->
+                  <div class="po-items-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                      <label style="font-size: 13.5px; font-weight: 700; color: #0f172a;">Danh sách sản phẩm / biến thể nhập kho <span style="color:#dc2626;">*</span></label>
+                      <button type="button" id="finPoAddItemBtn" class="btn-admin secondary" style="font-size: 12px; padding: 5px 12px; display: inline-flex; align-items: center; gap: 4px;">
+                        <i data-lucide="plus" style="width: 13px; height: 13px;"></i> Thêm sản phẩm
+                      </button>
+                    </div>
+
+                    <div class="po-items-table-wrap">
+                      <table class="admin-data-table po-items-table" id="finPoItemsTable">
+                        <thead>
+                          <tr>
+                            <th style="min-width: 170px;">Sản phẩm</th>
+                            <th style="min-width: 130px;">Biến thể (nếu có)</th>
+                            <th style="width: 75px; text-align: center;">SL</th>
+                            <th style="width: 120px; text-align: right;">Đơn giá nhập</th>
+                            <th style="width: 110px; text-align: right;">Chiết khấu dòng</th>
+                            <th style="width: 120px; text-align: right;">Thành tiền</th>
+                            <th style="width: 44px; text-align: center;"></th>
+                          </tr>
+                        </thead>
+                        <tbody id="finPoItemsTableBody">
+                          <!-- Dynamic Rows / Cards -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- Chiết khấu, Phí VC & Tổng tiền -->
+                  <div class="po-summary-box">
+                    <label class="po-field-group">
+                      <span class="po-field-label">Chiết khấu toàn phiếu (VNĐ)</span>
+                      <input type="number" id="finPoDiscountInput" class="time-filter-select po-input" min="0" step="1000" value="0">
+                    </label>
+
+                    <label class="po-field-group">
+                      <span class="po-field-label">Chi phí phát sinh / Vận chuyển (VNĐ)</span>
+                      <input type="number" id="finPoShippingInput" class="time-filter-select po-input" min="0" step="1000" value="0">
+                    </label>
+
+                    <div class="po-total-kpi-wrap">
+                      <span style="font-size: 12px; color: #64748b; font-weight: 600;">Tổng tiền thanh toán phiếu:</span>
+                      <strong id="finPoGrandTotalVal" class="po-total-kpi-val">0 ₫</strong>
+                    </div>
+                  </div>
+
+                  <!-- Thanh toán & Công nợ -->
+                  <div class="po-payment-box">
+                    <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Thông tin thanh toán cho nhà cung cấp:</div>
+                    <div class="po-payment-grid">
+                      <label class="po-field-group">
+                        <span class="po-field-label">Trạng thái thanh toán</span>
+                        <select id="finPoPaymentStatusInput" class="time-filter-select po-select">
+                          <option value="UNPAID">Chưa thanh toán (Công nợ toàn bộ)</option>
+                          <option value="PARTIALLY_PAID">Thanh toán một phần (Trả trước)</option>
+                          <option value="PAID">Đã thanh toán đủ (Trừ dòng tiền ngay)</option>
+                        </select>
+                      </label>
+
+                      <label id="finPoPaidAmountWrap" class="po-field-group" style="display: none;">
+                        <span class="po-field-label">Số tiền đã trả ban đầu (VNĐ)</span>
+                        <input type="number" id="finPoPaidAmountInput" class="time-filter-select po-input" min="0" step="1000" value="0">
+                      </label>
+
+                      <label class="po-field-group">
+                        <span class="po-field-label">Hình thức chi tiền</span>
+                        <select id="finPoPaymentMethodInput" class="time-filter-select po-select">
+                          <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
+                          <option value="Tiền mặt">Tiền mặt</option>
+                          <option value="Khác">Khác</option>
+                        </select>
+                      </label>
+
+                      <div class="po-debt-kpi-wrap">
+                        <span style="font-size: 12px; color: #64748b; font-weight: 600;">Công nợ còn nợ NCC:</span>
+                        <strong id="finPoDebtCalculatedVal" class="po-debt-kpi-val">0 ₫</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Chứng từ & Ghi chú -->
+                  <div class="po-grid-row-2">
+                    <label class="po-field-group">
+                      <span class="po-field-label">Link ảnh / Tệp chứng từ hóa đơn</span>
+                      <input id="finPoAttachmentInput" class="time-filter-select po-input" placeholder="https://... hoặc mã hóa đơn chứng từ">
+                    </label>
+
+                    <label class="po-field-group">
+                      <span class="po-field-label">Ghi chú phiếu nhập</span>
+                      <input id="finPoNoteInput" class="time-filter-select po-input" placeholder="Ghi chú thêm về lô hàng, số hóa đơn đỏ...">
+                    </label>
+                  </div>
+                </div>
+                <div class="admin-modal-footer po-modal-footer">
+                  <button class="btn-admin secondary" id="finPurchaseCancelBtn" type="button">Hủy</button>
+                  <button class="btn-admin primary" id="finPurchaseSubmitBtn" type="submit">Lưu phiếu nhập kho</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- ==================== MODAL XEM CHI TIẾT PHIẾU NHẬP KHO ==================== -->
+          <div class="admin-modal-backdrop" id="purchaseDetailModalBackdrop">
+            <div class="admin-modal-card" style="max-width: 800px; width: 95%;">
+              <div class="admin-modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <h3 id="poDetailTitle" style="margin: 0;">Chi tiết phiếu nhập kho #PO-000</h3>
+                  <span id="poDetailReceivedBadge"></span>
+                  <span id="poDetailPaymentBadge"></span>
+                </div>
+                <button class="admin-modal-close" id="poDetailCloseBtn" type="button">&times;</button>
+              </div>
+              <div class="admin-modal-body" id="poDetailBody">
+                <!-- Populated dynamically -->
+              </div>
+              <div class="admin-modal-footer" id="poDetailFooter" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div id="poDetailActionBtns" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <!-- Dynamic action buttons (Receive, Pay debt, Cancel) -->
+                </div>
+                <button class="btn-admin secondary" id="poDetailDismissBtn" type="button">Đóng</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== MODAL THANH TOÁN CÔNG NỢ NCC ==================== -->
+          <div class="admin-modal-backdrop" id="purchasePayDebtModalBackdrop">
+            <div class="admin-modal-card" style="max-width: 480px; width: 95%;">
+              <div class="admin-modal-header">
+                <h3>Ghi nhận thanh toán công nợ NCC</h3>
+                <button class="admin-modal-close" id="poPayDebtCloseBtn" type="button">&times;</button>
+              </div>
+              <form id="purchasePayDebtForm">
+                <input type="hidden" id="poPayDebtPoId">
+                <div class="admin-modal-body" style="display: grid; gap: 12px;">
+                  <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 10px 12px; font-size: 13px; color: #92400e;">
+                    Phiếu nhập: <strong id="poPayDebtCodeLabel"></strong><br>
+                    Công nợ hiện tại: <strong id="poPayDebtMaxLabel" style="color: #b91c1c;"></strong>
+                  </div>
+
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Số tiền thanh toán đợt này (VNĐ) *
+                    <input type="number" id="poPayDebtAmountInput" class="time-filter-select" min="1000" step="1000" required>
+                  </label>
+
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Hình thức chi tiền *
+                    <select id="poPayDebtMethodSelect" class="time-filter-select">
+                      <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
+                      <option value="Tiền mặt">Tiền mặt</option>
+                      <option value="Khác">Khác</option>
+                    </select>
+                  </label>
+
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Ghi chú thanh toán
+                    <input id="poPayDebtNoteInput" class="time-filter-select" placeholder="Số ủy nhiệm chi, ghi chú...">
+                  </label>
+                </div>
+                <div class="admin-modal-footer">
+                  <button class="btn-admin secondary" id="poPayDebtCancelBtn" type="button">Hủy</button>
+                  <button class="btn-admin primary" id="poPayDebtSubmitBtn" type="submit">Xác nhận chi tiền</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- ==================== MODAL HỦY PHIẾU NHẬP KHO ==================== -->
+          <div class="admin-modal-backdrop" id="purchaseCancelModalBackdrop">
+            <div class="admin-modal-card" style="max-width: 500px; width: 95%;">
+              <div class="admin-modal-header">
+                <h3 style="color: #dc2626;">Hủy phiếu nhập kho</h3>
+                <button class="admin-modal-close" id="poCancelCloseBtn" type="button">&times;</button>
+              </div>
+              <form id="purchaseCancelForm">
+                <input type="hidden" id="poCancelTargetId">
+                <div class="admin-modal-body" style="display: grid; gap: 12px;">
+                  <div id="poCancelWarningBox" style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 10px 12px; font-size: 13px; color: #991b1b; line-height: 1.5;">
+                    <!-- Warning text populated dynamically -->
+                  </div>
+
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Lý do hủy phiếu *
+                    <select id="poCancelReasonSelect" class="time-filter-select" required>
+                      <option value="Nhập sai thông tin sản phẩm / số lượng">Nhập sai thông tin sản phẩm / số lượng</option>
+                      <option value="Nhà cung cấp hủy đơn giao / trả hàng lại NCC">Nhà cung cấp hủy đơn giao / trả hàng lại NCC</option>
+                      <option value="Trùng lặp phiếu nhập">Trùng lặp phiếu nhập</option>
+                      <option value="Khác">Lý do khác (bắt buộc ghi chú)</option>
+                    </select>
+                  </label>
+
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Ghi chú chi tiết lý do hủy *
+                    <textarea id="poCancelNoteInput" class="time-filter-select" rows="2" placeholder="Ghi chú nguyên nhân hủy phiếu..." required></textarea>
+                  </label>
+                </div>
+                <div class="admin-modal-footer">
+                  <button class="btn-admin secondary" id="poCancelDismissBtn" type="button">Đóng</button>
+                  <button class="btn-admin primary" id="poCancelConfirmBtn" type="submit" style="background: #dc2626; border-color: #dc2626;">Xác nhận hủy phiếu</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Modal Tạo bảng lương nhân viên -->
+          <div class="admin-modal-backdrop" id="finPayrollModalBackdrop">
+            <div class="admin-modal-card" style="max-width: 520px; width: 95%;">
+              <div class="admin-modal-header">
+                <h3>Tạo bảng lương nhân viên</h3>
+                <button class="admin-modal-close" id="finPayrollModalCloseBtn" type="button">&times;</button>
+              </div>
+              <form id="finPayrollForm">
+                <div class="admin-modal-body" style="display: grid; gap: 12px;">
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Nhân viên *
+                      <select id="finPayEmployeeSelect" class="time-filter-select" required></select>
+                    </label>
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Kỳ lương (Tháng) *
+                      <input type="month" id="finPayPeriodInput" class="time-filter-select" required>
+                    </label>
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Lương cơ bản *
+                      <input type="number" id="finPayBaseInput" class="time-filter-select" min="0" step="10000" required>
+                    </label>
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Thưởng
+                      <input type="number" id="finPayBonusInput" class="time-filter-select" min="0" step="10000" value="0">
+                    </label>
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Khấu trừ
+                      <input type="number" id="finPayDeductInput" class="time-filter-select" min="0" step="10000" value="0">
+                    </label>
+                  </div>
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Ghi chú
+                    <input id="finPayNoteInput" class="time-filter-select" placeholder="Ghi chú kỳ lương...">
+                  </label>
+                </div>
+                <div class="admin-modal-footer">
+                  <button class="btn-admin secondary" id="finPayrollCancelBtn" type="button">Hủy</button>
+                  <button class="btn-admin primary" type="submit">Xác nhận tạo bảng lương</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- ==================== MODAL NHẬP / CHỈNH SỬA MỨC LƯƠNG NHÂN VIÊN ==================== -->
+          <div class="admin-modal-backdrop" id="finPayrollEditModalBackdrop">
+            <div class="admin-modal-card" style="max-width: 520px; width: 95%;">
+              <div class="admin-modal-header">
+                <h3 id="finPayrollEditModalTitle">Nhập mức lương nhân viên</h3>
+                <button class="admin-modal-close" id="finPayrollEditModalCloseBtn" type="button">&times;</button>
+              </div>
+              <form id="finPayrollEditForm">
+                <input type="hidden" id="finPayrollEditId">
+                <div class="admin-modal-body" style="display: grid; gap: 12px;">
+                  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+                    <div><span style="color: #64748b;">Nhân viên:</span> <strong id="finPayrollEditEmpName" style="color: #0f172a;"></strong></div>
+                    <div><span style="color: #64748b;">Kỳ lương:</span> <strong id="finPayrollEditPeriod" style="color: #0f172a;"></strong></div>
+                    <div><span style="color: #64748b;">Ngày đến hạn:</span> <strong id="finPayrollEditDueDate" style="color: #b45309;"></strong></div>
+                    <div><span style="color: #64748b;">Trạng thái:</span> <span id="finPayrollEditStatusBadge"></span></div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Lương cơ bản (VNĐ) *
+                      <input type="number" id="finPayrollEditBaseSalary" class="time-filter-select" min="0" step="50000" required placeholder="0 ₫">
+                    </label>
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Thưởng / Phụ cấp
+                      <input type="number" id="finPayrollEditBonus" class="time-filter-select" min="0" step="50000" value="0">
+                    </label>
+                    <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Khấu trừ (VNĐ)
+                      <input type="number" id="finPayrollEditDeduction" class="time-filter-select" min="0" step="50000" value="0">
+                    </label>
+                  </div>
+
+                  <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 13px; font-weight: 600; color: #166534;">Thực lĩnh ước tính:</span>
+                    <strong id="finPayrollEditNetEstimate" style="font-size: 16px; color: #15803d;">0 ₫</strong>
+                  </div>
+
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #334155; cursor: pointer;">
+                    <input type="checkbox" id="finPayrollEditSaveProfile" checked style="width: 16px; height: 16px;">
+                    Lưu mức lương cơ bản này vào hồ sơ nhân viên để tự động áp dụng các kỳ sau
+                  </label>
+
+                  <label style="display: grid; gap: 4px; font-size: 13px; font-weight: 600;">Ghi chú
+                    <input id="finPayrollEditNote" class="time-filter-select" placeholder="Ghi chú điều chỉnh lương, thưởng/phạt...">
+                  </label>
+                </div>
+                <div class="admin-modal-footer">
+                  <button class="btn-admin secondary" id="finPayrollEditCancelBtn" type="button">Hủy</button>
+                  <button class="btn-admin primary" type="submit">Lưu thông tin lương</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- ==================== MODAL CHI TIẾT CẤU THÀNH CHỈ SỐ KPI (DRILL-DOWN) ==================== -->
+          <div class="admin-modal-backdrop" id="finKpiDrilldownModalBackdrop">
+            <div class="admin-modal-card" style="max-width: 880px; width: 95%;">
+              <div class="admin-modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <h3 id="finKpiDrilldownTitle" style="margin: 0;">Danh sách chi tiết chỉ số</h3>
+                  <p id="finKpiDrilldownDesc" style="margin: 3px 0 0; font-size: 12.5px; color: #64748b;"></p>
+                </div>
+                <button class="admin-modal-close" id="finKpiDrilldownCloseBtn" type="button">&times;</button>
+              </div>
+              <div class="admin-modal-body" id="finKpiDrilldownBody" style="max-height: 60vh; overflow-y: auto;">
+                <!-- Populated dynamically -->
+              </div>
+              <div class="admin-modal-footer">
+                <button class="btn-admin secondary" id="finKpiDrilldownDismissBtn" type="button">Đóng</button>
+              </div>
+            </div>
+          </div>
+
+        <!-- ==================== TAB 11: CÀI ĐẶT (SETTINGS) ==================== -->
+        <section class="admin-tab-pane" id="pane-settings">
+          <div class="page-header-bar">
+            <div>
+              <h1 class="page-header-title">Cài đặt hệ thống EcoDesk</h1>
+              <p class="page-header-sub">Cấu hình thông tin cửa hàng, thanh toán và bảo mật</p>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-body" style="text-align: center; padding: 60px 20px;">
+              <div style="display: flex; justify-content: center; margin-bottom: 16px; color: #64748b;"><i data-lucide="settings" style="width:48px; height:48px;"></i></div>
+              <h3 style="margin: 0 0 8px; font-size: 18px; color: #1e293b;">Cài đặt chung</h3>
+              <p style="margin: 0 auto; max-width: 500px; color: #64748b; font-size: 14px;">
+                Bao gồm tích hợp cổng thanh toán trực tuyến, chính sách vận chuyển nội thất cồng kềnh và cài đặt thông báo SMS/Email.
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== ORDER DETAIL MODAL ==================== -->
+  <div class="admin-modal-backdrop" id="orderModalBackdrop">
+    <div class="admin-modal-card" style="max-width: 680px; width: 95%;">
+      <div class="admin-modal-header">
+        <h3 id="modalOrderTitle">Chi tiết đơn hàng #ED-000</h3>
+        <button class="admin-modal-close" id="modalOrderCloseBtn" type="button">&times;</button>
+      </div>
+      <div class="admin-modal-body" id="modalOrderBody">
+        <!-- Dynamically filled -->
+      </div>
+      <div class="admin-modal-footer">
+        <button class="btn-admin primary" id="modalOrderPdfBtn" type="button" style="background: #e11d48; border-color: #e11d48;"><span><i data-lucide="file-text" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> Xuất hóa đơn / Phiếu giao PDF</button>
+        <button class="btn-admin secondary" id="modalOrderPrintBtn" type="button"><span><i data-lucide="printer" style="width:15px; height:15px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i></span> In chi tiết đơn</button>
+        <button class="btn-admin secondary" id="modalOrderCancelBtn" type="button">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CATEGORY MODAL (THÊM / SỬA DANH MỤC) ==================== -->
+  <div class="admin-modal-backdrop" id="categoryModalBackdrop">
+    <div class="admin-modal-card" style="max-width: 480px; width: 95%;">
+      <div class="admin-modal-header">
+        <h3 id="categoryModalTitle">Thêm danh mục mới</h3>
+        <button class="admin-modal-close" id="categoryModalCloseBtn" type="button">&times;</button>
+      </div>
+      <form id="categoryModalForm">
+        <div class="admin-modal-body">
+          <input type="hidden" id="categoryMode" value="create">
+          <div style="display: grid; gap: 14px;">
+            <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">
+              Mã danh mục (ID)
+              <input class="time-filter-select" style="width: 100%;" id="categoryInputId" required placeholder="ví dụ: ban-nang-ha">
+              <small style="color: #64748b; font-weight: normal;">Chữ thường, viết liền hoặc dấu gạch ngang (không dấu).</small>
+            </label>
+            <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">
+              Tên danh mục hiển thị
+              <input class="time-filter-select" style="width: 100%;" id="categoryInputName" required placeholder="ví dụ: Bàn nâng hạ thông minh">
+            </label>
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button class="btn-admin secondary" id="categoryModalCancelBtn" type="button">Hủy</button>
+          <button class="btn-admin primary" id="categoryModalSaveBtn" type="submit">Lưu danh mục</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== EXCEL IMPORT PREVIEW MODAL ==================== -->
+  <div class="admin-modal-backdrop" id="excelPreviewModalBackdrop">
+    <div class="admin-modal-card" style="max-width: 900px; width: 95%;">
+      <div class="admin-modal-header">
+        <h3 id="excelPreviewTitle">Xem trước dữ liệu nhập từ Excel</h3>
+        <button class="admin-modal-close" id="excelPreviewCloseBtn" type="button">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <div id="excelPreviewSummary" style="margin-bottom: 14px; padding: 12px 16px; border-radius: 8px; font-size: 13.5px; background: #f8fafc; border: 1px solid #e2e8f0;">
+          <!-- Dynamically filled: Valid rows vs error rows -->
+        </div>
+        <div class="admin-table-wrap" style="max-height: 360px; overflow-y: auto;">
+          <table class="admin-data-table" id="excelPreviewTable">
+            <thead id="excelPreviewThead"></thead>
+            <tbody id="excelPreviewTbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="btn-admin secondary" id="excelPreviewCancelBtn" type="button">Hủy bỏ</button>
+        <button class="btn-admin primary" id="excelPreviewConfirmBtn" type="button">Xác nhận nhập dữ liệu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== REVIEW / COMMENT DELETE CONFIRM MODAL ==================== -->
+  <div class="admin-modal-backdrop" id="reviewDeleteConfirmBackdrop">
+    <div class="admin-modal-card" style="max-width: 480px; width: 95%;">
+      <div class="admin-modal-header">
+        <h3 id="reviewDeleteConfirmTitle">Xác nhận xóa nội dung</h3>
+        <button class="admin-modal-close" id="reviewDeleteConfirmCloseBtn" type="button">&times;</button>
+      </div>
+      <form id="reviewDeleteConfirmForm">
+        <div class="admin-modal-body">
+          <p id="reviewDeleteConfirmMessage" style="margin: 0 0 12px; font-size: 14px; color: #334155; line-height: 1.5;"></p>
+          <div id="reviewDeleteTargetPreview" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: #475569; margin-bottom: 12px;"></div>
+          <label id="reviewDeleteReasonWrap" style="display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: #334155;">
+            Lý do xử lý / ghi chú nhật ký (không bắt buộc)
+            <input type="text" class="time-filter-select" id="reviewDeleteReasonInput" style="width: 100%;" placeholder="Ví dụ: Vi phạm nội dung hoặc spam...">
+          </label>
+        </div>
+        <div class="admin-modal-footer">
+          <button class="btn-admin secondary" id="reviewDeleteConfirmCancelBtn" type="button">Hủy bỏ</button>
+          <button class="btn-admin danger" id="reviewDeleteConfirmSubmitBtn" type="submit">Xác nhận xóa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== ROLE CHANGE & GRANULAR PERMISSIONS MODAL ==================== -->
+  <div class="admin-modal-backdrop" id="roleModalBackdrop">
+    <div class="admin-modal-card" style="max-width: 600px; width: 95%;">
+      <div class="admin-modal-header">
+        <h3 id="roleModalTitle">Phân quyền tài khoản</h3>
+        <button class="admin-modal-close" id="roleModalCloseBtn" type="button">&times;</button>
+      </div>
+      <form id="roleModalForm">
+        <div class="admin-modal-body">
+          <input type="hidden" id="roleUserId">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; font-size: 13.5px;" id="roleUserTargetText"></div>
+          <div style="display: grid; gap: 14px;">
+            <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">
+              Vai trò tài khoản
+              <select class="time-filter-select" style="width: 100%; font-size: 14px;" id="roleSelect">
+                <option value="admin">Quản trị viên (Toàn quyền quản trị hệ thống)</option>
+                <option value="cashier">Thu ngân (Báo cáo tài chính, đối soát &amp; ghi nhận thu chi)</option>
+                <option value="staff">Nhân viên (Phân quyền chi tiết theo chức năng)</option>
+                <option value="customer">Khách hàng (Tài khoản người dùng thông thường)</option>
+              </select>
+            </label>
+            <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 600;">
+              Ghi chú phân công / thay đổi
+              <input class="time-filter-select" style="width: 100%;" id="roleNoteInput" placeholder="Ví dụ: Phân công nhân viên quản lý đơn hàng & CSKH">
+            </label>
+          </div>
+
+          <div id="staffPermissionsContainer" style="display: none; margin-top: 14px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong style="font-size: 13.5px; color: #1e293b;">Quyền hạn chi tiết cho nhân viên:</strong>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn-admin secondary" id="btnSelectAllPerms" style="padding: 2px 8px; font-size: 11px;">Chọn tất cả</button>
+                <button type="button" class="btn-admin secondary" id="btnClearAllPerms" style="padding: 2px 8px; font-size: 11px;">Bỏ chọn</button>
+              </div>
+            </div>
+            <div id="staffPermissionsList" style="max-height: 240px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #fafafa; display: flex; flex-direction: column; gap: 10px;">
+              <!-- Groups injected via JS -->
+            </div>
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button class="btn-admin secondary" id="roleModalCancelBtn" type="button">Hủy</button>
+          <button class="btn-admin primary" id="roleModalSaveBtn" type="submit">Lưu phân quyền</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== PRODUCT MODAL (THÊM & SỬA SẢN PHẨM) ==================== -->
+  <div class="admin-modal-backdrop" id="productModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="productModalTitle">
+    <div class="product-modal-card">
+      <div class="product-modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h3 id="productModalTitle" style="margin: 0; font-size: 17px; font-weight: 700; color: #0f172a;">Thêm sản phẩm</h3>
+          <span id="productModalModeBadge" style="font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; border: 1px solid #86efac; background: #dcfce7; color: #15803d;">Thêm mới</span>
+        </div>
+        <button class="admin-modal-close" id="productModalCloseBtn" type="button" aria-label="Đóng" style="font-size: 22px; line-height: 1; border: none; background: transparent; cursor: pointer; color: #64748b;">&times;</button>
+      </div>
+      <form id="productModalForm" novalidate style="display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; margin: 0;">
+        <div class="product-modal-body" id="productModalBody">
+          <!-- Biểu mẫu do js/admin-product-modal.js render -->
+        </div>
+        <div class="product-modal-footer">
+          <button class="btn-admin secondary" id="productModalCancelBtn" type="button">Hủy</button>
+          <button class="btn-admin secondary" id="productModalSaveAndPoBtn" type="button" style="background: #0284c7; color: #ffffff; border-color: #0284c7; display: inline-flex; align-items: center; gap: 6px;">
+            <span><i data-lucide="plus-circle" style="width:14px; height:14px;"></i></span>
+            <span>Lưu &amp; tạo phiếu nhập đầu tiên</span>
+          </button>
+          <button class="btn-admin primary" id="productModalSaveBtn" type="submit" style="display: inline-flex; align-items: center; gap: 6px;">
+            <span><i data-lucide="check" style="width:14px; height:14px;"></i></span>
+            <span id="productModalSaveText">Lưu sản phẩm</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== DELETE PRODUCT CONFIRMATION MODAL ==================== -->
+  <div class="admin-modal-backdrop" id="deleteProductModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="deleteProductModalTitle" aria-describedby="deleteProductModalDesc">
+    <div class="admin-modal-card" style="max-width: 540px; width: 95%;">
+      <div class="admin-modal-header">
+        <h3 id="deleteProductModalTitle" style="display: flex; align-items: center; gap: 8px; color: #dc2626; margin: 0; font-size: 17px; font-weight: 700;">
+          <i data-lucide="alert-triangle" style="width: 20px; height: 20px;"></i>
+          <span>Xóa sản phẩm?</span>
+        </h3>
+        <button class="admin-modal-close" id="deleteProductModalCloseBtn" type="button" aria-label="Đóng"><i data-lucide="x" style="width: 16px; height: 16px;"></i></button>
+      </div>
+
+      <div class="admin-modal-body" style="padding: 18px 24px; display: flex; flex-direction: column; gap: 14px;">
+        <!-- Product info summary card -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px;">
+          <img id="deleteProductModalImg" src="" alt="" style="width: 54px; height: 54px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; flex-shrink: 0;">
+          <div style="flex: 1; min-width: 0;">
+            <div id="deleteProductModalName" style="font-weight: 700; color: #1e293b; font-size: 14px; line-height: 1.4; word-break: break-word;"></div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+              <span class="delete-meta-badge">Mã: <strong id="deleteProductModalCode"></strong></span>
+              <span class="delete-meta-badge">Danh mục: <strong id="deleteProductModalCategory"></strong></span>
+              <span class="delete-meta-badge">Giá: <strong id="deleteProductModalPrice"></strong></span>
+              <span class="delete-meta-badge">Kho: <strong id="deleteProductModalStock"></strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warning if product has orders or sales -->
+        <div id="deleteProductModalOrderWarning" style="display: none; padding: 12px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; font-size: 13px; color: #92400e; line-height: 1.5;">
+          <div style="font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 3px;">
+            <i data-lucide="alert-triangle" style="width: 16px; height: 16px;"></i> Lưu ý quan trọng về đơn hàng
+          </div>
+          <div id="deleteProductModalOrderWarningText">
+            Sản phẩm này đã có đơn hàng và lượt bán. Khuyên dùng <strong>“Ẩn khỏi cửa hàng”</strong> thay vì xóa vĩnh viễn để bảo toàn toàn vẹn dữ liệu báo cáo kinh doanh.
+          </div>
+        </div>
+
+        <!-- Action alternatives choice -->
+        <div class="admin-form-group">
+          <label class="admin-form-label" style="font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 2px;">
+            Lựa chọn phương án xử lý <span style="color: #dc2626;">*</span>
+          </label>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label class="delete-action-card active-safe" id="actionCardHide" style="margin: 0;">
+              <input type="radio" name="deleteActionChoice" id="actionChoiceHide" value="hide" class="delete-action-radio" checked>
+              <div style="flex: 1;">
+                <div style="font-size: 13.5px; font-weight: 600; color: #15803d; display: flex; align-items: center; gap: 6px;">
+                  <span style="display: inline-flex; align-items: center; gap: 6px;"><i data-lucide="archive" style="width: 15px; height: 15px;"></i> Ẩn khỏi cửa hàng / Ngừng kinh doanh</span>
+                  <span style="font-size: 11px; background: #dcfce7; color: #166534; padding: 1px 6px; border-radius: 4px; font-weight: 600;">Ưu tiên đề xuất</span>
+                </div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+                  Sản phẩm được gỡ khỏi website mua sắm nhưng vẫn giữ trong hệ thống để tra cứu và bảo toàn lịch sử bán hàng.
+                </div>
+              </div>
+            </label>
+
+            <label class="delete-action-card" id="actionCardOutOfStock" style="margin: 0;">
+              <input type="radio" name="deleteActionChoice" id="actionChoiceOutOfStock" value="out_of_stock" class="delete-action-radio">
+              <div style="flex: 1;">
+                <div style="font-size: 13.5px; font-weight: 600; color: #334155; display: inline-flex; align-items: center; gap: 6px;">
+                  <i data-lucide="clock" style="width: 15px; height: 15px;"></i> Đánh dấu hết hàng
+                </div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+                  Cập nhật tồn kho về 0 và chuyển trạng thái sang "Hết hàng" để tạm dừng bán mà không cần xóa.
+                </div>
+              </div>
+            </label>
+
+            <label class="delete-action-card" id="actionCardDelete" style="margin: 0;">
+              <input type="radio" name="deleteActionChoice" id="actionChoiceDelete" value="delete" class="delete-action-radio danger-radio">
+              <div style="flex: 1;">
+                <div style="font-size: 13.5px; font-weight: 600; color: #dc2626; display:flex; align-items:center; gap:6px;">
+                  <i data-lucide="trash-2" style="width:15px; height:15px;"></i> Xóa vĩnh viễn sản phẩm
+                </div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+                  Xóa hoàn toàn sản phẩm khỏi hệ thống. Chỉ nên dùng khi tạo nhầm sản phẩm hoặc sản phẩm trùng lặp.
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Mandatory reason for deletion / action -->
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="deleteProductModalReason">
+            <span>Lý do thực hiện <span style="color: #dc2626;">*</span></span>
+          </label>
+          <select class="admin-form-select" id="deleteProductModalReason" required>
+            <option value="">-- Chọn lý do --</option>
+            <option value="Ngừng kinh doanh">Ngừng kinh doanh</option>
+            <option value="Sản phẩm trùng lặp">Sản phẩm trùng lặp</option>
+            <option value="Thông tin sản phẩm không chính xác">Thông tin sản phẩm không chính xác</option>
+            <option value="Thay thế bằng sản phẩm khác">Thay thế bằng sản phẩm khác</option>
+            <option value="Khác">Khác (nhập chi tiết)</option>
+          </select>
+          <small class="admin-field-error" id="deleteProductModalReasonError"></small>
+        </div>
+
+        <!-- Custom reason textarea when "Khác" is selected -->
+        <div class="admin-form-group" id="deleteProductModalCustomReasonWrap" style="display: none;">
+          <label class="admin-form-label" for="deleteProductModalCustomReason">
+            <span>Chi tiết lý do <span style="color: #dc2626;">*</span></span>
+          </label>
+          <textarea class="admin-form-textarea" id="deleteProductModalCustomReason" rows="2" placeholder="Vui lòng nhập lý do cụ thể..." style="min-height: 65px;"></textarea>
+          <small class="admin-field-error" id="deleteProductModalCustomReasonError"></small>
+        </div>
+
+        <!-- Note about data safety -->
+        <div style="padding: 10px 12px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; font-size: 12px; color: #64748b; line-height: 1.5;">
+          ℹ️ <strong>Bảo toàn dữ liệu:</strong> Xóa sản phẩm sẽ gỡ sản phẩm khỏi danh sách quản trị và cửa hàng. Nếu sản phẩm đã từng được đặt mua, thông tin tên và giá tại thời điểm mua vẫn tiếp tục được lưu giữ nguyên vẹn trong lịch sử đơn hàng.
+        </div>
+
+        <!-- Error box if deletion fails -->
+        <div id="deleteProductModalError" style="display: none; padding: 10px 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; color: #dc2626; font-size: 13px; font-weight: 500;"></div>
+      </div>
+
+      <div class="admin-modal-footer">
+        <button class="btn-admin secondary" id="deleteProductModalCancelBtn" type="button">Hủy</button>
+        <button class="btn-admin primary" id="deleteProductModalConfirmBtn" type="button" disabled>
+          <span id="deleteProductModalConfirmText">Ẩn khỏi cửa hàng</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== POS MODALS ==================== -->
+
+  <!-- ==================== PRINTABLE ORDER SLIP ==================== -->
+  <div id="printableOrderSlip" class="printable-order-slip" style="display: none;"></div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="admin-toast" id="adminToast">
+    <span id="toastMessage">Thông báo</span>
+  </div>
+
+  <!-- SCRIPT -->
+</body>
+</html>

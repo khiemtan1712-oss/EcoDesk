@@ -1,0 +1,862 @@
+/* ==========================================================================
+   EcoDesk Customer Account Portal Stylesheet
+   ========================================================================== */
+
+:root {
+  --co-primary: #15803d;
+  --co-primary-hover: #166534;
+  --co-primary-light: #f0fdf4;
+  --co-primary-border: #bbf7d0;
+  --co-ink: #0f172a;
+  --co-ink-light: #334155;
+  --co-muted: #64748b;
+  --co-line: #e2e8f0;
+  --co-surface: #ffffff;
+  --co-bg: #f8fafc;
+  --co-radius: 14px;
+  --co-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+}
+
+.account-portal-shell {
+  background-color: var(--co-bg);
+  min-height: 85vh;
+  padding: 32px 0 80px;
+}
+
+/* Unauthenticated Picker Card */
+.auth-guest-card {
+  background: var(--co-surface);
+  border: 1px solid var(--co-line);
+  border-radius: var(--co-radius);
+  padding: 48px 32px;
+  text-align: center;
+  max-width: 540px;
+  margin: 40px auto;
+  box-shadow: var(--co-shadow);
+}
+
+.auth-guest-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--co-primary-light);
+  color: var(--co-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 18px;
+}
+
+.auth-guest-card h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--co-ink);
+  margin-bottom: 8px;
+}
+
+.auth-guest-card p {
+  color: var(--co-muted);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.auth-guest-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Hero Header Banner */
+.account-hero-card {
+  background: var(--co-surface);
+  border: 1px solid var(--co-line);
+  border-radius: var(--co-radius);
+  padding: 24px 32px;
+  margin-bottom: 28px;
+  box-shadow: var(--co-shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.account-hero-user {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.account-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #15803d, #14513e);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25);
+  flex-shrink: 0;
+}
+
+.account-hero-info h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--co-ink);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.account-hero-email {
+  font-size: 13px;
+  color: var(--co-muted);
+}
+
+.account-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.account-tier-badge.badge-dong {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
+.account-tier-badge.badge-bac {
+  background: #f8fafc;
+  color: #334155;
+  border-color: #94a3b8;
+}
+
+.account-tier-badge.badge-vang {
+  background: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+.account-tier-badge.badge-kimcuong {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.account-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Two-column Layout */
+.account-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Sidebar Navigation */
+.account-sidebar {
+  background: var(--co-surface);
+  border: 1px solid var(--co-line);
+  border-radius: var(--co-radius);
+  box-shadow: var(--co-shadow);
+  padding: 12px;
+  position: sticky;
+  top: 90px;
+}
+
+.account-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.account-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--co-ink-light);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.account-nav-btn:hover {
+  background: #f1f5f9;
+  color: var(--co-primary);
+}
+
+.account-nav-btn.active {
+  background: var(--co-primary-light);
+  color: var(--co-primary);
+  border: 1px solid var(--co-primary-border);
+}
+
+.account-nav-icon {
+  font-size: 18px;
+  width: 22px;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--co-line);
+  margin: 8px 0;
+}
+
+.account-nav-btn.logout {
+  color: #b91c1c;
+}
+
+.account-nav-btn.logout:hover {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+/* Content Area & Cards */
+.account-content {
+  min-width: 0;
+}
+
+.account-tab-panel {
+  display: none;
+}
+
+.account-tab-panel.active {
+  display: block;
+}
+
+.account-card {
+  background: var(--co-surface);
+  border: 1px solid var(--co-line);
+  border-radius: var(--co-radius);
+  box-shadow: var(--co-shadow);
+  padding: 24px 28px;
+  margin-bottom: 24px;
+}
+
+.account-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--co-line);
+}
+
+.account-card-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--co-ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.account-card-header p {
+  font-size: 13px;
+  color: var(--co-muted);
+  margin-top: 2px;
+}
+
+/* 4-Stat Grid in Overview */
+.stats-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-stat-card {
+  background: var(--co-surface);
+  border: 1px solid var(--co-line);
+  border-radius: var(--co-radius);
+  padding: 18px 20px;
+  box-shadow: var(--co-shadow);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.summary-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: var(--co-bg);
+  flex-shrink: 0;
+}
+
+.summary-stat-icon.green {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.summary-stat-icon.blue {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.summary-stat-icon.amber {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.summary-stat-icon.purple {
+  background: #faf5ff;
+  color: #7c3aed;
+}
+
+.summary-stat-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--co-ink);
+  line-height: 1.2;
+}
+
+.summary-stat-label {
+  font-size: 12px;
+  color: var(--co-muted);
+  margin-top: 2px;
+}
+
+/* Recent Orders List in Overview */
+.recent-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recent-order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid var(--co-line);
+  border-radius: 10px;
+  transition: all 0.15s;
+}
+
+.recent-order-item:hover {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+}
+
+.recent-order-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recent-order-id {
+  font-weight: 700;
+  color: var(--co-ink);
+  font-size: 14px;
+}
+
+.recent-order-date {
+  font-size: 12px;
+  color: var(--co-muted);
+}
+
+.recent-order-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.recent-order-total {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--co-primary);
+}
+
+/* Profile Tab View & Edit */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.profile-field-item label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--co-muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.profile-field-val {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--co-ink);
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid var(--co-line);
+  border-radius: 8px;
+}
+
+.profile-field-note {
+  font-size: 12px;
+  color: var(--co-muted);
+  margin-top: 4px;
+}
+
+.profile-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.profile-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--co-ink-light);
+}
+
+.profile-form-group input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--co-line);
+  font-size: 14px;
+  color: var(--co-ink);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.profile-form-group input:focus {
+  border-color: var(--co-primary);
+  box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+}
+
+.profile-form-group input:disabled {
+  background: #f1f5f9;
+  color: var(--co-muted);
+  cursor: not-allowed;
+}
+
+/* Address Book */
+.address-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.address-card {
+  border: 1px solid var(--co-line);
+  border-radius: 12px;
+  padding: 18px 20px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.address-card.default {
+  border-color: var(--co-primary);
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.08);
+}
+
+.address-badge-default {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--co-primary-light);
+  color: var(--co-primary);
+  border: 1px solid var(--co-primary-border);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.address-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--co-ink);
+  margin-bottom: 4px;
+}
+
+.address-phone {
+  font-size: 13px;
+  color: var(--co-muted);
+  margin-bottom: 6px;
+}
+
+.address-detail {
+  font-size: 14px;
+  color: var(--co-ink-light);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.address-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-top: 1px solid var(--co-line);
+  padding-top: 12px;
+}
+
+.address-btn-link {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  color: var(--co-muted);
+  transition: color 0.15s;
+}
+
+.address-btn-link:hover {
+  color: var(--co-primary);
+}
+
+.address-btn-link.danger:hover {
+  color: #b91c1c;
+}
+
+/* Membership Tier Progress */
+.tier-progress-card {
+  background: #f8fafc;
+  border: 1px solid var(--co-line);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.tier-progress-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tier-name-large {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--co-primary);
+}
+
+.tier-spend-num {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--co-ink);
+}
+
+.tier-progress-bar-wrap {
+  width: 100%;
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.tier-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #15803d, #22c55e);
+  border-radius: 20px;
+  transition: width 0.4s ease;
+}
+
+.tier-progress-note {
+  font-size: 13px;
+  color: var(--co-muted);
+}
+
+/* Coupon Items */
+.coupon-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.coupon-ticket-card {
+  border: 1px dashed var(--co-primary-border);
+  background: var(--co-primary-light);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.coupon-ticket-info strong {
+  display: block;
+  font-size: 15px;
+  color: var(--co-primary);
+  margin-bottom: 4px;
+}
+
+.coupon-ticket-info code {
+  display: inline-block;
+  background: #ffffff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--co-primary-border);
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--co-ink);
+  margin-bottom: 6px;
+}
+
+.coupon-ticket-info small {
+  display: block;
+  font-size: 12px;
+  color: var(--co-muted);
+}
+
+.btn-copy-code {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--co-primary);
+  background: #ffffff;
+  color: var(--co-primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.btn-copy-code:hover {
+  background: var(--co-primary);
+  color: #ffffff;
+}
+
+/* Security Tab Card */
+.security-status-box {
+  background: #f8fafc;
+  border: 1px solid var(--co-line);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.security-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--co-line);
+  font-size: 14px;
+}
+
+.security-status-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.security-guideline {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.security-guideline-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.security-guideline-text h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 6px;
+}
+
+.security-guideline-text p {
+  font-size: 13px;
+  color: #1e3a8a;
+  line-height: 1.6;
+}
+
+/* Modal Popup Add/Edit Address */
+.address-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+}
+
+.address-modal.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.address-modal-dialog {
+  background: var(--co-surface);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.address-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--co-line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.address-modal-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--co-ink);
+}
+
+.address-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--co-muted);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.address-modal-body {
+  padding: 24px;
+}
+
+.address-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Empty States */
+.empty-box {
+  text-align: center;
+  padding: 36px 20px;
+  color: var(--co-muted);
+  font-size: 14px;
+}
+
+/* Responsive Rules */
+@media (max-width: 900px) {
+  .account-portal-shell {
+    padding: 18px 0 68px;
+  }
+
+  .account-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .account-main {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .account-sidebar {
+    position: static;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 8px;
+  }
+
+  .account-nav-list {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .account-nav-btn {
+    white-space: nowrap;
+    min-height: 42px;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .sidebar-divider {
+    display: none;
+  }
+
+  .stats-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .profile-grid,
+  .address-grid,
+  .coupon-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .account-hero-actions {
+    width: 100%;
+  }
+
+  .account-hero-actions a,
+  .account-hero-actions button {
+    flex: 1;
+    text-align: center;
+  }
+}

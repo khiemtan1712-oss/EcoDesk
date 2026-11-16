@@ -1,0 +1,68 @@
+[
+  {
+    "id": "NOTIF_1794472439490_lswu0",
+    "userId": "U_1794456499677",
+    "orderId": "ORD-1794472039950",
+    "oldStatus": "Chờ xác nhận",
+    "newStatus": "Đã hủy",
+    "title": "Đơn hàng #ORD-1794472039950 - Đã hủy",
+    "message": "Đơn hàng #ORD-1794472039950 của bạn đã chuyển sang trạng thái \"Đã hủy\". Ghi chú: Muốn đổi sản phẩm hoặc phiên bản khác",
+    "createdAt": "2026-11-12T08:33:59.490Z",
+    "isRead": false
+  },
+  {
+    "id": "NOTIF_1794469110978_whv3e",
+    "userId": "U_1794456499677",
+    "orderId": "ORD-1794468812053",
+    "oldStatus": "Đang giao",
+    "newStatus": "Hoàn thành",
+    "title": "Đơn hàng #ORD-1794468812053 - Hoàn thành",
+    "message": "Đơn hàng #ORD-1794468812053 của bạn đã chuyển sang trạng thái \"Hoàn thành\". Ghi chú: Quản trị viên chuyển trạng thái từ Đang giao sang Hoàn thành",
+    "createdAt": "2026-11-12T07:38:30.978Z",
+    "isRead": true
+  },
+  {
+    "id": "NOTIF_1794469097439_buwoo",
+    "userId": "U_1794456499677",
+    "orderId": "ORD-1794468812053",
+    "oldStatus": "Đang xử lý",
+    "newStatus": "Đang giao",
+    "title": "Đơn hàng #ORD-1794468812053 - Đang giao",
+    "message": "Đơn hàng #ORD-1794468812053 của bạn đã chuyển sang trạng thái \"Đang giao\". Ghi chú: Quản trị viên chuyển trạng thái từ Đang xử lý sang Đang giao",
+    "createdAt": "2026-11-12T07:38:17.439Z",
+    "isRead": true
+  },
+  {
+    "id": "NOTIF_1794468978325_ue6ah",
+    "userId": "U_ADMIN",
+    "orderId": "ORD-1793030757333",
+    "oldStatus": "Đang giao",
+    "newStatus": "Hoàn thành",
+    "title": "Đơn hàng #ORD-1793030757333 - Hoàn thành",
+    "message": "Đơn hàng #ORD-1793030757333 của bạn đã chuyển sang trạng thái \"Hoàn thành\". Ghi chú: Quản trị viên chuyển trạng thái từ Đang giao sang Hoàn thành",
+    "createdAt": "2026-11-12T07:36:18.325Z",
+    "isRead": true
+  },
+  {
+    "id": "NOTIF_1794468904722_0d3uu",
+    "userId": "U_ADMIN",
+    "orderId": "ORD-1793030757333",
+    "oldStatus": "Đang xử lý",
+    "newStatus": "Đang giao",
+    "title": "Đơn hàng #ORD-1793030757333 - Đang giao",
+    "message": "Đơn hàng #ORD-1793030757333 của bạn đã chuyển sang trạng thái \"Đang giao\". Ghi chú: Quản trị viên chuyển trạng thái từ Đang xử lý sang Đang giao",
+    "createdAt": "2026-11-12T07:35:04.722Z",
+    "isRead": false
+  },
+  {
+    "id": "NOTIF_1794468884806_824zh",
+    "userId": "U_1794456499677",
+    "orderId": "ORD-1794468812053",
+    "oldStatus": "Chờ xác nhận",
+    "newStatus": "Đang xử lý",
+    "title": "Đơn hàng #ORD-1794468812053 - Đang xử lý",
+    "message": "Đơn hàng #ORD-1794468812053 của bạn đã chuyển sang trạng thái \"Đang xử lý\". Ghi chú: Quản trị viên chuyển trạng thái từ Chờ xác nhận sang Đang xử lý",
+    "createdAt": "2026-11-12T07:34:44.806Z",
+    "isRead": true
+  }
+]

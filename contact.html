@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hỗ Trợ Khách Hàng - EcoDesk</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+  <link rel="stylesheet" href="./css/search-modal.css">
+</head>
+<body>
+  <div class="top-strip">
+    <div class="container top-strip-inner">
+      <span>Hỗ Trợ Khách Hàng EcoDesk</span>
+      <span>Kênh hỗ trợ và tư vấn</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html"><span class="brand-mark">E</span><span>EcoDesk</span></a>
+      <nav class="nav">
+        <a href="./index.html">Trang chủ</a>
+        <div class="nav-item product-menu">
+          <a class="product-menu-trigger" href="./products.html">Sản phẩm <span class="menu-arrow" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3.5L5 6.5L8 3.5"/></svg></span></a>
+          <div class="product-mega" aria-label="Danh sách danh mục sản phẩm">
+            <div>
+              <a class="mega-title" href="./products.html?category=ergonomic">Ghế công thái học</a>
+              <a href="./products.html?product=P003">Ghế StudyFit lưng lưới</a>
+              <a href="./products.html?product=P012">Ghế ProSeat phòng học</a>
+              <a href="./products.html?product=P013">Ghế gaming BlackCore</a>
+            </div>
+            <div>
+              <a class="mega-title" href="./products.html?category=ergonomic">Bàn EcoDesk</a>
+              <a href="./products.html?product=P002">Bàn nâng hạ FlexDesk</a>
+              <a href="./products.html?product=P016">Bàn học liền kệ Minimal</a>
+              <a href="./products.html?product=P015">Combo WarmDesk</a>
+            </div>
+            <div>
+              <a class="mega-title" href="./products.html?category=lighting">Đèn học</a>
+              <a href="./products.html?product=P001">Đèn DisplayLight</a>
+              <a href="./products.html?product=P007">Đèn kẹp Ergo Edge</a>
+              <a href="./products.html?product=P018">Đèn cổ ngỗng OfficeLight</a>
+            </div>
+            <div>
+              <a class="mega-title" href="./products.html?category=laptop">Phụ kiện setup</a>
+              <a href="./products.html?product=P004">Tay treo màn hình</a>
+              <a href="./products.html?product=P014">Giá đỡ laptop</a>
+              <a href="./products.html?product=P008">Khay đi dây kẹp bàn</a>
+            </div>
+            <div>
+              <a class="mega-title" href="./products.html?category=decor">Góc gaming</a>
+              <a href="./products.html?product=P009">Thảm bàn RGB</a>
+              <a href="./products.html?product=P010">Setup gaming đèn neon</a>
+              <a href="./products.html?product=P006">Đèn neon tay cầm</a>
+            </div>
+          </div>
+        </div>
+        <a class="active" href="./payment-support.html">Hỗ Trợ Khách Hàng</a>
+      </nav>
+      <div class="actions"><a class="header-search" href="./products.html">Tìm kiếm</a><span class="auth-area" data-auth-area></span></div>
+    </div>
+  </header>
+
+  <main class="section page-shell">
+    <div class="container contact-grid">
+      <div>
+        <p class="eyebrow">Thông tin</p>
+        <h1 class="page-title">Hỗ Trợ Khách Hàng & Tư Vấn Setup</h1>
+        <p class="page-lead">Gửi yêu cầu hỗ trợ hoặc thắc mắc về sản phẩm, dịch vụ và chính sách của EcoDesk.</p>
+      </div>
+      <form id="contactForm" class="contact-card form-grid" novalidate>
+        <div class="field">
+          <label for="name">Họ tên</label>
+          <input class="input" id="name" name="name" type="text">
+          <small class="error-text" data-error="name"></small>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input class="input" id="email" name="email" type="email">
+          <small class="error-text" data-error="email"></small>
+        </div>
+        <div class="field full">
+          <label for="phone">Số điện thoại</label>
+          <input class="input" id="phone" name="phone" type="tel">
+          <small class="error-text" data-error="phone"></small>
+        </div>
+        <div class="field full">
+          <label for="message">Nội dung</label>
+          <textarea class="textarea" id="message" name="message"></textarea>
+          <small class="error-text" data-error="message"></small>
+        </div>
+        <div class="form-row field full">
+          <button class="btn" type="submit">Gửi yêu cầu hỗ trợ</button>
+          <p id="contactNotice" class="notice hidden"></p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+  <script type="module" src="./js/auth-state.js"></script>
+  <script type="module" src="./js/contact.js"></script>
+</body>
+</html>

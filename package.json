@@ -1,0 +1,25 @@
+{
+  "name": "ecodesk-studio",
+  "version": "1.0.0",
+  "description": "Website ban bo setup ban hoc va ban lam viec thong minh bang HTML, CSS, JavaScript thuan.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "preview": "vite --host 127.0.0.1",
+    "api": "node assistant-api.js",
+    "backend": "node scripts/start-backend.mjs",
+    "docker:db": "docker compose up -d ecodesk-db",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "vite": "^8.3.1"
+  },
+  "dependencies": {
+    "aos": "2.3.4",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.9",
+    "lucide": "^0.468.0",
+    "xlsx": "^0.18.5"
+  }
+}

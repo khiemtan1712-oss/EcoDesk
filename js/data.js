@@ -1,0 +1,1376 @@
+export const fallbackData = {
+  categories: [
+    { id: "ergonomic", name: "Bàn ghế công thái học" },
+    { id: "lighting", name: "Đèn & Ánh sáng" },
+    { id: "laptop", name: "Phụ kiện setup" },
+    { id: "combo", name: "Combo setup" },
+    { id: "decor", name: "Decor & Gaming" },
+    { id: "eco", name: "Nội thất xanh" }
+  ],
+  products: [
+    {
+      "id": "P001",
+      "name": "Đèn học thông minh Epione AlphaLight",
+      "price": 690000,
+      "categoryId": "lighting",
+      "image": "./images/den-hoc-thong-minh-man-hinh.png",
+      "description": "Đèn học thông minh Epione tích hợp màn hình LED hiển thị, ánh sáng dịu chống chói bảo vệ mắt, chỉ số hoàn màu CRI > 95 chuẩn học tập và làm việc.",
+      "stock": 18,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Best seller",
+        "Bảo vệ mắt"
+      ],
+      "createdAt": "2026-10-01",
+      "gallery": [
+        "./images/den-man-hinh-setup-toi-gian.png",
+        "./images/den-ban-man-hinh.png"
+      ],
+      "reviewCount": 0
+    },
+    {
+      "id": "P002",
+      "name": "Bàn nâng hạ Epione SmartDesk Lite 2.0",
+      "price": 3790000,
+      "categoryId": "ergonomic",
+      "image": "./images/ban-nang-ha-mat-go.png",
+      "description": "Bàn nâng hạ công thái học bán chạy nhất của Epione với động cơ êm ái, bộ nhớ 4 vị trí thông minh, mặt bàn cốt gỗ chống ẩm cao cấp.",
+      "stock": 12,
+      "rating": 0,
+      "sold": 2,
+      "status": "Còn hàng",
+      "tags": [
+        "Epione Best seller",
+        "Động cơ êm"
+      ],
+      "createdAt": "2026-09-28",
+      "hasVariants": true,
+      "attributes": [
+        {
+          "name": "Màu sắc",
+          "values": [
+            "Gỗ Sồi tự nhiên",
+            "Đen Stealth",
+            "Trắng Minimal"
+          ]
+        },
+        {
+          "name": "Kích thước",
+          "values": [
+            "120 x 60 cm",
+            "140 x 70 cm"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "id": "P002-VAR-1",
+          "sku": "EP-SD-OAK-120",
+          "name": "Gỗ Sồi tự nhiên / 120 x 60 cm",
+          "options": {
+            "Màu sắc": "Gỗ Sồi tự nhiên",
+            "Kích thước": "120 x 60 cm"
+          },
+          "price": 3790000,
+          "stock": 5,
+          "status": "Còn hàng",
+          "image": "./images/ban-nang-ha-mat-go.png"
+        },
+        {
+          "id": "P002-VAR-2",
+          "sku": "EP-SD-OAK-140",
+          "name": "Gỗ Sồi tự nhiên / 140 x 70 cm",
+          "options": {
+            "Màu sắc": "Gỗ Sồi tự nhiên",
+            "Kích thước": "140 x 70 cm"
+          },
+          "price": 4290000,
+          "stock": 3,
+          "status": "Còn hàng",
+          "image": "./images/ban-nang-ha-mat-go.png"
+        },
+        {
+          "id": "P002-VAR-3",
+          "sku": "EP-SD-BLK-120",
+          "name": "Đen Stealth / 120 x 60 cm",
+          "options": {
+            "Màu sắc": "Đen Stealth",
+            "Kích thước": "120 x 60 cm"
+          },
+          "price": 3790000,
+          "stock": 3,
+          "status": "Còn hàng",
+          "image": "./images/setup-ban-govi-den.png"
+        },
+        {
+          "id": "P002-VAR-4",
+          "sku": "EP-SD-BLK-140",
+          "name": "Đen Stealth / 140 x 70 cm",
+          "options": {
+            "Màu sắc": "Đen Stealth",
+            "Kích thước": "140 x 70 cm"
+          },
+          "price": 4290000,
+          "stock": 0,
+          "status": "Tạm hết hàng",
+          "image": "./images/setup-ban-govi-den.png"
+        },
+        {
+          "id": "P002-VAR-5",
+          "sku": "EP-SD-WHT-120",
+          "name": "Trắng Minimal / 120 x 60 cm",
+          "options": {
+            "Màu sắc": "Trắng Minimal",
+            "Kích thước": "120 x 60 cm"
+          },
+          "price": 3790000,
+          "stock": 1,
+          "status": "Còn hàng",
+          "image": "./images/setup-ban-govi.png"
+        }
+      ],
+      "reviewCount": 0
+    },
+    {
+      "id": "P003",
+      "name": "Ghế công thái học Epione EasyChair 2.0",
+      "price": 6890000,
+      "categoryId": "ergonomic",
+      "image": "./images/ghe-cong-thai-hoc-xam.png",
+      "description": "Chiếc ghế công thái học biểu tượng của Epione. Tích hợp cơ chế tự động điều chỉnh thắt lưng Lumbar Support, lưới Shrinx Korea và tựa tay 3D đa hướng nâng đỡ cơ thể suốt ngày dài.",
+      "stock": 20,
+      "rating": 0,
+      "sold": 1,
+      "status": "Còn hàng",
+      "tags": [
+        "Epione Flagship",
+        "Best seller"
+      ],
+      "createdAt": "2026-09-20",
+      "hasVariants": true,
+      "attributes": [
+        {
+          "name": "Màu sắc",
+          "values": [
+            "Xám Titanium",
+            "Đen BlackCore"
+          ]
+        },
+        {
+          "name": "Phiên bản",
+          "values": [
+            "Tiêu chuẩn",
+            "Kèm kê chân"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "id": "P003-VAR-1",
+          "sku": "EP-EC-GRY-STD",
+          "name": "Xám Titanium / Tiêu chuẩn",
+          "options": {
+            "Màu sắc": "Xám Titanium",
+            "Phiên bản": "Tiêu chuẩn"
+          },
+          "price": 6890000,
+          "stock": 8,
+          "status": "Còn hàng",
+          "image": "./images/ghe-cong-thai-hoc-xam.png"
+        },
+        {
+          "id": "P003-VAR-2",
+          "sku": "EP-EC-GRY-LEG",
+          "name": "Xám Titanium / Kèm kê chân",
+          "options": {
+            "Màu sắc": "Xám Titanium",
+            "Phiên bản": "Kèm kê chân"
+          },
+          "price": 7490000,
+          "stock": 4,
+          "status": "Còn hàng",
+          "image": "./images/ghe-cong-thai-hoc-phong.png"
+        },
+        {
+          "id": "P003-VAR-3",
+          "sku": "EP-EC-BLK-STD",
+          "name": "Đen BlackCore / Tiêu chuẩn",
+          "options": {
+            "Màu sắc": "Đen BlackCore",
+            "Phiên bản": "Tiêu chuẩn"
+          },
+          "price": 6890000,
+          "stock": 5,
+          "status": "Còn hàng",
+          "image": "./images/ghe-cong-thai-hoc-xam.png"
+        },
+        {
+          "id": "P003-VAR-4",
+          "sku": "EP-EC-BLK-LEG",
+          "name": "Đen BlackCore / Kèm kê chân",
+          "options": {
+            "Màu sắc": "Đen BlackCore",
+            "Phiên bản": "Kèm kê chân"
+          },
+          "price": 7490000,
+          "stock": 3,
+          "status": "Còn hàng",
+          "image": "./images/ghe-cong-thai-hoc-phong.png"
+        }
+      ],
+      "reviewCount": 0
+    },
+    {
+      "id": "P004",
+      "name": "Tay nâng màn hình HyperWork Alpha Ergonomic",
+      "price": 890000,
+      "categoryId": "laptop",
+      "image": "./images/tay-treo-man-hinh-hyperwork.png",
+      "description": "Tay treo màn hình kẹp bàn trợ lực Piston khí nén bền bỉ, xoay 360 độ linh hoạt giúp giải phóng hoàn toàn mặt bàn và điều chỉnh góc nhìn chuẩn mắt.",
+      "stock": 25,
+      "rating": 0,
+      "sold": 1,
+      "status": "Còn hàng",
+      "tags": [
+        "HyperWork",
+        "Phụ kiện setup"
+      ],
+      "createdAt": "2026-09-18",
+      "reviewCount": 0
+    },
+    {
+      "id": "P005",
+      "name": "Combo Setup Starter Bàn nâng hạ & Ghế Ergonomic",
+      "price": 4960000,
+      "categoryId": "combo",
+      "image": "./images/setup-ban-govi.png",
+      "description": "Gói setup tối ưu ngân sách chuẩn công thái học: kết hợp bàn nâng hạ thông minh và ghế lưới thoáng khí, giải phóng không gian học tập và làm việc.",
+      "stock": 15,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Combo Epione",
+        "Tiết kiệm"
+      ],
+      "createdAt": "2026-09-10",
+      "reviewCount": 0
+    },
+    {
+      "id": "P006",
+      "name": "Đèn Neon LED Game Pad Gaming Decor",
+      "price": 290000,
+      "categoryId": "decor",
+      "image": "./images/den-neon-tay-cam-gaming.png",
+      "description": "Đèn neon nghệ thuật hình tay cầm chơi game, ánh sáng dịu mắt tạo điểm nhấn ấn tượng cho góc gaming, livestream và không gian sáng tạo.",
+      "stock": 30,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Gaming Decor",
+        "RGB"
+      ],
+      "createdAt": "2026-09-08",
+      "reviewCount": 0
+    },
+    {
+      "id": "P007",
+      "name": "Đèn kẹp bàn công thái học Epione Ergo Edge",
+      "price": 490000,
+      "categoryId": "lighting",
+      "image": "./images/den-kep-ban-ergo-edge.png",
+      "description": "Đèn kẹp mép bàn cao cấp với thân gập linh hoạt đa trục, vùng phủ sáng rộng đều không bóng gương, chuẩn công thái học bảo vệ thị lực.",
+      "stock": 22,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Epione Light",
+        "Chống mỏi mắt"
+      ],
+      "createdAt": "2026-09-03",
+      "reviewCount": 0
+    },
+    {
+      "id": "P008",
+      "name": "Khay đi dây kẹp bàn Epione Cable Management",
+      "price": 350000,
+      "categoryId": "laptop",
+      "image": "./images/khay-di-day-kep-ban.png",
+      "description": "Khay gom dây điện kẹp dưới gầm bàn không cần khoan, chịu lực tốt, chứa ổ cắm và adapter sạc giúp góc bàn luôn sạch sẽ tinh tươm.",
+      "stock": 40,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Giấu dây",
+        "Gọn gàng"
+      ],
+      "createdAt": "2026-08-25",
+      "reviewCount": 0
+    },
+    {
+      "id": "P009",
+      "name": "Thảm trải bàn Gaming Desk Mat viền RGB",
+      "price": 390000,
+      "categoryId": "decor",
+      "image": "./images/gaming-desk-rgb.png",
+      "description": "Thảm bàn kích thước lớn bọc viền LED RGB đa chế độ phát quang, vải sợi dệt micro-texture êm ái di chuột mượt và chống trượt tối đa.",
+      "stock": 28,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Gaming",
+        "RGB"
+      ],
+      "createdAt": "2026-08-18",
+      "reviewCount": 0
+    },
+    {
+      "id": "P010",
+      "name": "Combo Setup Cyberpunk Neon Room",
+      "price": 7490000,
+      "categoryId": "combo",
+      "image": "./images/setup-gaming-den-neon.png",
+      "description": "Bộ setup góc máy phong cách Cyberpunk độc đáo với bàn nâng hạ, ghế ergonomic, đèn neon và hệ thống ánh sáng đồng bộ.",
+      "stock": 10,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Cyberpunk",
+        "Combo VIP"
+      ],
+      "createdAt": "2026-08-12",
+      "reviewCount": 0
+    },
+    {
+      "id": "P011",
+      "name": "Bộ quản lý dây cáp & Ổ điện DeskHub Pro",
+      "price": 520000,
+      "categoryId": "laptop",
+      "image": "./images/quan-ly-day-cap-ban.png",
+      "description": "Hộp gom ổ cắm và dây cáp chuyên dụng thiết kế tản nhiệt thông minh, nắp nam châm dễ đóng mở giữ toàn bộ cụm dây an toàn.",
+      "stock": 20,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Gọn gàng",
+        "An toàn"
+      ],
+      "createdAt": "2026-08-01",
+      "reviewCount": 0
+    },
+    {
+      "id": "P012",
+      "name": "Ghế công thái học Epione ElysChair",
+      "price": 2690000,
+      "categoryId": "ergonomic",
+      "image": "./images/ghe-cong-thai-hoc-phong.png",
+      "description": "Dòng ghế công thái học trẻ trung hiện đại của Epione. Lưng tựa ôm sát đường cong sinh học cột sống, đệm ngồi êm ái nâng đỡ tư thế làm việc cả ngày.",
+      "stock": 19,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Epione Best seller",
+        "Văn phòng"
+      ],
+      "createdAt": "2026-07-24",
+      "reviewCount": 0
+    },
+    {
+      "id": "P013",
+      "name": "Ghế Gaming Ergonomic BlackCore Pro",
+      "price": 3290000,
+      "categoryId": "ergonomic",
+      "image": "./images/ghe-gaming-den.png",
+      "description": "Ghế chơi game thiết kế chuẩn công thái học toàn thân đen nhám, đệm mút đúc lạnh chống xẹp, ngả lưng 155 độ thư giãn cực êm.",
+      "stock": 14,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Gaming",
+        "Ergonomic"
+      ],
+      "createdAt": "2026-07-18",
+      "reviewCount": 0
+    },
+    {
+      "id": "P014",
+      "name": "Giá đỡ laptop nhôm CNC AirStand",
+      "price": 450000,
+      "categoryId": "laptop",
+      "image": "./images/gia-do-laptop-nhom.png",
+      "description": "Giá đỡ máy tính xách tay gia công từ hợp kim nhôm Anodized nguyên khối, nâng cao góc nhìn chống gù cổ vai gáy và hỗ trợ tản nhiệt vượt trội.",
+      "stock": 60,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Nhôm CNC",
+        "Công thái học"
+      ],
+      "createdAt": "2026-07-10",
+      "reviewCount": 0
+    },
+    {
+      "id": "P015",
+      "name": "Combo Setup WarmDesk Epione Look Cool",
+      "price": 12590000,
+      "categoryId": "combo",
+      "image": "./images/setup-goc-lam-viec-den-ban.png",
+      "description": "Gói setup cao cấp mang lại cảm giác ấm áp và sang trọng với bàn nâng hạ mặt gỗ tự nhiên, ghế EasyChair 2.0, đèn bàn và phụ kiện decor tuyển chọn.",
+      "stock": 8,
+      "rating": 0,
+      "sold": 2,
+      "status": "Còn hàng",
+      "tags": [
+        "Look Cool",
+        "Combo cao cấp"
+      ],
+      "createdAt": "2026-10-03",
+      "reviewCount": 0
+    },
+    {
+      "id": "P016",
+      "name": "Kệ nâng màn hình Ergonomic Desk Shelf",
+      "price": 680000,
+      "categoryId": "laptop",
+      "image": "./images/ke-man-hinh-setup.png",
+      "description": "Kệ gỗ nâng màn hình ngang tầm mắt làm việc chuẩn công thái học, mở rộng không gian mặt bàn để cất gọn bàn phím, sổ tay và chuột khi không dùng.",
+      "stock": 25,
+      "rating": 0,
+      "sold": 1,
+      "status": "Còn hàng",
+      "tags": [
+        "Gỗ cao cấp",
+        "Tối giản"
+      ],
+      "createdAt": "2026-09-30",
+      "reviewCount": 0
+    },
+    {
+      "id": "P017",
+      "name": "Giá treo tay cầm & tai nghe Gaming RGB",
+      "price": 430000,
+      "categoryId": "decor",
+      "image": "./images/gia-treo-tay-cam-tai-nghe-rgb.png",
+      "description": "Đế treo kép tích hợp chân sạc USB và đèn nền RGB đổi màu, sắp xếp gọn gàng cả tay cầm và tai nghe gaming trên mặt bàn.",
+      "stock": 17,
+      "rating": 0,
+      "sold": 1,
+      "status": "Còn hàng",
+      "tags": [
+        "Phụ kiện bàn",
+        "RGB"
+      ],
+      "createdAt": "2026-07-02",
+      "reviewCount": 0
+    },
+    {
+      "id": "P018",
+      "name": "Đèn bàn làm việc cổ ngỗng OfficeLight Pro",
+      "price": 680000,
+      "categoryId": "lighting",
+      "image": "./images/den-ban-van-phong-co-ngong.png",
+      "description": "Đèn bàn văn phòng cổ ngỗng dẻo xoay 360 độ, điều khiển cảm ứng đa mức sáng, không nhấp nháy, chống chói lóa tối ưu cho mắt.",
+      "stock": 15,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Office",
+        "Bảo vệ mắt"
+      ],
+      "createdAt": "2026-06-25",
+      "reviewCount": 0
+    },
+    {
+      "id": "P019",
+      "name": "Đèn treo màn hình Epione Horizon ScreenBar",
+      "price": 1190000,
+      "categoryId": "lighting",
+      "image": "./images/den-ban-man-hinh.png",
+      "description": "Đèn gắn màn hình thông minh Epione Horizon chiếu sáng bàn phím bất đối xứng không gây bóng gương trên màn hình, trang bị núm xoay không dây tiện lợi.",
+      "stock": 21,
+      "rating": 0,
+      "sold": 1,
+      "status": "Còn hàng",
+      "tags": [
+        "ScreenBar",
+        "Epione Horizon"
+      ],
+      "createdAt": "2026-09-15",
+      "reviewCount": 0
+    },
+    {
+      "id": "P020",
+      "name": "Combo Setup Minimal All-Black Studio",
+      "price": 8890000,
+      "categoryId": "combo",
+      "image": "./images/setup-ban-govi-den.png",
+      "description": "Góc làm việc chuẩn phong cách All-Black huyền bí và quyền lực: Bàn nâng hạ mặt đen nhám, ghế công thái học đen và giải pháp giấu dây tuyệt đối.",
+      "stock": 11,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "All-Black",
+        "Tối giản"
+      ],
+      "createdAt": "2026-08-20",
+      "gallery": [
+        "./images/setup-phong-rgb.png",
+        "./images/setup-gaming-goc.png"
+      ],
+      "reviewCount": 0
+    },
+    {
+      "id": "P021",
+      "name": "Bàn nâng hạ Epione SmartDesk Pro 3.0",
+      "price": 6990000,
+      "categoryId": "ergonomic",
+      "image": "./images/ban-nang-ha-mat-go.png",
+      "description": "Bàn nâng hạ cao cấp nhất của Epione với động cơ kép tốc độ 38mm/s, tải trọng 100kg, cảm biến chạm dừng thông minh và mặt bàn gỗ sồi bo viền tinh tế.",
+      "stock": 14,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Epione Pro",
+        "Flagship"
+      ],
+      "createdAt": "2026-10-02",
+      "reviewCount": 0
+    },
+    {
+      "id": "P022",
+      "name": "Combo Setup Gaming Pro Studio Dual Monitor",
+      "price": 15490000,
+      "categoryId": "combo",
+      "image": "./images/setup-gaming-goc.png",
+      "description": "Trọn bộ góc làm việc & chơi game chuyên nghiệp với bàn nâng hạ chữ L, ghế công thái học, tay nâng màn hình đôi và hệ thống chiếu sáng RGB.",
+      "stock": 6,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Gaming Studio",
+        "Dual Screen"
+      ],
+      "createdAt": "2026-09-12",
+      "reviewCount": 0
+    },
+    {
+      "id": "P023",
+      "name": "Khay để điện thoại & đồ dùng để bàn Gỗ Sồi",
+      "price": 190000,
+      "categoryId": "decor",
+      "image": "./images/khay-de-dien-thoai-go.png",
+      "description": "Khay đế gỗ sồi tự nhiên mài thủ công mịn màng, góc nghiêng chuẩn để giữ điện thoại luôn hiển thị thông báo ngay cạnh máy tính.",
+      "stock": 35,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Gỗ sồi",
+        "Eco Decor"
+      ],
+      "createdAt": "2026-07-15",
+      "gallery": [],
+      "reviewCount": 0
+    },
+    {
+      "id": "P024",
+      "name": "Đèn màn hình Minimalist Slim Light",
+      "price": 850000,
+      "categoryId": "lighting",
+      "image": "./images/den-man-hinh-setup-toi-gian.png",
+      "description": "Thanh đèn gắn màn hình siêu mỏng, kẹp trọng lực vững chắc vừa với cả màn hình cong và phẳng, chống lóa mắt khi làm việc buổi tối.",
+      "stock": 24,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Slim Light",
+        "Bảo vệ mắt"
+      ],
+      "createdAt": "2026-08-05",
+      "reviewCount": 0
+    },
+    {
+      "id": "P025",
+      "name": "máy xoa bóp",
+      "price": 100000,
+      "categoryId": "laptop",
+      "image": "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSbANstRhI30at6b891NzOkk6C3oVCDqgjS5xvC_sp04Rcsizzot4GipHogUVr2Fg-TcZ2PUaJrhEfAIMolaJmJdxDWy56d9Rc7XmayUw4uzlnQTlAQo5zVMKZ3x9mXqY9fY6EgxEI-eg&usqp=CAc",
+      "description": "Máy xoa bóp cầm tay đa năng giúp thư giãn vùng cổ, vai, gáy và cơ bắp sau nhiều giờ làm việc căng thẳng tại bàn làm việc.",
+      "stock": 12,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "tags": [
+        "Eco",
+        "Massage"
+      ],
+      "createdAt": "2026-10-29",
+      "hasVariants": true,
+      "attributes": [
+        {
+          "name": "Màu sắc",
+          "values": [
+            "Đen Stealth",
+            "Xám Titan"
+          ]
+        },
+        {
+          "name": "Phiên bản",
+          "values": [
+            "Bản 4 đầu massage",
+            "Bản 6 đầu chuyên sâu"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "id": "P025-VAR-1",
+          "sku": "P025-BLK-4H",
+          "name": "Đen Stealth / Bản 4 đầu massage",
+          "price": 100000,
+          "stock": 5,
+          "status": "Còn hàng",
+          "options": {
+            "Màu sắc": "Đen Stealth",
+            "Phiên bản": "Bản 4 đầu massage"
+          }
+        },
+        {
+          "id": "P025-VAR-2",
+          "sku": "P025-BLK-6H",
+          "name": "Đen Stealth / Bản 6 đầu chuyên sâu",
+          "price": 150000,
+          "stock": 3,
+          "status": "Còn hàng",
+          "options": {
+            "Màu sắc": "Đen Stealth",
+            "Phiên bản": "Bản 6 đầu chuyên sâu"
+          }
+        },
+        {
+          "id": "P025-VAR-3",
+          "sku": "P025-GRY-4H",
+          "name": "Xám Titan / Bản 4 đầu massage",
+          "price": 120000,
+          "stock": 4,
+          "status": "Còn hàng",
+          "options": {
+            "Màu sắc": "Xám Titan",
+            "Phiên bản": "Bản 4 đầu massage"
+          }
+        },
+        {
+          "id": "P025-VAR-4",
+          "sku": "P025-GRY-6H",
+          "name": "Xám Titan / Bản 6 đầu chuyên sâu",
+          "price": 170000,
+          "stock": 0,
+          "status": "Tạm hết hàng",
+          "options": {
+            "Màu sắc": "Xám Titan",
+            "Phiên bản": "Bản 6 đầu chuyên sâu"
+          }
+        }
+      ],
+      "reviewCount": 0
+    },
+    {
+      "id": "P026",
+      "name": "Ghế văn phòng công thái học Fufutech Modern Ergonomic Pro",
+      "price": 1090000,
+      "categoryId": "ergonomic",
+      "image": "./images/1_1-2096.jpg",
+      "description": "Dòng ghế công thái học văn phòng cao cấp với thiết kế hiện đại, tùy biến đa sắc màu (Đen, Xám, Tím, Xanh dương, Đỏ, Cam, Xanh lá) kết hợp tùy chọn gối tựa đầu 3D chống mỏi cổ hoặc bản tiêu chuẩn gọn gàng. Tay vịn lật 90 độ thông minh giúp đẩy sát gầm bàn, đệm mút định hình êm ái cùng tựa lưng lưới thoáng khí hỗ trợ cột sống chuẩn y khoa.",
+      "stock": 100,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "isDraft": false,
+      "tags": [
+        "Fufutech",
+        "Nhiều màu sắc",
+        "Tay gập 90°",
+        "Tựa đầu 3D"
+      ],
+      "createdAt": "2026-11-04",
+      "newBadge": {
+        "enabled": true,
+        "mode": "custom",
+        "startDate": "2026-11-04",
+        "endDate": "2026-12-04"
+      },
+      "discount": {
+        "enabled": true,
+        "type": "percentage",
+        "value": 15,
+        "startAt": "2026-11-04T00:00",
+        "endAt": "2026-12-04T23:59"
+      },
+      "gallery": [
+        "./images/1_1-2096.jpg",
+        "./images/17_1(116).jpg",
+        "./images/19_10-185.jpg",
+        "./images/21_11-214.jpg",
+        "./images/26_12-3318.jpg",
+        "./images/27_13-6580.jpg",
+        "./images/52_9(58).jpg",
+        "./images/25_11-8930.jpg",
+        "./images/5_3-9402.jpg",
+        "./images/53_7(61).jpg",
+        "./images/54_4(118).jpg",
+        "./images/16_8(48).jpg",
+        "./images/59_9(51).jpg",
+        "./images/4_4-6174.jpg",
+        "./images/3_3-8106.jpg",
+        "./images/1_2-6904.jpg",
+        "./images/22_8-1356.jpg",
+        "./images/23_9-9508.jpg"
+      ],
+      "hasVariants": true,
+      "attributes": [
+        {
+          "name": "Màu sắc",
+          "values": [
+            "Xám (Khung Trắng)",
+            "Đen (Khung Đen)",
+            "Tím (Khung Trắng)",
+            "Xanh dương (Khung Đen)",
+            "Đỏ (Khung Đen)",
+            "Cam (Khung Trắng)",
+            "Xanh lá (Khung Đen)"
+          ]
+        },
+        {
+          "name": "Phiên bản",
+          "values": [
+            "Có tựa đầu 3D (Bản Pro)",
+            "Không tựa đầu (Bản Standard)"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "id": "P026-VAR-1",
+          "sku": "FUFU-MOD-WHT-GRY-PRO",
+          "name": "Xám (Khung Trắng) / Có tựa đầu 3D (Bản Pro)",
+          "options": {
+            "Màu sắc": "Xám (Khung Trắng)",
+            "Phiên bản": "Có tựa đầu 3D (Bản Pro)"
+          },
+          "price": 1290000,
+          "stock": 15,
+          "status": "Còn hàng",
+          "image": "./images/25_11-8930.jpg"
+        },
+        {
+          "id": "P026-VAR-2",
+          "sku": "FUFU-MOD-WHT-GRY-STD",
+          "name": "Xám (Khung Trắng) / Không tựa đầu (Bản Standard)",
+          "options": {
+            "Màu sắc": "Xám (Khung Trắng)",
+            "Phiên bản": "Không tựa đầu (Bản Standard)"
+          },
+          "price": 1090000,
+          "stock": 12,
+          "status": "Còn hàng",
+          "image": "./images/17_1(116).jpg"
+        },
+        {
+          "id": "P026-VAR-3",
+          "sku": "FUFU-MOD-BLK-BLK-PRO",
+          "name": "Đen (Khung Đen) / Có tựa đầu 3D (Bản Pro)",
+          "options": {
+            "Màu sắc": "Đen (Khung Đen)",
+            "Phiên bản": "Có tựa đầu 3D (Bản Pro)"
+          },
+          "price": 1290000,
+          "stock": 20,
+          "status": "Còn hàng",
+          "image": "./images/52_9(58).jpg"
+        },
+        {
+          "id": "P026-VAR-4",
+          "sku": "FUFU-MOD-BLK-BLK-STD",
+          "name": "Đen (Khung Đen) / Không tựa đầu (Bản Standard)",
+          "options": {
+            "Màu sắc": "Đen (Khung Đen)",
+            "Phiên bản": "Không tựa đầu (Bản Standard)"
+          },
+          "price": 1090000,
+          "stock": 15,
+          "status": "Còn hàng",
+          "image": "./images/5_3-9402.jpg"
+        },
+        {
+          "id": "P026-VAR-5",
+          "sku": "FUFU-MOD-WHT-PUR-PRO",
+          "name": "Tím (Khung Trắng) / Có tựa đầu 3D (Bản Pro)",
+          "options": {
+            "Màu sắc": "Tím (Khung Trắng)",
+            "Phiên bản": "Có tựa đầu 3D (Bản Pro)"
+          },
+          "price": 1290000,
+          "stock": 12,
+          "status": "Còn hàng",
+          "image": "./images/53_7(61).jpg"
+        },
+        {
+          "id": "P026-VAR-6",
+          "sku": "FUFU-MOD-BLK-BLU-PRO",
+          "name": "Xanh dương (Khung Đen) / Có tựa đầu 3D (Bản Pro)",
+          "options": {
+            "Màu sắc": "Xanh dương (Khung Đen)",
+            "Phiên bản": "Có tựa đầu 3D (Bản Pro)"
+          },
+          "price": 1290000,
+          "stock": 10,
+          "status": "Còn hàng",
+          "image": "./images/19_10-185.jpg"
+        },
+        {
+          "id": "P026-VAR-7",
+          "sku": "FUFU-MOD-BLK-RED-PRO",
+          "name": "Đỏ (Khung Đen) / Có tựa đầu 3D (Bản Pro)",
+          "options": {
+            "Màu sắc": "Đỏ (Khung Đen)",
+            "Phiên bản": "Có tựa đầu 3D (Bản Pro)"
+          },
+          "price": 1290000,
+          "stock": 10,
+          "status": "Còn hàng",
+          "image": "./images/21_11-214.jpg"
+        },
+        {
+          "id": "P026-VAR-8",
+          "sku": "FUFU-MOD-BLK-RED-STD",
+          "name": "Đỏ (Khung Đen) / Không tựa đầu (Bản Standard)",
+          "options": {
+            "Màu sắc": "Đỏ (Khung Đen)",
+            "Phiên bản": "Không tựa đầu (Bản Standard)"
+          },
+          "price": 1090000,
+          "stock": 6,
+          "status": "Còn hàng",
+          "image": "./images/21_11-214.jpg"
+        },
+        {
+          "id": "P026-VAR-9",
+          "sku": "FUFU-MOD-WHT-ORA-PRO",
+          "name": "Cam (Khung Trắng) / Có tựa đầu 3D (Bản Pro)",
+          "options": {
+            "Màu sắc": "Cam (Khung Trắng)",
+            "Phiên bản": "Có tựa đầu 3D (Bản Pro)"
+          },
+          "price": 1290000,
+          "stock": 0,
+          "status": "Tạm hết hàng",
+          "image": "./images/16_8(48).jpg"
+        },
+        {
+          "id": "P026-VAR-10",
+          "sku": "FUFU-MOD-BLK-GRN-PRO",
+          "name": "Xanh lá (Khung Đen) / Có tựa đầu 3D (Bản Pro)",
+          "options": {
+            "Màu sắc": "Xanh lá (Khung Đen)",
+            "Phiên bản": "Có tựa đầu 3D (Bản Pro)"
+          },
+          "price": 1290000,
+          "stock": 0,
+          "status": "Tạm hết hàng",
+          "image": "./images/59_9(51).jpg"
+        }
+      ],
+      "reviewCount": 0
+    },
+    {
+      "id": "P027",
+      "name": "Ghế công thái học Fufutech Dual-Lumbar (Đệm lưng đôi)",
+      "price": 2890000,
+      "categoryId": "ergonomic",
+      "image": "./images/800x800_9-3996.jpg",
+      "description": "Ghế công thái học cao cấp với cơ cấu đệm lưng đôi cánh bướm độc lập nâng đỡ thắt lưng linh hoạt, tựa đầu 3D điều chỉnh góc nghiêng và độ cao, lưới đan thoáng khí chống tích nhiệt hoàn hảo cho làm việc cả ngày.",
+      "stock": 27,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "isDraft": false,
+      "tags": [
+        "Fufutech",
+        "Dual Lumbar",
+        "Ergonomic Pro"
+      ],
+      "createdAt": "2026-11-04",
+      "gallery": [
+        "./images/800x800_9-3996.jpg",
+        "./images/800x800_4-989.jpg",
+        "./images/800x800_19-1046.jpg",
+        "./images/1000x100_1+(9)(2).jpg",
+        "./images/800x800_21-3071.jpg",
+        "./images/800x800_2-4030.jpg",
+        "./images/800x800_7-96.jpg",
+        "./images/1000x100_4_11zon+(36)(1).jpg",
+        "./images/1000x100_6_11zon+(34).jpg",
+        "./images/1000x100_fasdvc_11zon.jpg",
+        "./images/1000x100_sdvsvdsdv_11zon.jpg"
+      ],
+      "hasVariants": true,
+      "attributes": [
+        {
+          "name": "Màu sắc",
+          "values": [
+            "Xám thanh lịch",
+            "Đen huyền bí"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "id": "P027-VAR-1",
+          "sku": "FUFU-DL-GRY",
+          "name": "Xám thanh lịch",
+          "options": {
+            "Màu sắc": "Xám thanh lịch"
+          },
+          "price": 2890000,
+          "stock": 12,
+          "status": "Còn hàng",
+          "image": "./images/800x800_9-3996.jpg"
+        },
+        {
+          "id": "P027-VAR-2",
+          "sku": "FUFU-DL-BLK",
+          "name": "Đen huyền bí",
+          "options": {
+            "Màu sắc": "Đen huyền bí"
+          },
+          "price": 2890000,
+          "stock": 15,
+          "status": "Còn hàng",
+          "image": "./images/800x800_4-989.jpg"
+        }
+      ],
+      "newBadge": {
+        "enabled": true,
+        "mode": "custom",
+        "startDate": "2026-11-04",
+        "endDate": "2026-12-04"
+      },
+      "discount": {
+        "enabled": true,
+        "type": "percentage",
+        "value": 12,
+        "startAt": "2026-11-04T00:00",
+        "endAt": "2026-12-04T23:59"
+      },
+      "reviewCount": 0
+    },
+    {
+      "id": "P028",
+      "name": "Bàn làm việc chữ L Fufutech 180x120cm",
+      "price": 2490000,
+      "categoryId": "ergonomic",
+      "image": "./images/2911zon-1979.jpg",
+      "description": "Bàn làm việc góc chữ L khung thép sơn tĩnh điện cố định chịu tải 150kg, kích thước rộng rãi 180x120x60x75cm tối ưu diện tích góc phòng. Hỗ trợ đa dạng cấu hình từ tiêu chuẩn, tích hợp kệ sách dưới gầm bàn đến bộ kệ kết hợp bảng Pegboard decor thông minh.",
+      "stock": 41,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "isDraft": false,
+      "tags": [
+        "Fufutech",
+        "Bàn chữ L",
+        "Bàn góc 180cm"
+      ],
+      "createdAt": "2026-11-04",
+      "gallery": [
+        "./images/2911zon-1979.jpg",
+        "./images/1811zon-0149.jpg",
+        "./images/10211zon-555.jpg",
+        "./images/11311zon-6464.jpg",
+        "./images/61311zon-6024.jpg",
+        "./images/51211zon-1660.jpg",
+        "./images/81511zon-2149.jpg",
+        "./images/11-8974.jpg",
+        "./images/12-9605.jpg",
+        "./images/13-4091.jpg",
+        "./images/14-8755.jpg",
+        "./images/15-6535.jpg",
+        "./images/16-2760.jpg",
+        "./images/17-264.jpg",
+        "./images/18-8955.jpg"
+      ],
+      "hasVariants": true,
+      "attributes": [
+        {
+          "name": "Màu sắc",
+          "values": [
+            "Trắng Minimal",
+            "Nâu Gỗ Tự Nhiên",
+            "Đen Stealth"
+          ]
+        },
+        {
+          "name": "Cấu hình",
+          "values": [
+            "Tiêu chuẩn (Không kệ)",
+            "Có kệ sách",
+            "Có kệ & Pegboard"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "id": "P028-VAR-1",
+          "sku": "FUFU-DESK-L-WHT-STD",
+          "name": "Trắng Minimal / Tiêu chuẩn (Không kệ)",
+          "options": {
+            "Màu sắc": "Trắng Minimal",
+            "Cấu hình": "Tiêu chuẩn (Không kệ)"
+          },
+          "price": 2490000,
+          "stock": 6,
+          "status": "Còn hàng",
+          "image": "./images/11-8974.jpg"
+        },
+        {
+          "id": "P028-VAR-2",
+          "sku": "FUFU-DESK-L-WOOD-STD",
+          "name": "Nâu Gỗ Tự Nhiên / Tiêu chuẩn (Không kệ)",
+          "options": {
+            "Màu sắc": "Nâu Gỗ Tự Nhiên",
+            "Cấu hình": "Tiêu chuẩn (Không kệ)"
+          },
+          "price": 2490000,
+          "stock": 8,
+          "status": "Còn hàng",
+          "image": "./images/12-9605.jpg"
+        },
+        {
+          "id": "P028-VAR-3",
+          "sku": "FUFU-DESK-L-BLK-STD",
+          "name": "Đen Stealth / Tiêu chuẩn (Không kệ)",
+          "options": {
+            "Màu sắc": "Đen Stealth",
+            "Cấu hình": "Tiêu chuẩn (Không kệ)"
+          },
+          "price": 2490000,
+          "stock": 5,
+          "status": "Còn hàng",
+          "image": "./images/2911zon-1979.jpg"
+        },
+        {
+          "id": "P028-VAR-4",
+          "sku": "FUFU-DESK-L-WHT-SHF",
+          "name": "Trắng Minimal / Có kệ sách",
+          "options": {
+            "Màu sắc": "Trắng Minimal",
+            "Cấu hình": "Có kệ sách"
+          },
+          "price": 2890000,
+          "stock": 4,
+          "status": "Còn hàng",
+          "image": "./images/14-8755.jpg"
+        },
+        {
+          "id": "P028-VAR-5",
+          "sku": "FUFU-DESK-L-WOOD-SHF",
+          "name": "Nâu Gỗ Tự Nhiên / Có kệ sách",
+          "options": {
+            "Màu sắc": "Nâu Gỗ Tự Nhiên",
+            "Cấu hình": "Có kệ sách"
+          },
+          "price": 2890000,
+          "stock": 6,
+          "status": "Còn hàng",
+          "image": "./images/15-6535.jpg"
+        },
+        {
+          "id": "P028-VAR-6",
+          "sku": "FUFU-DESK-L-BLK-SHF",
+          "name": "Đen Stealth / Có kệ sách",
+          "options": {
+            "Màu sắc": "Đen Stealth",
+            "Cấu hình": "Có kệ sách"
+          },
+          "price": 2890000,
+          "stock": 3,
+          "status": "Còn hàng",
+          "image": "./images/16-2760.jpg"
+        },
+        {
+          "id": "P028-VAR-7",
+          "sku": "FUFU-DESK-L-WHT-PEG",
+          "name": "Trắng Minimal / Có kệ & Pegboard",
+          "options": {
+            "Màu sắc": "Trắng Minimal",
+            "Cấu hình": "Có kệ & Pegboard"
+          },
+          "price": 3290000,
+          "stock": 4,
+          "status": "Còn hàng",
+          "image": "./images/17-264.jpg"
+        },
+        {
+          "id": "P028-VAR-8",
+          "sku": "FUFU-DESK-L-WOOD-PEG",
+          "name": "Nâu Gỗ Tự Nhiên / Có kệ & Pegboard",
+          "options": {
+            "Màu sắc": "Nâu Gỗ Tự Nhiên",
+            "Cấu hình": "Có kệ & Pegboard"
+          },
+          "price": 3290000,
+          "stock": 5,
+          "status": "Còn hàng",
+          "image": "./images/18-8955.jpg"
+        }
+      ],
+      "newBadge": {
+        "enabled": true,
+        "mode": "custom",
+        "startDate": "2026-11-04",
+        "endDate": "2026-12-04"
+      },
+      "discount": {
+        "enabled": true,
+        "type": "percentage",
+        "value": 10,
+        "startAt": "2026-11-04T00:00",
+        "endAt": "2026-12-04T23:59"
+      },
+      "reviewCount": 0
+    },
+    {
+      "id": "P029",
+      "name": "Bàn Gaming chân U Fufutech Carbon",
+      "price": 1490000,
+      "categoryId": "decor",
+      "image": "./images/413x400_thumbnail-gaming-den-chan-u4491_413x400.jpg",
+      "description": "Bàn chơi game chuyên dụng chân chữ U chịu lực cao, mặt bàn bo góc phủ vân carbon đen sang trọng, tích hợp 2 lỗ đi dây cáp gọn gàng cho game thủ và streamer.",
+      "stock": 10,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "isDraft": false,
+      "tags": [
+        "Fufutech",
+        "Bàn Gaming",
+        "Chân U"
+      ],
+      "createdAt": "2026-11-04",
+      "gallery": [
+        "./images/chan-u-10704_413x400.png"
+      ],
+      "newBadge": {
+        "enabled": true,
+        "mode": "custom",
+        "startDate": "2026-11-04",
+        "endDate": "2026-12-04"
+      },
+      "discount": {
+        "enabled": true,
+        "type": "percentage",
+        "value": 15,
+        "startAt": "2026-11-04T00:00",
+        "endAt": "2026-12-04T23:59"
+      },
+      "reviewCount": 0
+    },
+    {
+      "id": "P032",
+      "name": "Ghế trưởng phòng Fufutech Epic (Gỗ uốn cao cấp)",
+      "price": 3690000,
+      "categoryId": "ergonomic",
+      "image": "./images/413x400_ghe-truong-phong-fufutech-epic-go-uon-chan-xoay-57576_413x400.jpg",
+      "description": "Ghế làm việc đẳng cấp cho lãnh đạo với thân gỗ tự nhiên uốn cong nghệ thuật bọc đệm da cao cấp, chân hợp kim nhôm xoay 360 độ vững chãi.",
+      "stock": 6,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "isDraft": false,
+      "tags": [
+        "Fufutech",
+        "Epic",
+        "Gỗ uốn"
+      ],
+      "createdAt": "2026-11-04",
+      "newBadge": {
+        "enabled": true,
+        "mode": "custom",
+        "startDate": "2026-11-04",
+        "endDate": "2026-12-04"
+      },
+      "discount": {
+        "enabled": true,
+        "type": "percentage",
+        "value": 10,
+        "startAt": "2026-11-04T00:00",
+        "endAt": "2026-12-04T23:59"
+      },
+      "reviewCount": 0
+    },
+    {
+      "id": "P033",
+      "name": "Ghế giám đốc Fufutech Leon (Da ngả lưng kèm kê chân)",
+      "price": 2990000,
+      "categoryId": "ergonomic",
+      "image": "./images/413x400_ghe-giam-doc-fufutech-leon-nga-lung-chan-xoay-149047_413x400.jpg",
+      "description": "Ghế lãnh đạo bọc da PU êm ái, cơ chế ngả lưng thư giãn lên tới 135 độ kèm đệm kê chân gập giấu gọn gàng, giảm căng thẳng tối đa sau giờ làm việc.",
+      "stock": 8,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "isDraft": false,
+      "tags": [
+        "Fufutech",
+        "Leon",
+        "Giám đốc"
+      ],
+      "createdAt": "2026-11-04",
+      "newBadge": {
+        "enabled": true,
+        "mode": "custom",
+        "startDate": "2026-11-04",
+        "endDate": "2026-12-04"
+      },
+      "discount": {
+        "enabled": true,
+        "type": "percentage",
+        "value": 15,
+        "startAt": "2026-11-04T00:00",
+        "endAt": "2026-12-04T23:59"
+      },
+      "reviewCount": 0
+    },
+    {
+      "id": "P035",
+      "name": "Ghế thư giãn Fufutech Velvet (Da bò nâu cổ điển)",
+      "price": 3490000,
+      "categoryId": "ergonomic",
+      "image": "./images/413x400_ghe-giam-doc-fufutech-thu-gian-velvet-188431413x4000025_413x400.jpg",
+      "description": "Ghế giám đốc thư giãn da bò nâu phong cách Retro sang trọng, tay vịn ốp gỗ kết hợp đệm mút siêu êm ái mang đến trải nghiệm ngồi nghỉ ngơi thượng lưu.",
+      "stock": 5,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "isDraft": false,
+      "tags": [
+        "Fufutech",
+        "Velvet",
+        "Vintage"
+      ],
+      "createdAt": "2026-11-04",
+      "newBadge": {
+        "enabled": true,
+        "mode": "custom",
+        "startDate": "2026-11-04",
+        "endDate": "2026-12-04"
+      },
+      "discount": {
+        "enabled": true,
+        "type": "percentage",
+        "value": 12,
+        "startAt": "2026-11-04T00:00",
+        "endAt": "2026-12-04T23:59"
+      },
+      "reviewCount": 0
+    },
+    {
+      "id": "P036",
+      "name": "Ghế chân quỳ văn phòng Fufutech EOS",
+      "price": 890000,
+      "categoryId": "ergonomic",
+      "image": "./images/413x400_ghe-van-phong-fufutech-eos-lung-cao-chan-quy0778_413x400.jpg",
+      "description": "Ghế chân quỳ cố định mạ crom sáng bóng chịu tải cao, lưng lưới thoáng khí chống tích nhiệt, lựa chọn tối ưu cho phòng họp và không gian làm việc chuyên nghiệp.",
+      "stock": 30,
+      "rating": 0,
+      "sold": 0,
+      "status": "Còn hàng",
+      "isDraft": false,
+      "tags": [
+        "Fufutech",
+        "Chân quỳ",
+        "Phòng họp"
+      ],
+      "createdAt": "2026-11-04",
+      "gallery": [
+        "./images/413x400_ghe-van-phong-fufutech-eos-lung-thap-chan-quy9750_413x400.jpg"
+      ],
+      "hasVariants": true,
+      "attributes": [
+        {
+          "name": "Thiết kế lưng",
+          "values": [
+            "Lưng cao",
+            "Lưng thấp"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "id": "P036-VAR-1",
+          "sku": "FUFU-EOS-HIGH",
+          "name": "Lưng cao",
+          "options": {
+            "Thiết kế lưng": "Lưng cao"
+          },
+          "price": 990000,
+          "stock": 15,
+          "status": "Còn hàng",
+          "image": "./images/413x400_ghe-van-phong-fufutech-eos-lung-cao-chan-quy0778_413x400.jpg"
+        },
+        {
+          "id": "P036-VAR-2",
+          "sku": "FUFU-EOS-LOW",
+          "name": "Lưng thấp",
+          "options": {
+            "Thiết kế lưng": "Lưng thấp"
+          },
+          "price": 890000,
+          "stock": 15,
+          "status": "Còn hàng",
+          "image": "./images/413x400_ghe-van-phong-fufutech-eos-lung-thap-chan-quy9750_413x400.jpg"
+        }
+      ],
+      "newBadge": {
+        "enabled": true,
+        "mode": "custom",
+        "startDate": "2026-11-04",
+        "endDate": "2026-12-04"
+      },
+      "discount": {
+        "enabled": true,
+        "type": "percentage",
+        "value": 10,
+        "startAt": "2026-11-04T00:00",
+        "endAt": "2026-12-04T23:59"
+      },
+      "reviewCount": 0
+    }
+  ]
+};
+
+export async function loadSeedData() {
+  try {
+    const response = await fetch("./db.json");
+    if (!response.ok) throw new Error("Không đọc được db.json");
+    return await response.json();
+  } catch (error) {
+    return fallbackData;
+  }
+}
