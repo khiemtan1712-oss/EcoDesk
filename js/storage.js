@@ -38,10 +38,26 @@ function getActorUserIdHeader() {
   return "";
 }
 
+export function getApiBaseUrl() {
+  if (typeof window !== "undefined" && window.__ECODESK_API_URL__) {
+    return String(window.__ECODESK_API_URL__).replace(/\/+$/, "");
+  }
+  try {
+    if (typeof import.meta !== "undefined" && import.meta?.env?.VITE_API_URL) {
+      return String(import.meta.env.VITE_API_URL).replace(/\/+$/, "");
+    }
+  } catch {}
+  return "";
+}
+
 async function apiFetch(endpoint, options = {}) {
   try {
     const actorId = getActorUserIdHeader();
-    const res = await fetch(endpoint, {
+    const baseUrl = getApiBaseUrl();
+    const resolvedUrl = (baseUrl && typeof endpoint === "string" && endpoint.startsWith("/"))
+      ? `${baseUrl}${endpoint}`
+      : endpoint;
+    const res = await fetch(resolvedUrl, {
       ...options,
       headers: {
         "Content-Type": "application/json",
@@ -123,16 +139,62 @@ function parseOrderItemsSafe(order) {
   return [];
 }
 
+const WIN1252_REV_MAP = new Map([
+  ["€", 0x80], ["‚", 0x82], ["ƒ", 0x83], ["„", 0x84], ["…", 0x85],
+  ["†", 0x86], ["‡", 0x87], ["ˆ", 0x88], ["‰", 0x89], ["Š", 0x8A],
+  ["‹", 0x8B], ["Œ", 0x8C], ["Ž", 0x8E], ["‘", 0x91], ["’", 0x92],
+  ["“", 0x93], ["”", 0x94], ["•", 0x95], ["–", 0x96], ["—", 0x97],
+  ["˜", 0x98], ["™", 0x99], ["š", 0x9A], ["›", 0x9B], ["œ", 0x9C],
+  ["ž", 0x9E], ["Ÿ", 0x9F]
+]);
+
 export function cleanMojibake(str) {
   if (typeof str !== "string" || !str) return str;
   let s = str;
+
+  // 1. Tiền xử lý các biến thể đặc biệt của Đ/đ trước khi giải mã
+  s = s.replace(/Ä[\u0080-\u009f\u0000-\u001f\s\uFFFD\u25A0-\u25A9□\?']?en/gi, "Đen");
+  s = s.replace(/Ä['’`\?‘]/g, "đ");
+  s = s.replace(/Ä‘/g, "đ");
+
+  // 2. Thử giải mã nhị phân Windows-1252 -> UTF-8 cho chuỗi bị double-encoding
+  if (/[ÄÃáàảãạâăéèẻẽẹêíìỉĩịóòỏõọôơúùủũụưýỳỷỹỵº»¼½¾¿]/.test(s)) {
+    try {
+      const bytes = [];
+      const encoder = typeof TextEncoder !== "undefined" ? new TextEncoder() : null;
+      for (let i = 0; i < s.length; i++) {
+        const ch = s[i];
+        const code = s.charCodeAt(i);
+        if (WIN1252_REV_MAP.has(ch)) {
+          bytes.push(WIN1252_REV_MAP.get(ch));
+        } else if (code <= 0xFF) {
+          bytes.push(code);
+        } else if (encoder) {
+          const encoded = encoder.encode(ch);
+          for (let j = 0; j < encoded.length; j++) bytes.push(encoded[j]);
+        } else if (typeof Buffer !== "undefined") {
+          const buf = Buffer.from(ch, "utf8");
+          for (let j = 0; j < buf.length; j++) bytes.push(buf[j]);
+        }
+      }
+      const decoder = typeof TextDecoder !== "undefined" ? new TextDecoder("utf-8") : null;
+      const decoded = decoder
+        ? decoder.decode(new Uint8Array(bytes))
+        : (typeof Buffer !== "undefined" ? Buffer.from(bytes).toString("utf8") : "");
+      if (decoded && !decoded.includes("\uFFFD")) {
+        s = decoded;
+      }
+    } catch (_) {}
+  }
+
+  // 3. Quy tắc từ điển khử triệt để mọi tàn dư lỗi font thường gặp
   const replacements = [
     [/Ä[\u0080-\u009f\u0000-\u001f\s\uFFFD\u25A1□\?']?en/gi, "Đen"],
-    [/Ä['’`\?]?áº§u/gi, "đầu"],
-    [/Ä['’`\?]?áº£n/gi, "đản"],
-    [/Ä['’`\?]?á»[\u0087\u0099]?/gi, "điệ"],
-    [/Ä['’`\?]?á/gi, "đ"],
-    [/Ä['’`\?]/g, "đ"],
+    [/Ä['’`\?‘]?áº§u/gi, "đầu"],
+    [/Ä['’`\?‘]?áº£n/gi, "đản"],
+    [/Ä['’`\?‘]?á»[\u0087\u0099]?/gi, "điệ"],
+    [/Ä['’`\?‘]?á/gi, "đ"],
+    [/Ä['’`\?‘]/g, "đ"],
     [/Báo£n/g, "Bản"],
     [/Báº£n/g, "Bản"],
     [/chuyÃªn/g, "chuyên"],
@@ -140,7 +202,7 @@ export function cleanMojibake(str) {
     [/XÃ¡m/g, "Xám"],
     [/mÃ¡y/g, "máy"],
     [/xoa bÃ³p/g, "xoa bóp"],
-    [/Ä['’]?Ã¨n/g, "Đèn"],
+    [/Ä['’`‘]?Ã¨n/g, "Đèn"],
     [/BÃ\s*n/g, "Bàn"],
     [/Gháº¿/g, "Ghế"],
     [/Ã¡/g, "á"],
@@ -214,6 +276,7 @@ export function cleanMojibake(str) {
     [/Ä\u0080/g, "Đ"],
     [/Ä[\u0080-\u009f]/g, "Đ"]
   ];
+
   for (const [re, rep] of replacements) {
     s = s.replace(re, rep);
   }
@@ -366,6 +429,15 @@ export function sanitizeProductRecord(product) {
       let vName = cleanMojibake(v.name || "");
       if ((!vName || /Ä|Ã|áº|á»|Báº|XÃ|[\uFFFD□]/.test(vName)) && Object.keys(cleanOptions).length > 0) {
         vName = Object.values(cleanOptions).filter(Boolean).join(" / ");
+      }
+      if (String(product.id) === "P025") {
+        const p025Map = {
+          "P025-VAR-1": "Đen Stealth / Bản 4 đầu massage",
+          "P025-VAR-2": "Đen Stealth / Bản 6 đầu chuyên sâu",
+          "P025-VAR-3": "Xám Titan / Bản 4 đầu massage",
+          "P025-VAR-4": "Xám Titan / Bản 6 đầu chuyên sâu"
+        };
+        if (p025Map[v.id]) vName = p025Map[v.id];
       }
       return {
         ...v,

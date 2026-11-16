@@ -1,0 +1,98 @@
+# ==============================================================================
+# RENDER BLUEPRINT CONFIGURATION FOR ECODESK STUDIO
+# Documentation: https://render.com/docs/blueprint-spec
+# ==============================================================================
+version: "1"
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. FRONTEND: Static Site (Hoàn toàn MIỄN PHÍ & Không giới hạn băng thông)
+  # ----------------------------------------------------------------------------
+  - type: static
+    name: ecodesk-frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: false
+    routes:
+      # Chuyển hướng các request /api sang Backend Spring Boot
+      # (Sau khi deploy backend xong, bạn có thể kiểm tra URL backend và cập nhật nếu cần)
+      - type: rewrite
+        source: /api/*
+        destination: https://ecodesk-api.onrender.com/api/*
+      # Hỗ trợ định tuyến Single Page Application & các trang html tĩnh
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+    envVars:
+      - key: VITE_API_URL
+        value: https://ecodesk-api.onrender.com
+
+  # ----------------------------------------------------------------------------
+  # 2. BACKEND API: Spring Boot Web Service (Java 17 / Docker)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: ecodesk-api
+    env: docker
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    plan: free
+    region: singapore
+    healthCheckPath: /api/auth/mail-status
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SERVER_PORT
+        value: 8080
+
+      # Cấu hình kết nối MySQL Database (nhập từ TiDB Cloud, Aiven hoặc Clever Cloud)
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+
+      # Cấu hình Secret OTP bảo mật
+      - key: OTP_SECRET
+        generateValue: true
+
+      # Cấu hình gửi Mail OTP (Tùy chọn: Gmail App Password hoặc Resend/SendGrid)
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: MAIL_FROM_NAME
+        value: EcoDesk Studio
+
+      # Cấu hình cổng thanh toán SePay (Tùy chọn)
+      - key: SEPAY_API_TOKEN
+        sync: false
+      - key: SEPAY_BANK_CODE
+        sync: false
+      - key: SEPAY_ACCOUNT_NUMBER
+        sync: false
+      - key: SEPAY_ACCOUNT_NAME
+        sync: false
+      - key: SEPAY_PAYMENT_PREFIX
+        value: DH
+      - key: SEPAY_SYNC_ENABLED
+        value: "true"
+
+      # Cấu hình Google Gemini AI cho trợ lý tư vấn (Tùy chọn)
+      - key: GEMINI_API_KEY
+        sync: false
+

@@ -243,7 +243,11 @@ async function mountAssistant() {
     };
 
     try {
-      const response = await fetch("/api/assistant", {
+      const baseUrl = (typeof window !== "undefined" && window.__ECODESK_API_URL__)
+        ? String(window.__ECODESK_API_URL__).replace(/\/+$/, "")
+        : (typeof import.meta !== "undefined" && import.meta?.env?.VITE_API_URL ? String(import.meta.env.VITE_API_URL).replace(/\/+$/, "") : "");
+      const assistantUrl = baseUrl ? `${baseUrl}/api/assistant` : "/api/assistant";
+      const response = await fetch(assistantUrl, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ question, context })

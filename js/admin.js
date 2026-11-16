@@ -2353,6 +2353,15 @@ function renderProductsTable() {
                       if ((!vName || /Ä|Ã|áº|á»|Báº|XÃ|[\uFFFD□]/.test(vName)) && v.options && typeof v.options === "object") {
                         vName = Object.values(v.options).map(cleanMojibake).filter(Boolean).join(" / ");
                       }
+                      if (p.id === "P025") {
+                        const p025Map = {
+                          "P025-VAR-1": "Đen Stealth / Bản 4 đầu massage",
+                          "P025-VAR-2": "Đen Stealth / Bản 6 đầu chuyên sâu",
+                          "P025-VAR-3": "Xám Titan / Bản 4 đầu massage",
+                          "P025-VAR-4": "Xám Titan / Bản 6 đầu chuyên sâu"
+                        };
+                        if (p025Map[v.id]) vName = p025Map[v.id];
+                      }
                       return `
                       <tr style="border-bottom: 1px solid #f1f5f9;">
                         <td style="padding: 6px 8px;"><strong>${escapeHtml(vName)}</strong></td>
@@ -3425,7 +3434,19 @@ function renderInventoryTable() {
                 ${p.variants.map((v) => {
                   const varStock = Number(v.stock ?? 0);
                   const isOutOfStock = varStock === 0;
-                  const cleanVarName = cleanMojibake(v.name || "");
+                  let cleanVarName = cleanMojibake(v.name || "");
+                  if ((!cleanVarName || /Ä|Ã|áº|á»|Báº|XÃ|[\uFFFD□]/.test(cleanVarName)) && v.options && typeof v.options === "object") {
+                    cleanVarName = Object.values(v.options).map(cleanMojibake).filter(Boolean).join(" / ");
+                  }
+                  if (p.id === "P025") {
+                    const p025Map = {
+                      "P025-VAR-1": "Đen Stealth / Bản 4 đầu massage",
+                      "P025-VAR-2": "Đen Stealth / Bản 6 đầu chuyên sâu",
+                      "P025-VAR-3": "Xám Titan / Bản 4 đầu massage",
+                      "P025-VAR-4": "Xám Titan / Bản 6 đầu chuyên sâu"
+                    };
+                    if (p025Map[v.id]) cleanVarName = p025Map[v.id];
+                  }
                   return `
                     <div style="display: flex; align-items: center; justify-content: space-between; background: ${isOutOfStock ? "#fff1f2" : "#f8fafc"}; padding: 8px 12px; border-radius: 6px; border: 1px solid ${isOutOfStock ? "#fecdd3" : "#e2e8f0"}; flex-wrap: wrap; gap: 8px;">
                       <div style="flex: 1; min-width: 180px;">
@@ -3776,6 +3797,15 @@ function openAdjustInventoryModal(target = null) {
         if ((!vName || /Ä|Ã|áº|á»|Báº|XÃ|[\uFFFD□]/.test(vName)) && v.options && typeof v.options === "object") {
           vName = Object.values(v.options).map(cleanMojibake).filter(Boolean).join(" / ");
         }
+        if (selectedP.id === "P025") {
+          const p025Map = {
+            "P025-VAR-1": "Đen Stealth / Bản 4 đầu massage",
+            "P025-VAR-2": "Đen Stealth / Bản 6 đầu chuyên sâu",
+            "P025-VAR-3": "Xám Titan / Bản 4 đầu massage",
+            "P025-VAR-4": "Xám Titan / Bản 6 đầu chuyên sâu"
+          };
+          if (p025Map[v.id]) vName = p025Map[v.id];
+        }
         return `<option value="${escapeHtml(v.id)}">${escapeHtml(vName)} (Tồn: ${v.stock ?? 0})</option>`;
       }).join("");
       const selectedV = selectedP.variants.find((v) => String(v.id) === String(vSel.value)) || selectedP.variants[0];
@@ -3911,6 +3941,15 @@ function renderPoItemsRows() {
         let vName = cleanMojibake(v.name || "");
         if ((!vName || /Ä|Ã|áº|á»|Báº|XÃ|[\uFFFD□]/.test(vName)) && v.options && typeof v.options === "object") {
           vName = Object.values(v.options).map(cleanMojibake).filter(Boolean).join(" / ");
+        }
+        if (selectedProd.id === "P025") {
+          const p025Map = {
+            "P025-VAR-1": "Đen Stealth / Bản 4 đầu massage",
+            "P025-VAR-2": "Đen Stealth / Bản 6 đầu chuyên sâu",
+            "P025-VAR-3": "Xám Titan / Bản 4 đầu massage",
+            "P025-VAR-4": "Xám Titan / Bản 6 đầu chuyên sâu"
+          };
+          if (p025Map[v.id]) vName = p025Map[v.id];
         }
         return `
           <option value="${escapeHtml(v.id)}" ${String(v.id) === String(item.variantId) ? 'selected' : ''}>
