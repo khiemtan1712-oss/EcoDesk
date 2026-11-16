@@ -22,6 +22,7 @@ public class Campaign {
     @Column(length = 30)
     private String type = "percent";
 
+    @Column(name = "`value`")
     private Double value = 0.0;
 
     @Column(name = "max_discount")

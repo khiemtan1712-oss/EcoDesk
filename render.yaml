@@ -44,11 +44,6 @@ services:
     healthCheckPath: /api/auth/mail-status
     autoDeploy: true
     envVars:
-      - key: PORT
-        value: 8080
-      - key: SERVER_PORT
-        value: 8080
-
       # Cấu hình kết nối MySQL Database (nhập từ TiDB Cloud, Aiven hoặc Clever Cloud)
       - key: SPRING_DATASOURCE_URL
         sync: false
