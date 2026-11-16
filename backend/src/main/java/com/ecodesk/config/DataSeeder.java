@@ -68,41 +68,58 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void seedUsers() {
-        if (userRepository.count() > 0) return;
-
         Path usersPath = findFile("users.json");
         if (usersPath != null && usersPath.toFile().exists()) {
             try {
                 JsonNode root = objectMapper.readTree(usersPath.toFile());
                 if (root.isArray()) {
-                    List<User> list = new ArrayList<>();
+                    List<User> toCreate = new ArrayList<>();
                     for (JsonNode node : root) {
                         String id = node.path("id").asText("U_" + System.currentTimeMillis());
                         if ("U_ADMIN_01".equals(id)) continue;
-                        User u = new User();
-                        u.setId(id);
-                        u.setName(node.path("name").asText(""));
-                        u.setEmail(node.path("email").asText(""));
-                        u.setPassword(node.path("password").asText("123456"));
-                        u.setRole(node.path("role").asText("customer"));
-                        u.setPhone(node.path("phone").asText(""));
-                        u.setCreatedAt(node.path("createdAt").asText(""));
-                        u.setSpendTotal(node.path("spendTotal").asDouble(0.0));
-                        u.setTier(node.path("tier").asText("Đồng"));
-                        u.setNote(node.path("note").asText(""));
-                        u.setActive(true);
-                        u.setHidden(false);
-                        if (node.has("permissions") && node.get("permissions").isArray()) {
-                            List<String> perms = new ArrayList<>();
-                            for (JsonNode p : node.get("permissions")) {
-                                perms.add(p.asText());
+                        String email = node.path("email").asText("").trim().toLowerCase();
+                        if (email.isEmpty()) continue;
+                        String pwd = node.path("password").asText("123456");
+
+                        userRepository.findByEmail(email).ifPresentOrElse(existing -> {
+                            if (node.has("password") && (existing.getPassword() == null || existing.getPassword().equals("123456") || existing.getPassword().equals("admin"))) {
+                                existing.setPassword(pwd);
+                                userRepository.save(existing);
+                                System.out.println("✅ Đã cập nhật mật khẩu đồng bộ từ users.json cho: " + email);
                             }
-                            u.setPermissions(perms);
-                        }
-                        list.add(u);
+                        }, () -> {
+                            User u = new User();
+                            u.setId(id);
+                            u.setName(node.path("name").asText(""));
+                            u.setEmail(email);
+                            u.setPassword(pwd);
+                            u.setRole(node.path("role").asText("customer"));
+                            u.setPhone(node.path("phone").asText(""));
+                            u.setCreatedAt(node.path("createdAt").asText(""));
+                            u.setSpendTotal(node.path("spendTotal").asDouble(0.0));
+                            u.setTier(node.path("tier").asText("Đồng"));
+                            u.setNote(node.path("note").asText(""));
+                            u.setActive(true);
+                            u.setHidden(false);
+                            if (node.has("emailVerified")) {
+                                u.setEmailVerified(node.path("emailVerified").asBoolean(true));
+                            } else {
+                                u.setEmailVerified(true);
+                            }
+                            if (node.has("permissions") && node.get("permissions").isArray()) {
+                                List<String> perms = new ArrayList<>();
+                                for (JsonNode p : node.get("permissions")) {
+                                    perms.add(p.asText());
+                                }
+                                u.setPermissions(perms);
+                            }
+                            toCreate.add(u);
+                        });
                     }
-                    userRepository.saveAll(list);
-                    System.out.println("✅ Đã nạp " + list.size() + " người dùng từ users.json vào MySQL!");
+                    if (!toCreate.isEmpty()) {
+                        userRepository.saveAll(toCreate);
+                        System.out.println("✅ Đã nạp " + toCreate.size() + " người dùng mới từ users.json vào cơ sở dữ liệu!");
+                    }
                     return;
                 }
             } catch (Exception e) {

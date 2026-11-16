@@ -1,23 +1,5 @@
 [
   {
-    "id": "U_ADMIN",
-    "name": "Quản trị viên EcoDesk",
-    "email": "admin@ecodesk.vn",
-    "role": "admin",
-    "phone": "0901234567",
-    "createdAt": "2026-10-01T08:00:00.000Z",
-    "spendTotal": 57691500,
-    "tier": "Kim cương",
-    "note": "Tài khoản toàn quyền quản trị hệ thống",
-    "emailVerified": null,
-    "active": true,
-    "hidden": false,
-    "baseSalary": null,
-    "permissionsUpdatedAt": null,
-    "permissionsUpdatedBy": null,
-    "permissions": null
-  },
-  {
     "id": "U_1794456499677",
     "name": "Khiêm Tấn",
     "email": "khiemtan1712@gmail.com",
@@ -33,9 +15,29 @@
     "baseSalary": null,
     "permissionsUpdatedAt": null,
     "permissionsUpdatedBy": null,
+    "permissions": null,
+    "password": "$2a$10$vE80ojG22QQeU03IAkqUrOsxRj3IxfA2FiNTJMaMxasbzRIpmVx0m"
+  },
+  {
+    "id": "U_ADMIN",
+    "name": "Quản trị viên EcoDesk",
+    "email": "admin@ecodesk.vn",
+    "role": "admin",
+    "phone": "0901234567",
+    "createdAt": "2026-10-01T08:00:00.000Z",
+    "spendTotal": 57691500,
+    "tier": "Kim cương",
+    "note": "Tài khoản toàn quyền quản trị hệ thống",
+    "emailVerified": null,
+    "active": true,
+    "hidden": false,
+    "baseSalary": null,
+    "permissionsUpdatedAt": null,
+    "permissionsUpdatedBy": null,
     "permissions": [],
     "avatar": null,
-    "favorites": []
+    "favorites": [],
+    "password": "$2a$10$RRbEmWFJ4gchLEVLk9kXq.cs.FDnLuDlghcnT3SoKjdWZnOnzlqP2"
   },
   {
     "id": "U_CUST_01",
@@ -55,7 +57,8 @@
     "permissionsUpdatedBy": null,
     "permissions": [],
     "avatar": null,
-    "favorites": []
+    "favorites": [],
+    "password": "Khach123@"
   },
   {
     "id": "U_CUST_02",
@@ -75,7 +78,8 @@
     "permissionsUpdatedBy": null,
     "permissions": [],
     "avatar": null,
-    "favorites": []
+    "favorites": [],
+    "password": "Khach123@"
   },
   {
     "id": "U_STAFF_01",
@@ -95,7 +99,8 @@
     "permissionsUpdatedBy": null,
     "permissions": [],
     "avatar": null,
-    "favorites": []
+    "favorites": [],
+    "password": "staff123"
   },
   {
     "id": "U_STAFF_02",
@@ -115,7 +120,8 @@
     "permissionsUpdatedBy": null,
     "permissions": [],
     "avatar": null,
-    "favorites": []
+    "favorites": [],
+    "password": "staff123"
   },
   {
     "id": "U_CASHIER_01",
@@ -134,6 +140,7 @@
       "orders:view"
     ],
     "avatar": null,
-    "favorites": []
+    "favorites": [],
+    "password": "cashier123"
   }
 ]
