@@ -52,7 +52,10 @@ public class RbacService {
     );
 
     public static final List<String> DEFAULT_CASHIER_PERMISSIONS = List.of(
-            PERM_ORDERS_VIEW
+            PERM_ORDERS_VIEW,
+            PERM_FINANCE_VIEW,
+            PERM_FINANCE_RECORD_EXPENSE,
+            PERM_FINANCE_RECONCILE
     );
 
     public static final Set<String> CASHIER_FORBIDDEN_PERMISSIONS = Set.of(
@@ -66,7 +69,6 @@ public class RbacService {
             PERM_ORDERS_EDIT_INFO,
             PERM_INVENTORY_PURCHASE_RECEIVE,
             PERM_INVENTORY_ADJUST,
-            PERM_FINANCE_VIEW,
             PERM_FINANCE_PAYROLL_VIEW,
             PERM_REPORTS_VIEW
     );

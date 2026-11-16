@@ -1,6 +1,6 @@
 import { getPricing, isNewProduct } from "./commerce.js";
 import { renderIcon } from "./icons.js";
-import { normalizeProductTags } from "./storage.js";
+import { normalizeProductTags, formatShortDateTimeVN } from "./storage.js";
 
 export const $ = (selector, parent = document) => parent.querySelector(selector);
 export const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
@@ -428,6 +428,9 @@ export function productCard(product, categories) {
     } else {
       priceHtml = `<strong>${formatPrice(minFinal)}</strong>`;
     }
+    if (pricing.isUpcoming) {
+      priceHtml += `<span class="upcoming-sale-hint" style="display: block; font-size: 11px; color: #d97706; font-weight: 600; margin-top: 2px; line-height: 1.3;">Sắp sale ${formatShortDateTimeVN(pricing.upcomingStartAt)} (-${pricing.upcomingPercent}%)</span>`;
+    }
   }
 
   // Rút trích các lựa chọn màu sắc thực tế từ biến thể
@@ -494,6 +497,7 @@ export function productCard(product, categories) {
         <a class="product-image" href="${defaultDetailUrl}" data-card-link>
           <div class="card-corner-badges">
             ${pricing.percent ? `<span class="badge-sale-pill">${pricing.badgeText || `-${pricing.percent}%`}</span>` : ""}
+            ${pricing.isUpcoming ? `<span class="badge-upcoming-pill" title="Sắp sale lúc ${formatShortDateTimeVN(pricing.upcomingStartAt)}">Sắp sale</span>` : ""}
             ${isNewProduct(product) ? `<span class="badge-new-pill">Mới</span>` : ""}
           </div>
           ${isOutOfStock ? `<div class="card-out-overlay">Tạm hết hàng</div>` : ""}

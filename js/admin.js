@@ -9,6 +9,11 @@ import {
   logoutUser,
   getCampaigns,
   saveCampaigns,
+  createCampaign,
+  updateCampaign,
+  deleteCampaign,
+  formatDateTimeVN,
+  getCampaignScheduleStatus,
   getBanners,
   saveBanners,
   createProduct,
@@ -5113,21 +5118,47 @@ function fillProductSelects() {
 function renderSchedules() {
   const campaignList = document.getElementById("campaignList");
   if (campaignList) {
-    campaignList.innerHTML = getCampaigns()
+    const list = getCampaigns();
+    const now = new Date();
+    campaignList.innerHTML = list
       .map((c) => {
-        const p = products.find((item) => item.id === c.productId);
+        const p = products.find((item) => String(item.id) === String(c.productId));
+        const sched = getCampaignScheduleStatus(c, now);
+        let badgeColor = "#64748b";
+        let badgeBg = "#f1f5f9";
+        let badgeBorder = "#cbd5e1";
+        if (sched.status === "active") {
+          badgeColor = "#15803d";
+          badgeBg = "#dcfce7";
+          badgeBorder = "#86efac";
+        } else if (sched.status === "upcoming") {
+          badgeColor = "#b45309";
+          badgeBg = "#fef3c7";
+          badgeBorder = "#fcd34d";
+        }
+
+        const typeLabel = c.type === "special" ? "Dịp đặc biệt (tối đa 90%)" : "Sự kiện thường (tối đa 50%)";
+
         return `
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
-            <div>
-              <strong>${escapeHtml(c.name)} · ${c.percent || c.value}%</strong>
-              <br><small style="color: #64748b;">${escapeHtml(p?.name || "Sản phẩm")} · Mã: ${escapeHtml(c.code)}</small>
-              <br><small style="color: #94a3b8;">${new Date(c.startAt).toLocaleString("vi-VN")} – ${new Date(c.endAt).toLocaleString("vi-VN")}</small>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; gap: 16px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 240px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;">
+                <strong style="font-size: 15px; color: #0f172a;">${escapeHtml(c.name)}</strong>
+                <span style="font-size: 12px; font-weight: 700; color: #059669; background: #ecfdf5; padding: 2px 8px; border-radius: 9999px;">-${c.percent || c.value}%</span>
+                <span style="font-size: 12px; font-weight: 600; color: ${badgeColor}; background: ${badgeBg}; border: 1px solid ${badgeBorder}; padding: 2px 8px; border-radius: 9999px;">${escapeHtml(sched.label)}</span>
+              </div>
+              <div style="font-size: 13px; color: #475569; margin-bottom: 2px;">
+                <strong>Sản phẩm:</strong> ${escapeHtml(p?.name || "ID: " + (c.productId || "Chưa gắn"))} · <code style="font-size: 12px; background: #f8fafc; padding: 1px 4px; border-radius: 4px;">Mã: ${escapeHtml(c.code)}</code>
+              </div>
+              <div style="font-size: 12px; color: #64748b;">
+                <strong>Thời gian:</strong> ${formatDateTimeVN(c.startAt)} – ${formatDateTimeVN(c.endAt)} · <em>${escapeHtml(typeLabel)}</em>
+              </div>
             </div>
-            <button class="table-action-btn danger" type="button" data-remove-campaign="${escapeHtml(c.id)}">Xóa</button>
+            <button class="table-action-btn danger" type="button" data-remove-campaign="${escapeHtml(c.id)}" style="flex-shrink: 0;">Xóa lịch</button>
           </div>
         `;
       })
-      .join("") || `<p style="color: #64748b; font-size: 13px;">Chưa có lịch sale nào đang chạy.</p>`;
+      .join("") || `<p style="color: #64748b; font-size: 13px;">Chưa có lịch sale nào đang được lưu.</p>`;
   }
 
   const bannerList = document.getElementById("bannerList");
@@ -5152,7 +5183,7 @@ function renderSchedules() {
 function bindSchedulesEvents() {
   const campaignForm = document.getElementById("campaignForm");
   if (campaignForm) {
-    campaignForm.addEventListener("submit", (e) => {
+    campaignForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const data = new FormData(campaignForm);
       const cap = data.get("type") === "special" ? 90 : 50;
@@ -5162,14 +5193,32 @@ function bindSchedulesEvents() {
       const prodId = document.getElementById("campaignProduct").value;
 
       if (!products.some((item) => item.id === prodId) || amount < 1 || amount > cap || endAt <= startAt) {
-        showToast("Vui lòng kiểm tra lại sản phẩm, mức giảm và thời gian khuyến mãi.");
+        showToast("Vui lòng kiểm tra lại sản phẩm, mức giảm và thời gian khuyến mãi.", "error");
         return;
       }
 
-      const id = `C${Date.now()}`;
-      const code = `ECO-${prodId}-${id.slice(-6)}`;
-      saveCampaigns([
-        {
+      // Kiểm tra trùng lịch trước khi gửi
+      const overlap = getCampaigns().find((c) => {
+        if (!c.active || String(c.productId) !== String(prodId)) return false;
+        const oStart = new Date(c.startAt).getTime();
+        const oEnd = new Date(c.endAt).getTime();
+        return startAt.getTime() < oEnd && oStart < endAt.getTime();
+      });
+      if (overlap) {
+        showToast(`Trùng lịch sale với chương trình "${overlap.name}" (${formatDateTimeVN(overlap.startAt)} – ${formatDateTimeVN(overlap.endAt)})!`, "error");
+        return;
+      }
+
+      const submitBtn = campaignForm.querySelector("button[type='submit']");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Đang lưu...";
+      }
+
+      try {
+        const id = `C${Date.now()}`;
+        const code = `ECO-${prodId}-${id.slice(-6)}`;
+        await createCampaign({
           id,
           productId: prodId,
           name: data.get("name").trim(),
@@ -5179,13 +5228,20 @@ function bindSchedulesEvents() {
           startAt: startAt.toISOString(),
           endAt: endAt.toISOString(),
           active: true
-        },
-        ...getCampaigns()
-      ]);
+        });
 
-      campaignForm.reset();
-      renderSchedules();
-      showToast(`Đã lên lịch sale! Mã khuyến mãi: ${code}`);
+        campaignForm.reset();
+        renderSchedules();
+        showToast(`Đã lưu lịch sale thành công! Mã khuyến mãi: ${code}`);
+      } catch (err) {
+        console.error("Lỗi khi tạo lịch sale:", err);
+        showToast(err.message || "Không thể lưu lịch sale vào máy chủ.", "error");
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Tạo lịch sale";
+        }
+      }
     });
   }
 
@@ -5229,12 +5285,21 @@ function bindSchedulesEvents() {
     });
   }
 
-  document.addEventListener("click", (e) => {
+  document.addEventListener("click", async (e) => {
     const removeCamp = e.target.closest("[data-remove-campaign]");
     if (removeCamp) {
-      saveCampaigns(getCampaigns().filter((c) => c.id !== removeCamp.dataset.removeCampaign));
-      renderSchedules();
-      showToast("Đã xóa lịch sale.");
+      const campId = removeCamp.dataset.removeCampaign;
+      if (!confirm("Bạn có chắc chắn muốn xóa lịch sale này không?")) return;
+      removeCamp.disabled = true;
+      try {
+        await deleteCampaign(campId);
+        renderSchedules();
+        showToast("Đã xóa lịch sale khỏi hệ thống.");
+      } catch (err) {
+        console.error("Lỗi khi xóa lịch sale:", err);
+        showToast(err.message || "Không thể xóa lịch sale trên máy chủ.", "error");
+        removeCamp.disabled = false;
+      }
     }
 
     const removeBan = e.target.closest("[data-remove-banner]");

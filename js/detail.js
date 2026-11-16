@@ -1,4 +1,4 @@
-import { initStore, findProduct, getCategories, getProducts, addToCart, getCartCount, getCurrentUser, normalizeProductTags, normalizeImageUrlKey } from "./storage.js";
+import { initStore, findProduct, getCategories, getProducts, addToCart, getCartCount, getCurrentUser, normalizeProductTags, normalizeImageUrlKey, formatDateTimeVN } from "./storage.js";
 import { $, formatPrice, getCategoryName, getParam, showToast, renderRatingStars, escapeHtml, resolveColorSwatch, buildAuthUrl } from "./utils.js";
 import { getPricing, isNewProduct } from "./commerce.js";
 import { revealOnScroll } from "./scroll-reveal.js";
@@ -641,6 +641,26 @@ function renderDetail(product, categories) {
 
           <!-- Price Box -->
           <div class="pdp-price-box">
+            <div id="pdpSaleBannerWrap">
+              ${initialPricing.isUpcoming ? `
+                <div class="pdp-upcoming-sale-banner" style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; color: #b45309;">
+                  <span style="font-size: 18px;">⏰</span>
+                  <div>
+                    <strong style="display: block; font-size: 13px;">Sắp sale · Giảm ${initialPricing.upcomingPercent}%</strong>
+                    <small style="font-size: 12px; color: #92400e;">Chương trình "${escapeHtml(initialPricing.label)}" bắt đầu lúc ${formatDateTimeVN(initialPricing.upcomingStartAt)}</small>
+                  </div>
+                </div>
+              ` : ""}
+              ${initialPricing.percent ? `
+                <div class="pdp-active-sale-banner" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; color: #15803d;">
+                  <span style="font-size: 18px;">🔥</span>
+                  <div>
+                    <strong style="display: block; font-size: 13px;">Đang sale · ${escapeHtml(initialPricing.label || "Ưu đãi theo lịch")}</strong>
+                    <small style="font-size: 12px; color: #166534;">Giảm ${initialPricing.percent}% giá trực tiếp khi đặt hàng</small>
+                  </div>
+                </div>
+              ` : ""}
+            </div>
             <div class="pdp-price-main-row">
               <span class="pdp-current-price" id="displayCurrentPrice">${formatPrice(initialPricing.price)}</span>
               <del class="pdp-original-price" id="displayOriginalPrice" style="${initialPricing.percent ? "" : "display: none;"}">${formatPrice(initialPricing.original)}</del>
@@ -1379,6 +1399,34 @@ function renderDetail(product, categories) {
       const saveText = pricing.savings ? `Tiết kiệm ${formatPrice(pricing.savings)} (${pricing.percent}%)` : `Tiết kiệm ${pricing.percent}%`;
       percentEl.textContent = saveText;
       percentEl.style.display = (!isInvalidCombo && pricing.percent) ? "" : "none";
+    }
+
+    // Cập nhật banner sale động theo biến thể/sản phẩm
+    const bannerWrap = document.getElementById("pdpSaleBannerWrap");
+    if (bannerWrap) {
+      if (pricing.isUpcoming) {
+        bannerWrap.innerHTML = `
+          <div class="pdp-upcoming-sale-banner" style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; color: #b45309;">
+            <span style="font-size: 18px;">⏰</span>
+            <div>
+              <strong style="display: block; font-size: 13px;">Sắp sale · Giảm ${pricing.upcomingPercent}%</strong>
+              <small style="font-size: 12px; color: #92400e;">Chương trình "${escapeHtml(pricing.label)}" bắt đầu lúc ${formatDateTimeVN(pricing.upcomingStartAt)}</small>
+            </div>
+          </div>
+        `;
+      } else if (pricing.percent) {
+        bannerWrap.innerHTML = `
+          <div class="pdp-active-sale-banner" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; color: #15803d;">
+            <span style="font-size: 18px;">🔥</span>
+            <div>
+              <strong style="display: block; font-size: 13px;">Đang sale · ${escapeHtml(pricing.label || "Ưu đãi theo lịch")}</strong>
+              <small style="font-size: 12px; color: #166534;">Giảm ${pricing.percent}% giá trực tiếp khi đặt hàng</small>
+            </div>
+          </div>
+        `;
+      } else {
+        bannerWrap.innerHTML = "";
+      }
     }
 
     // Cập nhật SKU & Mã SP

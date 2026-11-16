@@ -25,6 +25,12 @@ public class Campaign {
     @Column(name = "`value`")
     private Double value = 0.0;
 
+    @Column(name = "percent")
+    private Double percent = 0.0;
+
+    @Column(name = "product_id", length = 50)
+    private String productId;
+
     @Column(name = "max_discount")
     private Double maxDiscount = 0.0;
 
@@ -85,11 +91,33 @@ public class Campaign {
     }
 
     public Double getValue() {
-        return value;
+        return value != null ? value : percent;
     }
 
     public void setValue(Double value) {
         this.value = value;
+        if (this.percent == null || this.percent == 0.0) {
+            this.percent = value;
+        }
+    }
+
+    public Double getPercent() {
+        return percent != null ? percent : value;
+    }
+
+    public void setPercent(Double percent) {
+        this.percent = percent;
+        if (this.value == null || this.value == 0.0) {
+            this.value = percent;
+        }
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public Double getMaxDiscount() {

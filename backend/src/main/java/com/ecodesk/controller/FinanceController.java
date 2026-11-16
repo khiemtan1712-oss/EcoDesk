@@ -237,8 +237,9 @@ public class FinanceController {
             boolean wasCompletedInOrBeforePeriod = isCompleted && (toDate == null || completedDate.compareTo(toDate) <= 0)
                     && (fromDate == null || completedDate.compareTo(fromDate) >= 0);
             boolean wasUnpaidAsOfPeriodEnd = !isPaid || (toDate != null && !paidDate.isEmpty() && paidDate.compareTo(toDate) > 0);
+            boolean isPendingQrInPeriod = isBankTransferOrQr(o.getPaymentMethod()) && !isCancelled && inRange(createdDate, fromDate, toDate);
 
-            if (wasCompletedInOrBeforePeriod && wasUnpaidAsOfPeriodEnd) {
+            if ((wasCompletedInOrBeforePeriod || isPendingQrInPeriod) && wasUnpaidAsOfPeriodEnd) {
                 pendingReceivable += total;
                 pendingReceivableCount++;
 
@@ -1148,7 +1149,9 @@ public class FinanceController {
         String payMethod = trim(body.get("paymentMethod"));
         if (payMethod.isEmpty()) payMethod = "Chuyển khoản ngân hàng";
         String payDate = trim(body.get("paymentDate"));
-        if (payDate.isEmpty()) payDate = LocalDate.now().toString();
+        if (payDate.isEmpty()) {
+            payDate = (po.getPurchaseDate() != null && !po.getPurchaseDate().isBlank()) ? extractDate(po.getPurchaseDate()) : LocalDate.now().toString();
+        }
         String note = trim(body.get("note"));
 
         double newPaid = (po.getPaidAmount() != null ? po.getPaidAmount() : 0.0) + payAmount;
@@ -1955,6 +1958,8 @@ public class FinanceController {
                 if (arr.isArray()) {
                     for (int i = arr.size() - 1; i >= 0; i--) {
                         JsonNode item = arr.get(i);
+                        String by = item.path("by").asText("");
+                        if ("SePay API".equalsIgnoreCase(by)) continue;
                         String st = item.path("status").asText("");
                         if ("Hoàn thành".equalsIgnoreCase(st) || "HOAN_THANH".equalsIgnoreCase(st)) {
                             String t = item.path("timestamp").asText("");
@@ -1966,10 +1971,13 @@ public class FinanceController {
                 }
             } catch (Exception ignored) {}
         }
+        if (o.getCreatedAt() != null && !o.getCreatedAt().isBlank()) {
+            return extractDate(o.getCreatedAt());
+        }
         if (o.getUpdatedAt() != null && !o.getUpdatedAt().isBlank()) {
             return extractDate(o.getUpdatedAt());
         }
-        return extractDate(o.getCreatedAt());
+        return "";
     }
 
     private String trimOrNull(Object s) {

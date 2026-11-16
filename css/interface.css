@@ -60,6 +60,20 @@ body {
   line-height: 1.2;
 }
 
+.badge-upcoming-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 850;
+  color: #fff;
+  background: #d97706;
+  box-shadow: 0 4px 10px rgba(217, 119, 6, 0.35);
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+
 .badge-top-pill {
   display: inline-flex;
   align-items: center;

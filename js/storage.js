@@ -1152,6 +1152,131 @@ export const saveUsers = (users) => {
 };
 export const getCampaigns = () => read(CAMPAIGN_KEY);
 export const saveCampaigns = (campaigns) => write(CAMPAIGN_KEY, campaigns);
+
+export function parseCampaignDate(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+export function formatDateTimeVN(dateStr) {
+  const d = parseCampaignDate(dateStr);
+  if (!d) return "";
+  return d.toLocaleString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  });
+}
+
+export function formatShortDateTimeVN(dateStr) {
+  const d = parseCampaignDate(dateStr);
+  if (!d) return "";
+  return d.toLocaleString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit"
+  });
+}
+
+export function getCampaignScheduleStatus(campaign, now = new Date()) {
+  if (!campaign || !campaign.active) {
+    return { status: "inactive", label: "Đã tắt", text: "Đã tắt" };
+  }
+  const start = parseCampaignDate(campaign.startAt);
+  const end = parseCampaignDate(campaign.endAt);
+  if (!start || !end) {
+    return { status: "invalid", label: "Không hợp lệ", text: "Thiếu thời gian" };
+  }
+  const nowMs = now.getTime();
+  const startMs = start.getTime();
+  const endMs = end.getTime();
+
+  if (nowMs < startMs) {
+    return {
+      status: "upcoming",
+      label: "Sắp sale",
+      text: `Bắt đầu ${formatShortDateTimeVN(start)}`,
+      startAt: campaign.startAt,
+      endAt: campaign.endAt
+    };
+  }
+  if (nowMs >= startMs && nowMs < endMs) {
+    return {
+      status: "active",
+      label: "Đang sale",
+      text: `Kết thúc ${formatShortDateTimeVN(end)}`,
+      startAt: campaign.startAt,
+      endAt: campaign.endAt
+    };
+  }
+  return {
+    status: "expired",
+    label: "Đã kết thúc",
+    text: `Đã kết thúc ${formatShortDateTimeVN(end)}`,
+    startAt: campaign.startAt,
+    endAt: campaign.endAt
+  };
+}
+
+export async function createCampaign(campaignData) {
+  const actor = getCurrentUser();
+  const headers = {};
+  if (actor?.id) {
+    headers["X-EcoDesk-User-Id"] = actor.id;
+  }
+  const saved = await apiFetch("/api/campaigns", {
+    method: "POST",
+    headers,
+    body: JSON.stringify(campaignData)
+  });
+  if (saved && saved.id) {
+    const list = getCampaigns().filter((c) => c.id !== saved.id);
+    list.unshift(saved);
+    write(CAMPAIGN_KEY, list);
+    return saved;
+  }
+  throw new Error("Không nhận được dữ liệu phản hồi từ máy chủ khi tạo lịch sale.");
+}
+
+export async function updateCampaign(id, campaignData) {
+  const actor = getCurrentUser();
+  const headers = {};
+  if (actor?.id) {
+    headers["X-EcoDesk-User-Id"] = actor.id;
+  }
+  const saved = await apiFetch(`/api/campaigns/${encodeURIComponent(id)}`, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(campaignData)
+  });
+  if (saved && saved.id) {
+    const list = getCampaigns().map((c) => (c.id === id ? saved : c));
+    write(CAMPAIGN_KEY, list);
+    return saved;
+  }
+  throw new Error("Không nhận được dữ liệu phản hồi từ máy chủ khi cập nhật lịch sale.");
+}
+
+export async function deleteCampaign(id) {
+  const actor = getCurrentUser();
+  const headers = {};
+  if (actor?.id) {
+    headers["X-EcoDesk-User-Id"] = actor.id;
+  }
+  await apiFetch(`/api/campaigns/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers
+  });
+  const list = getCampaigns().filter((c) => c.id !== id);
+  write(CAMPAIGN_KEY, list);
+  return true;
+}
 export const getBanners = () => read(BANNER_KEY);
 export const saveBanners = (banners) => write(BANNER_KEY, banners);
 export const saveOrders = (orders) => write(ORDER_KEY, orders);
@@ -1984,9 +2109,11 @@ export function getActiveCoupons(userId = getCurrentUser()?.id) {
 }
 
 export function getProductPrice(product, now = new Date(), variant = null) {
-  const basePrice = (variant && variant.price != null) ? Number(variant.price) : Number(product.price);
+  if (!product) return { original: 0, price: 0, percent: 0, savings: 0, code: "", label: "", badgeText: "", isUpcoming: false };
+  const basePrice = (variant && variant.price != null && !isNaN(variant.price)) ? Number(variant.price) : Number(product.price || 0);
+  const nowMs = now instanceof Date ? now.getTime() : new Date(now).getTime();
 
-  // 1. Kiểm tra chương trình khuyến mãi theo lịch riêng của từng sản phẩm
+  // 1. Kiểm tra chương trình khuyến mãi theo lịch riêng của từng sản phẩm từ product.discount
   const promoStatus = getDiscountPromotionStatus(product, now);
   if (promoStatus.active) {
     const calc = calculateDiscountPricing(basePrice, promoStatus.discount);
@@ -1999,57 +2126,114 @@ export function getProductPrice(product, now = new Date(), variant = null) {
         code: `PROMO-${product.id}`,
         label: calc.label,
         badgeText: calc.badgeText,
-        isProductPromo: true
+        isProductPromo: true,
+        status: "active",
+        isUpcoming: false
       };
     }
   }
 
-  // 2. Dự phòng: Chiến dịch ưu đãi chung / Ngày đôi / Ngày lễ
-  const active = getCampaigns().filter((campaign) => campaign.active && String(campaign.productId) === String(product.id) && new Date(campaign.startAt) <= now && new Date(campaign.endAt) >= now).sort((a, b) => (b.percent || b.value || 0) - (a.percent || a.value || 0))[0];
-  const number = Number.parseInt(String(product.id).replace(/\D/g, ""), 10) || 0;
-  const doubleDay = now.getDate() === now.getMonth() + 1;
-  const doublePercent = doubleDay ? Math.min(15, 10 + number % 6) : 0;
-  const holidays = [
-    { code: "MAR08", month: 2, day: 8, days: 1, name: "Quốc tế Phụ nữ" },
-    { code: "APR30", month: 3, day: 30, days: 2, name: "Đại lễ tháng Tư" },
-    { code: "SEP02", month: 8, day: 2, days: 1, name: "Quốc khánh" },
-    { code: "OCT20", month: 9, day: 20, days: 1, name: "Ngày Phụ nữ Việt Nam" },
-    { code: "NOV20", month: 10, day: 20, days: 1, name: "Ngày Nhà giáo Việt Nam" },
-    { code: "DEC24", month: 11, day: 24, days: 2, name: "Mùa lễ hội cuối năm" }
-  ].find((holiday) => {
-    const date = new Date(now.getFullYear(), holiday.month, holiday.day);
-    const offset = Math.round((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - date) / 86400000);
-    return Math.abs(offset) <= holiday.days;
-  });
-  const holidayPercent = holidays ? 20 + number % 31 : 0;
-  const manualPercent = Number(active?.percent || active?.value || 0);
-  let percent = Math.max(doublePercent, holidayPercent, manualPercent);
-  let code = active?.code || "";
-  let label = active?.name || "";
-  if (holidayPercent > manualPercent && holidayPercent >= doublePercent) {
-    code = `HOLIDAY-${holidays.code}-${product.id}`;
-    label = holidays.name;
+  // 2. Kiểm tra chiến dịch sale theo sản phẩm từ getCampaigns()
+  const allCampaigns = getCampaigns();
+  const prodCampaigns = allCampaigns.filter(
+    (c) => Boolean(c.active) && String(c.productId) === String(product.id)
+  );
+
+  let activeCampaign = null;
+  let upcomingCampaign = null;
+
+  for (const c of prodCampaigns) {
+    const sDate = c.startAt ? new Date(c.startAt).getTime() : NaN;
+    const eDate = c.endAt ? new Date(c.endAt).getTime() : NaN;
+    if (isNaN(sDate) || isNaN(eDate)) continue;
+
+    if (nowMs >= sDate && nowMs < eDate) {
+      // Đang trong thời gian sale: chọn chương trình có mức giảm cao nhất
+      const val = Number(c.percent || c.value || 0);
+      if (!activeCampaign || val > Number(activeCampaign.percent || activeCampaign.value || 0)) {
+        activeCampaign = c;
+      }
+    } else if (nowMs < sDate) {
+      // Sắp sale trong tương lai: chọn sự kiện sắp tới sớm nhất
+      if (!upcomingCampaign || sDate < new Date(upcomingCampaign.startAt).getTime()) {
+        upcomingCampaign = c;
+      }
+    }
   }
-  if (doubleDay && doublePercent >= Math.max(holidayPercent, manualPercent)) {
-    percent = Math.min(15, doublePercent);
-    code = `DOUBLE-${String(now.getMonth() + 1).padStart(2, "0")}-${product.id}`;
-    label = "Ưu đãi ngày đôi";
-  } else if (doubleDay) {
-    percent = Math.min(15, percent);
+
+  // Nếu ĐANG SALE: áp dụng mức giảm
+  if (activeCampaign) {
+    const cap = activeCampaign.type === "special" ? 90 : 50;
+    const rawPercent = Number(activeCampaign.percent || activeCampaign.value || 0);
+    const percent = Math.min(cap, Math.max(0, rawPercent));
+    const price = Math.round(basePrice * (100 - percent) / 100);
+    const savings = Math.round(basePrice * (percent / 100));
+    return {
+      original: basePrice,
+      price,
+      percent,
+      savings,
+      code: activeCampaign.code || `ECO-${product.id}`,
+      label: activeCampaign.name || "Ưu đãi theo lịch",
+      badgeText: percent > 0 ? `-${percent}%` : "",
+      status: "active",
+      isUpcoming: false,
+      campaign: activeCampaign
+    };
   }
-  if (active && manualPercent >= Math.max(doublePercent, holidayPercent)) {
-    code = active.code;
-    label = active.name;
+
+  // Nếu SẮP SALE: sản phẩm vẫn bán theo GIÁ GỐC, KHÔNG giảm giá
+  if (upcomingCampaign) {
+    const cap = upcomingCampaign.type === "special" ? 90 : 50;
+    const rawPercent = Number(upcomingCampaign.percent || upcomingCampaign.value || 0);
+    const upcomingPercent = Math.min(cap, Math.max(0, rawPercent));
+    return {
+      original: basePrice,
+      price: basePrice,
+      percent: 0,
+      savings: 0,
+      code: upcomingCampaign.code || `ECO-${product.id}`,
+      label: upcomingCampaign.name || "Sắp sale",
+      badgeText: "Sắp sale",
+      status: "upcoming",
+      isUpcoming: true,
+      upcomingStartAt: upcomingCampaign.startAt,
+      upcomingEndAt: upcomingCampaign.endAt,
+      upcomingPercent,
+      campaign: upcomingCampaign
+    };
   }
-  if (active?.type !== "special") percent = Math.min(50, percent);
+
+  // Nếu product.discount là upcoming:
+  if (promoStatus.status === "upcoming") {
+    return {
+      original: basePrice,
+      price: basePrice,
+      percent: 0,
+      savings: 0,
+      code: `PROMO-${product.id}`,
+      label: "Sắp khuyến mãi",
+      badgeText: "Sắp sale",
+      status: "upcoming",
+      isUpcoming: true,
+      upcomingStartAt: promoStatus.startAt,
+      upcomingEndAt: promoStatus.endAt,
+      upcomingPercent: promoStatus.value,
+      isProductPromo: true
+    };
+  }
+
+  // Mặc định: Giá gốc, không sale
   return {
     original: basePrice,
-    price: Math.round(basePrice * (100 - percent) / 100),
-    percent,
-    savings: Math.round(basePrice * (percent / 100)),
-    code,
-    label,
-    badgeText: percent > 0 ? `-${percent}%` : ""
+    price: basePrice,
+    percent: 0,
+    savings: 0,
+    code: "",
+    label: "",
+    badgeText: "",
+    status: "regular",
+    isUpcoming: false
   };
 }
 

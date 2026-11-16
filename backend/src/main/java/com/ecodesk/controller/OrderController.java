@@ -1,8 +1,11 @@
 package com.ecodesk.controller;
 
 import com.ecodesk.config.SepayProperties;
+import com.ecodesk.entity.Campaign;
 import com.ecodesk.entity.Order;
+import com.ecodesk.entity.Product;
 import com.ecodesk.entity.User;
+import com.ecodesk.repository.CampaignRepository;
 import com.ecodesk.repository.OrderRepository;
 import com.ecodesk.repository.ProductRepository;
 import com.ecodesk.repository.UserRepository;
@@ -37,6 +40,7 @@ public class OrderController {
     private final UserRepository userRepository;
     private final SepayProperties sepayProperties;
     private final RbacService rbacService;
+    private final CampaignRepository campaignRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final SecureRandom secureRandom = new SecureRandom();
 
@@ -44,7 +48,15 @@ public class OrderController {
                            ProductRepository productRepository,
                            UserRepository userRepository,
                            SepayProperties sepayProperties) {
-        this(orderRepository, productRepository, userRepository, sepayProperties, new RbacService(userRepository));
+        this(orderRepository, productRepository, userRepository, sepayProperties, new RbacService(userRepository), null);
+    }
+
+    public OrderController(OrderRepository orderRepository,
+                           ProductRepository productRepository,
+                           UserRepository userRepository,
+                           SepayProperties sepayProperties,
+                           RbacService rbacService) {
+        this(orderRepository, productRepository, userRepository, sepayProperties, rbacService, null);
     }
 
     @Autowired
@@ -52,12 +64,14 @@ public class OrderController {
                            ProductRepository productRepository,
                            UserRepository userRepository,
                            SepayProperties sepayProperties,
-                           RbacService rbacService) {
+                           RbacService rbacService,
+                           @Autowired(required = false) CampaignRepository campaignRepository) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.sepayProperties = sepayProperties;
         this.rbacService = rbacService;
+        this.campaignRepository = campaignRepository;
     }
 
     @GetMapping
@@ -141,19 +155,25 @@ public class OrderController {
             order.setPaymentReference(null);
         }
 
-        // Tự động trừ tồn kho, tăng số lượng bán và snapshot giá vốn (nếu có) vào itemsJson
+        // Tự động kiểm tra giá bán authoritative, trừ tồn kho, tăng số lượng bán và snapshot giá vốn vào itemsJson
+        double calculatedSubtotal = 0.0;
+        boolean hasCalculatedItems = false;
         if (order.getItemsJson() != null && !order.getItemsJson().trim().isEmpty()) {
             try {
                 JsonNode items = objectMapper.readTree(order.getItemsJson());
                 if (items.isArray()) {
                     ArrayNode updatedItems = (ArrayNode) items;
+                    Instant orderTime = CampaignController.parseToInstant(order.getCreatedAt());
+                    if (orderTime == null) orderTime = Instant.now();
                     for (JsonNode item : updatedItems) {
                         String prodId = item.has("productId") ? item.path("productId").asText() : item.path("id").asText();
                         String variantId = item.has("variantId") && !item.get("variantId").isNull()
                                 ? item.path("variantId").asText("").trim() : "";
                         int qty = item.path("quantity").asInt(1);
                         if (!prodId.isEmpty()) {
-                            productRepository.findById(prodId).ifPresent(p -> {
+                            Optional<Product> prodOpt = productRepository.findById(prodId);
+                            if (prodOpt.isPresent()) {
+                                Product p = prodOpt.get();
                                 Double unitCost = p.getCostPrice();
                                 if (!variantId.isEmpty() && p.getVariantsJson() != null && !p.getVariantsJson().isBlank()) {
                                     try {
@@ -168,20 +188,34 @@ public class OrderController {
                                         }
                                     } catch (Exception ignored) {}
                                 }
-                                if (item.isObject() && unitCost != null && unitCost > 0) {
-                                    ((ObjectNode) item).put("costPrice", unitCost);
+                                if (item.isObject()) {
+                                    if (unitCost != null && unitCost > 0) {
+                                        ((ObjectNode) item).put("costPrice", unitCost);
+                                    }
+                                    // Authoritative server-side price check
+                                    double authPrice = resolveAuthoritativePrice(p, variantId, orderTime);
+                                    ((ObjectNode) item).put("price", authPrice);
+                                    calculatedSubtotal += authPrice * qty;
+                                    hasCalculatedItems = true;
                                 }
                                 int currentStock = p.getStock() != null ? p.getStock() : 0;
                                 int currentSold = p.getSold() != null ? p.getSold() : 0;
                                 p.setStock(Math.max(0, currentStock - qty));
                                 p.setSold(currentSold + qty);
                                 productRepository.save(p);
-                            });
+                            }
                         }
                     }
                     order.setItemsJson(objectMapper.writeValueAsString(updatedItems));
                 }
             } catch (Exception ignored) {}
+        }
+
+        if (hasCalculatedItems) {
+            order.setSubtotal(calculatedSubtotal);
+            double disc = order.getDiscount() != null ? order.getDiscount() : 0.0;
+            double ship = order.getShippingFee() != null ? order.getShippingFee() : 0.0;
+            order.setTotal(Math.max(0.0, calculatedSubtotal - disc + ship));
         }
 
         Order saved = orderRepository.save(order);
@@ -206,6 +240,71 @@ public class OrderController {
             else user.setTier("Đồng");
             userRepository.save(user);
         });
+    }
+
+    private double resolveAuthoritativePrice(Product p, String variantId, Instant orderTime) {
+        double basePrice = p.getPrice() != null ? p.getPrice() : 0.0;
+        if (variantId != null && !variantId.isEmpty() && p.getVariantsJson() != null && !p.getVariantsJson().isBlank()) {
+            try {
+                JsonNode vNode = objectMapper.readTree(p.getVariantsJson());
+                if (vNode.isArray()) {
+                    for (JsonNode v : vNode) {
+                        if (variantId.equals(v.path("id").asText("")) && v.has("price") && v.get("price").isNumber()) {
+                            basePrice = v.get("price").asDouble();
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
+        // Active campaign discount
+        double activeDiscountPercent = 0.0;
+        if (campaignRepository != null) {
+            List<Campaign> campaigns = campaignRepository.findByProductId(p.getId());
+            for (Campaign c : campaigns) {
+                if (Boolean.FALSE.equals(c.getActive())) continue;
+                Instant start = CampaignController.parseToInstant(c.getStartAt());
+                Instant end = CampaignController.parseToInstant(c.getEndAt());
+                if (start != null && end != null && !orderTime.isBefore(start) && orderTime.isBefore(end)) {
+                    double pct = c.getPercent() != null ? c.getPercent() : (c.getValue() != null ? c.getValue() : 0.0);
+                    String type = c.getType() != null ? c.getType().trim().toLowerCase(Locale.ROOT) : "regular";
+                    double cap = "special".equals(type) ? 90.0 : 50.0;
+                    pct = Math.min(cap, Math.max(0.0, pct));
+                    if (pct > activeDiscountPercent) {
+                        activeDiscountPercent = pct;
+                    }
+                }
+            }
+        }
+
+        // Product inline discount if configured
+        if (p.getDiscountJson() != null && !p.getDiscountJson().isBlank()) {
+            try {
+                JsonNode dc = objectMapper.readTree(p.getDiscountJson());
+                if (dc.path("enabled").asBoolean(false)) {
+                    Instant dStart = CampaignController.parseToInstant(dc.path("startAt").asText(null));
+                    Instant dEnd = CampaignController.parseToInstant(dc.path("endAt").asText(null));
+                    if (dStart != null && dEnd != null && !orderTime.isBefore(dStart) && orderTime.isBefore(dEnd)) {
+                        String dType = dc.path("type").asText("percentage");
+                        double val = dc.path("value").asDouble(0.0);
+                        if ("percentage".equalsIgnoreCase(dType) && val > activeDiscountPercent) {
+                            activeDiscountPercent = Math.min(90.0, val);
+                        } else if ("fixed".equalsIgnoreCase(dType) && basePrice > 0) {
+                            double fixedPct = (val / basePrice) * 100.0;
+                            if (fixedPct > activeDiscountPercent) {
+                                activeDiscountPercent = Math.min(90.0, fixedPct);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
+        if (activeDiscountPercent > 0) {
+            return Math.round(basePrice * (100.0 - activeDiscountPercent) / 100.0);
+        }
+        return basePrice;
     }
 
     @PatchMapping("/{id}/status")
